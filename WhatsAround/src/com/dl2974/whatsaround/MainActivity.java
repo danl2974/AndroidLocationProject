@@ -2,7 +2,15 @@ package com.dl2974.whatsaround;
 
 import java.util.HashMap;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import android.os.Bundle;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -10,7 +18,8 @@ import android.view.Menu;
 
 public class MainActivity extends FragmentActivity implements 
 LocationsListFragment.OnLocationTypeSelectedListener, 
-FactualFragment.OnLocationSelectedListener {
+FactualFragment.OnLocationSelectedListener,
+LocationFragment.MapListener {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +67,22 @@ FactualFragment.OnLocationSelectedListener {
 
         transaction.commit();
 		
-	}	
+	}
+	
+	@SuppressLint("NewApi")
+	public void onSingleLocationView(Double latitude, Double longitude){
+		
+        GoogleMap map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.gmap)).getMap();
+        //GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.gmap)).getMap();
+        LatLng locationLongLat = new LatLng(latitude, longitude);
+
+        //map.setMyLocationEnabled(true);
+        //map.moveCamera(CameraUpdateFactory.newLatLngZoom(locationLongLat, 13));
+         map.addMarker(new MarkerOptions().position(locationLongLat).title("Your Location"));
+         map.moveCamera(CameraUpdateFactory.newLatLngZoom(locationLongLat, 15));
+         map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
+         
+	}
 	
 	/*
 	@Override
