@@ -12,8 +12,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.pm.FeatureInfo;
+import android.content.pm.PackageManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.Menu;
 
 public class MainActivity extends FragmentActivity implements 
@@ -70,17 +73,17 @@ LocationFragment.MapListener {
 	}
 	
 	@SuppressLint("NewApi")
-	public void onSingleLocationView(Double latitude, Double longitude){
+	public void onSingleLocationView(HashMap<String,String> locationData){
 		
         GoogleMap map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.gmap)).getMap();
         //GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.gmap)).getMap();
-        LatLng locationLongLat = new LatLng(latitude, longitude);
+        LatLng locationLongLat = new LatLng( Double.valueOf(locationData.get("latitude")), Double.valueOf(locationData.get("longitude")) );
 
         //map.setMyLocationEnabled(true);
         //map.moveCamera(CameraUpdateFactory.newLatLngZoom(locationLongLat, 13));
-         map.addMarker(new MarkerOptions().position(locationLongLat).title("Your Location"));
+         map.addMarker(new MarkerOptions().position(locationLongLat).title(locationData.get("name")));
          map.moveCamera(CameraUpdateFactory.newLatLngZoom(locationLongLat, 15));
-         map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
+         map.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
          
 	}
 	

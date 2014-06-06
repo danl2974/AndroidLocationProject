@@ -22,7 +22,7 @@ public class LocationFragment extends Fragment {
 	
     public interface MapListener {
         
-        public void onSingleLocationView(Double latitude, Double longitude);
+        public void onSingleLocationView(HashMap<String,String> locationData);
     }
 
     MapListener mapListenerCallback;
@@ -44,8 +44,8 @@ public class LocationFragment extends Fragment {
         
         textData.setText(sb.toString());
         
-        mapListenerCallback.onSingleLocationView(Double.valueOf(locationData.get("latitude")), Double.valueOf(locationData.get("longitude")) );
-        
+        //mapListenerCallback.onSingleLocationView(Double.valueOf(locationData.get("latitude")), Double.valueOf(locationData.get("longitude")) );
+        mapListenerCallback.onSingleLocationView(locationData);        
 
         return locationView;
          
