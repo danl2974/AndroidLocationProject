@@ -28,6 +28,8 @@ LocationsListFragment.OnLocationTypeSelectedListener,
 FactualFragment.OnLocationSelectedListener,
 LocationFragment.MapListener,
 GoogleMap.InfoWindowAdapter {
+	
+	HashMap<String,String> activityLocationData;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -80,19 +82,32 @@ GoogleMap.InfoWindowAdapter {
 	@SuppressLint("NewApi")
 	public void onSingleLocationView(HashMap<String,String> locationData){
 		
+		this.activityLocationData = locationData;
+		
         GoogleMap map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.gmap)).getMap();
         //GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.gmap)).getMap();
         LatLng locationLongLat = new LatLng( Double.valueOf(locationData.get("latitude")), Double.valueOf(locationData.get("longitude")) );
-
+        /*
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String,String> entry : locationData.entrySet()){
         	sb.append(entry.getKey() + ": " + entry.getValue() + "\n");
         }
         String markerSnippet = sb.toString();
+        */
+        /*
+        String markerSnippet = String.format("%s\n%s\n%s\n%s\n%s", 
+        		locationData.get("name"),
+        		locationData.get("address") + "\n" +  locationData.get("locality") + " " + locationData.get("region") + " " + locationData.get("postcode"),
+        		locationData.get("hours_display"),
+        		locationData.get("tel"),
+        		locationData.get("website")
+        		); 
+        */
         
         //map.setMyLocationEnabled(true);
         //map.moveCamera(CameraUpdateFactory.newLatLngZoom(locationLongLat, 13));
-         Marker marker = map.addMarker(new MarkerOptions().position(locationLongLat).title(locationData.get("name")).snippet(markerSnippet));
+         //Marker marker = map.addMarker(new MarkerOptions().position(locationLongLat).title(locationData.get("name")).snippet(markerSnippet));
+         Marker marker = map.addMarker(new MarkerOptions().position(locationLongLat).title(locationData.get("name")));
          map.setInfoWindowAdapter(this);
          marker.showInfoWindow();
          map.moveCamera(CameraUpdateFactory.newLatLngZoom(locationLongLat, 15));
@@ -109,8 +124,21 @@ GoogleMap.InfoWindowAdapter {
 	public View getInfoContents(Marker marker){
 		
 		View infoWindowView =  getLayoutInflater().inflate(R.layout.info_window, null);
+		/*
 		TextView textData = (TextView) infoWindowView.findViewById(R.id.location_info);
 		textData.setText(marker.getSnippet());
+		*/
+		TextView iw_name = (TextView) infoWindowView.findViewById(R.id.iw_name);
+		iw_name.setText(this.activityLocationData.get("name"));
+		TextView iw_address = (TextView) infoWindowView.findViewById(R.id.iw_address);
+		iw_address.setText(this.activityLocationData.get("address") + "\n" +  this.activityLocationData.get("locality") + " " + this.activityLocationData.get("region") + " " + this.activityLocationData.get("postcode"));
+		TextView iw_hours = (TextView) infoWindowView.findViewById(R.id.iw_hours);
+		iw_hours.setText(this.activityLocationData.get("hours_display"));
+		TextView iw_telephone = (TextView) infoWindowView.findViewById(R.id.iw_telephone);
+		iw_telephone.setText(this.activityLocationData.get("tel"));
+		TextView iw_website = (TextView) infoWindowView.findViewById(R.id.iw_website);
+		iw_website.setText(this.activityLocationData.get("website"));
+
 		
 		return infoWindowView;
 		
