@@ -7,17 +7,22 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.FeatureInfo;
 import android.content.pm.PackageManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -26,9 +31,11 @@ import android.widget.TextView;
 public class MainActivity extends FragmentActivity implements 
 LocationsListFragment.OnLocationTypeSelectedListener, 
 FactualFragment.OnLocationSelectedListener,
+FactualFragment.OnUserLocationChange,
 LocationFragment.MapListener,
 GoogleMap.InfoWindowAdapter {
 	
+	Location userLocation;
 	HashMap<String,String> activityLocationData;
 
 	@Override
@@ -87,6 +94,7 @@ GoogleMap.InfoWindowAdapter {
         GoogleMap map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.gmap)).getMap();
         //GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.gmap)).getMap();
         LatLng locationLongLat = new LatLng( Double.valueOf(locationData.get("latitude")), Double.valueOf(locationData.get("longitude")) );
+        LatLng userLocationLatLng = new LatLng(userLocation.getLatitude(), userLocation.getLongitude());
         /*
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String,String> entry : locationData.entrySet()){
@@ -108,10 +116,23 @@ GoogleMap.InfoWindowAdapter {
         //map.moveCamera(CameraUpdateFactory.newLatLngZoom(locationLongLat, 13));
          //Marker marker = map.addMarker(new MarkerOptions().position(locationLongLat).title(locationData.get("name")).snippet(markerSnippet));
          Marker marker = map.addMarker(new MarkerOptions().position(locationLongLat).title(locationData.get("name")));
+         Marker userLocationMarker = map.addMarker(new MarkerOptions().position(userLocationLatLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_action)));
          map.setInfoWindowAdapter(this);
          marker.showInfoWindow();
-         map.moveCamera(CameraUpdateFactory.newLatLngZoom(locationLongLat, 15));
-         map.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
+         map.moveCamera(CameraUpdateFactory.newLatLngZoom(locationLongLat, 12));
+         map.animateCamera(CameraUpdateFactory.zoomTo(12), 2000, null);
+         
+         map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+        	 
+        	 @Override
+             public void onInfoWindowClick(Marker marker) {
+        		 
+        		 String websiteUrl = MainActivity.this.activityLocationData.get("website");
+        		 Uri webpage = Uri.parse(websiteUrl);
+        		 Intent webIntent = new Intent(Intent.ACTION_VIEW, webpage);
+        		 startActivity(webIntent);
+        	 }
+         });
          
 	}
 	
@@ -136,14 +157,23 @@ GoogleMap.InfoWindowAdapter {
 		iw_hours.setText(this.activityLocationData.get("hours_display"));
 		TextView iw_telephone = (TextView) infoWindowView.findViewById(R.id.iw_telephone);
 		iw_telephone.setText(this.activityLocationData.get("tel"));
+		
 		TextView iw_website = (TextView) infoWindowView.findViewById(R.id.iw_website);
-		iw_website.setText(this.activityLocationData.get("website"));
+		iw_website.setClickable(true);
+		String websiteUrl = this.activityLocationData.get("website");
+		String link = String.format("<a href='%s'>%s</a>", websiteUrl, websiteUrl );
+		iw_website.setText(Html.fromHtml(link));
 
 		
 		return infoWindowView;
 		
 	}
 	
+	public void updateUserLocation(Location location){
+		
+		this.userLocation = location;
+		
+	}
 	
 	/*
 	@Override

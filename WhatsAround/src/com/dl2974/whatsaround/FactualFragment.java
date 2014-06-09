@@ -65,8 +65,15 @@ GooglePlayServicesClient.OnConnectionFailedListener  {
         
         public void onLocationSelected(HashMap<String,String> locationMap);
     }
+    
+    public interface OnUserLocationChange {
+    	
+    	public void updateUserLocation(Location location);
+    	
+    }
 
     OnLocationSelectedListener selectionCallback;
+    OnUserLocationChange iUserLocation;
 	
     private static final String DEBUG_TAG = "WhatsAround";
     private EditText urlText;
@@ -312,7 +319,7 @@ GooglePlayServicesClient.OnConnectionFailedListener  {
 	         Log.i("FactualClient",  sb.toString() );
 			}
 			catch(Exception e){
-				Log.e("FactualClientException", "Exception doConnection");
+				Log.e("FactualClientException", "Exception doConnection " + e.getMessage());
 			}
 			finally {
 			    conn.disconnect();
@@ -440,6 +447,7 @@ GooglePlayServicesClient.OnConnectionFailedListener  {
 		    	Log.i("WHATSAROUND", "inside onLocationChanged");
 		    	longitude = location.getLongitude();
 		        latitude = location.getLatitude();
+		        iUserLocation.updateUserLocation(location);
 		        //String factualLocationCategory = "347"; // Restaurants
 		        Log.i("WHATSAROUND long lat", String.format("%f %f", longitude, latitude));
 		   	    //int min = 2;
@@ -598,6 +606,16 @@ GooglePlayServicesClient.OnConnectionFailedListener  {
 		            throw new ClassCastException(activity.toString()
 		                    + " must implement OnLocationSelectedListener");
 		        }
+		        
+		        try{
+		        	iUserLocation = (OnUserLocationChange) activity;
+		        }
+		        catch(ClassCastException cce){
+		        	 throw new ClassCastException(activity.toString()
+			                    + " must implement OnUserLocationChange");
+		        }
+		        
+		        
 		    }
 		    
 		    @Override
