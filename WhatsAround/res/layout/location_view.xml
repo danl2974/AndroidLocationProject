@@ -37,7 +37,12 @@
 
 </RelativeLayout> 
 
--->
+
+
+
+
+
+
 
 
 
@@ -74,3 +79,20 @@
         android:layout_height="match_parent"/>
 
 </FrameLayout>
+-->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+<FrameLayout 
+    android:id="@+id/mapFragmentContainer"
+    android:layout_width="match_parent" 
+    android:layout_height="match_parent"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentRight="true"
+    android:layout_alignParentTop="true" >
+    </FrameLayout>
+
+ </RelativeLayout>

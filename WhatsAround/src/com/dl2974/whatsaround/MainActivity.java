@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -84,6 +85,7 @@ GoogleMap.InfoWindowAdapter {
 
         transaction.commit();
 		
+		
 	}
 	
 	@SuppressLint("NewApi")
@@ -91,8 +93,12 @@ GoogleMap.InfoWindowAdapter {
 		
 		this.activityLocationData = locationData;
 		
-        GoogleMap map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.gmap)).getMap();
-        //GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.gmap)).getMap();
+		Log.i("MainActivity", "inside onSingleLocationView");
+        
+        GoogleMap map = ((MapFragment) getFragmentManager().findFragmentByTag("mapfragment")).getMap();
+       // GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.gmap)).getMap();
+
+        
         LatLng locationLongLat = new LatLng( Double.valueOf(locationData.get("latitude")), Double.valueOf(locationData.get("longitude")) );
         LatLng userLocationLatLng = new LatLng(userLocation.getLatitude(), userLocation.getLongitude());
         /*
@@ -133,6 +139,8 @@ GoogleMap.InfoWindowAdapter {
         		 startActivity(webIntent);
         	 }
          });
+         
+  
          
 	}
 	

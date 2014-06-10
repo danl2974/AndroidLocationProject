@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,9 +33,9 @@ public class LocationFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, 
         Bundle savedInstanceState) {
-        
+    	        
         View locationView = inflater.inflate(R.layout.location_view, container, false);
-        
+        /*
         TextView textData = (TextView) locationView.findViewById(R.id.location_data);
         StringBuilder sb = new StringBuilder();
         
@@ -43,19 +44,27 @@ public class LocationFragment extends Fragment {
         }
         
         textData.setText(sb.toString());
-        
+        */
         //mapListenerCallback.onSingleLocationView(Double.valueOf(locationData.get("latitude")), Double.valueOf(locationData.get("longitude")) );
+        
+        
+        GoogleMapOptions gmo = (new GoogleMapOptions()).zoomControlsEnabled(false).rotateGesturesEnabled(false);
+        SupportMapFragment mapFragment = SupportMapFragment.newInstance(gmo);
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.mapFragmentContainer, mapFragment, "mapfragment");
+        fragmentTransaction.commit();
+        
         mapListenerCallback.onSingleLocationView(locationData);        
 
         return locationView;
          
     }
     
-	
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       
+          
     }
     
     @Override
