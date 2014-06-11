@@ -35,10 +35,12 @@ LocationsListFragment.OnLocationTypeSelectedListener,
 FactualFragment.OnLocationSelectedListener,
 FactualFragment.OnUserLocationChange,
 LocationFragment.MapListener,
+CustomMapFragment.MapListener,
 GoogleMap.InfoWindowAdapter {
 	
 	Location userLocation;
 	HashMap<String,String> activityLocationData;
+	final static String MAP_FRAGMENT = "mapfragment";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +78,17 @@ GoogleMap.InfoWindowAdapter {
 	
 	public void onLocationSelected(HashMap<String,String> locationMap) {
 		
+        //GoogleMapOptions gmo = (new GoogleMapOptions()).zoomControlsEnabled(false).rotateGesturesEnabled(false);
+        CustomMapFragment mapFragment = CustomMapFragment.newInstance();
+        mapFragment.setLocationData(locationMap);
+		
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, mapFragment, MAP_FRAGMENT);
+        transaction.addToBackStack(null);
+
+        transaction.commit();
+		
+		/*
 		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.gmap);
 		
 		if (mapFragment != null){
@@ -92,18 +105,21 @@ GoogleMap.InfoWindowAdapter {
 
         transaction.commit();
 		}
+		*/
 		
 	}
+	
+	
 	
 	@SuppressLint("NewApi")
 	public void onSingleLocationView(HashMap<String,String> locationData){
 		
 		this.activityLocationData = locationData;
-		/*
+		
 		Log.i("MainActivity", "inside onSingleLocationView");
 		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentByTag("mapfragment");
-
+                .findFragmentByTag(MAP_FRAGMENT);
+         /*
         // We only create a fragment if it doesn't already exist.
         if (mapFragment == null) {
             // To programmatically add the map, we first create a SupportMapFragment.
@@ -116,9 +132,10 @@ GoogleMap.InfoWindowAdapter {
             int commit = fragmentTransaction.commit();
             Log.i("MainActivity", String.format("commit %d", commit));
         }
-        GoogleMap map = mapFragment.getMap();
         */
-        GoogleMap map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.gmap)).getMap();
+        GoogleMap map = mapFragment.getMap();
+        
+        //GoogleMap map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.gmap)).getMap();
        // GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.gmap)).getMap();
 
         
