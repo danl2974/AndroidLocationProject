@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.content.pm.FeatureInfo;
 import android.content.pm.PackageManager;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Html;
 import android.util.Log;
@@ -75,6 +76,7 @@ GoogleMap.InfoWindowAdapter {
 	
 	public void onLocationSelected(HashMap<String,String> locationMap) {
 		
+		killOldMap();
 		LocationFragment lFragment = new LocationFragment();
 		lFragment.setLocationData(locationMap);
 		
@@ -92,10 +94,26 @@ GoogleMap.InfoWindowAdapter {
 	public void onSingleLocationView(HashMap<String,String> locationData){
 		
 		this.activityLocationData = locationData;
-		
+		/*
 		Log.i("MainActivity", "inside onSingleLocationView");
-        
-        GoogleMap map = ((MapFragment) getFragmentManager().findFragmentByTag("mapfragment")).getMap();
+		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentByTag("mapfragment");
+
+        // We only create a fragment if it doesn't already exist.
+        if (mapFragment == null) {
+            // To programmatically add the map, we first create a SupportMapFragment.
+            mapFragment = SupportMapFragment.newInstance();
+
+            // Then we add it using a FragmentTransaction.
+            FragmentTransaction fragmentTransaction =
+                    getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.add(android.R.id.content, mapFragment, "mapfragment");
+            int commit = fragmentTransaction.commit();
+            Log.i("MainActivity", String.format("commit %d", commit));
+        }
+        GoogleMap map = mapFragment.getMap();
+        */
+        GoogleMap map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.gmap)).getMap();
        // GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.gmap)).getMap();
 
         
@@ -191,5 +209,16 @@ GoogleMap.InfoWindowAdapter {
 		return true;
 	}
 	*/
+	
+    private void killOldMap() {
+        SupportMapFragment mapFragment = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.gmap));
+
+        if(mapFragment != null) {
+            FragmentManager fM = getSupportFragmentManager();
+            int commit = fM.beginTransaction().remove(mapFragment).commit();
+            Log.i("MainActivity", String.format("inside killOldMap not null %d", commit));
+        }
+
+    }
 
 }
