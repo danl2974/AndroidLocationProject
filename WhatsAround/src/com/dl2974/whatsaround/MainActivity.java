@@ -76,7 +76,12 @@ GoogleMap.InfoWindowAdapter {
 	
 	public void onLocationSelected(HashMap<String,String> locationMap) {
 		
-		killOldMap();
+		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.gmap);
+		
+		if (mapFragment != null){
+			onSingleLocationView(locationMap);
+		}
+		else{
 		LocationFragment lFragment = new LocationFragment();
 		lFragment.setLocationData(locationMap);
 		
@@ -86,7 +91,7 @@ GoogleMap.InfoWindowAdapter {
         transaction.addToBackStack(null);
 
         transaction.commit();
-		
+		}
 		
 	}
 	
