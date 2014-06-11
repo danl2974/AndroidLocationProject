@@ -1,5 +1,6 @@
 package com.dl2974.whatsaround;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.app.Activity;
@@ -15,6 +16,7 @@ public class CustomMapFragment extends SupportMapFragment {
     public interface MapListener {
         
         public void onSingleLocationView(HashMap<String,String> locationData);
+        public void onUserCenteredLocationsView();
     }
     
     MapListener mapListenerCallback;
@@ -33,7 +35,9 @@ public class CustomMapFragment extends SupportMapFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     	
     	View view = super.onCreateView(inflater, container, savedInstanceState);
-    	 mapListenerCallback.onSingleLocationView(locationData);
+    	 //mapListenerCallback.onSingleLocationView(locationData);
+    	
+    	 mapListenerCallback.onUserCenteredLocationsView();
     	return view;
     }
     

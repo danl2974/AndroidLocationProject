@@ -1,5 +1,6 @@
 package com.dl2974.whatsaround;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,6 +8,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -40,6 +42,8 @@ GoogleMap.InfoWindowAdapter {
 	
 	Location userLocation;
 	HashMap<String,String> activityLocationData;
+	Projection projection;
+	int factualCategoryId;
 	final static String MAP_FRAGMENT = "mapfragment";
 
 	@Override
@@ -66,6 +70,7 @@ GoogleMap.InfoWindowAdapter {
 		
 		FactualFragment fFragment = new FactualFragment();
 		fFragment.setCategoryId(categoryId);
+		this.factualCategoryId = categoryId;
 		
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
@@ -116,7 +121,6 @@ GoogleMap.InfoWindowAdapter {
 		
 		this.activityLocationData = locationData;
 		
-		Log.i("MainActivity", "inside onSingleLocationView");
 		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentByTag(MAP_FRAGMENT);
          /*
@@ -134,30 +138,14 @@ GoogleMap.InfoWindowAdapter {
         }
         */
         GoogleMap map = mapFragment.getMap();
+
         
         //GoogleMap map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.gmap)).getMap();
        // GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.gmap)).getMap();
 
-        
+        //SINGLE LOCATION AND USER POSITION
         LatLng locationLongLat = new LatLng( Double.valueOf(locationData.get("latitude")), Double.valueOf(locationData.get("longitude")) );
-        LatLng userLocationLatLng = new LatLng(userLocation.getLatitude(), userLocation.getLongitude());
-        /*
-        StringBuilder sb = new StringBuilder();
-        for (Map.Entry<String,String> entry : locationData.entrySet()){
-        	sb.append(entry.getKey() + ": " + entry.getValue() + "\n");
-        }
-        String markerSnippet = sb.toString();
-        */
-        /*
-        String markerSnippet = String.format("%s\n%s\n%s\n%s\n%s", 
-        		locationData.get("name"),
-        		locationData.get("address") + "\n" +  locationData.get("locality") + " " + locationData.get("region") + " " + locationData.get("postcode"),
-        		locationData.get("hours_display"),
-        		locationData.get("tel"),
-        		locationData.get("website")
-        		); 
-        */
-        
+        LatLng userLocationLatLng = new LatLng(userLocation.getLatitude(), userLocation.getLongitude());        
         //map.setMyLocationEnabled(true);
         //map.moveCamera(CameraUpdateFactory.newLatLngZoom(locationLongLat, 13));
          //Marker marker = map.addMarker(new MarkerOptions().position(locationLongLat).title(locationData.get("name")).snippet(markerSnippet));
@@ -179,9 +167,39 @@ GoogleMap.InfoWindowAdapter {
         		 startActivity(webIntent);
         	 }
          });
+         //SINGLE LOCATION AND USER POSITION
          
-  
          
+	}
+	
+	
+	public void onUserCenteredLocationsView(){
+		
+		FactualClient fc = new FactualClient(userLocation.getLatitude(), userLocation.getLongitude(), 20000);
+		ArrayList<HashMap<String,String>> localLocations = fc.getLocationsByCategory(this.factualCategoryId);
+		
+		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentByTag(MAP_FRAGMENT);
+		GoogleMap map = mapFragment.getMap();
+        projection = map.getProjection();
+        LatLng userLocationLatLng = new LatLng(userLocation.getLatitude(), userLocation.getLongitude());
+        Marker userLocationMarker = map.addMarker(new MarkerOptions().position(userLocationLatLng).title("YOU").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_action)));
+        userLocationMarker.showInfoWindow();
+        
+        for (HashMap<String,String> ll : localLocations){
+        	LatLng locationLongLat = new LatLng( Double.valueOf(ll.get("latitude")), Double.valueOf(ll.get("longitude")) );
+        	int mapDrawable = getResources().getIdentifier(resolveCategoryName(this.factualCategoryId), "drawable", this.getPackageName());
+        	Log.i("MainActivityMapDrawable", String.format("%d", mapDrawable));
+        	Marker marker = map.addMarker(new MarkerOptions().position(locationLongLat).title(ll.get("name")).icon(BitmapDescriptorFactory.fromResource(mapDrawable)));
+        	//Marker marker = map.addMarker(new MarkerOptions().position(locationLongLat).title(ll.get("name")).icon(BitmapDescriptorFactory.fromResource(R.drawable.restaurant)));
+        	//Marker marker = map.addMarker(new MarkerOptions().position(locationLongLat).alpha(0.7f).title(ll.get("name")));
+        	marker.showInfoWindow();
+        }
+        
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocationLatLng, 12));
+        map.animateCamera(CameraUpdateFactory.zoomTo(12), 2000, null);
+		
+		
 	}
 	
 	
@@ -231,6 +249,19 @@ GoogleMap.InfoWindowAdapter {
 		return true;
 	}
 	*/
+	
+	private String resolveCategoryName(int id){
+		String name = "";
+		int[] FACTUAL_IDS = {2, 62, 123, 149, 177, 308, 312, 372, 415, 430};
+		String[] names = {"car","restaurant","mall","restaurant","departmentstore","group","bar","bar","bus","airport"};
+		for(int i = 0;i<FACTUAL_IDS.length;i++){
+			if(FACTUAL_IDS[i] == id){
+				name = names[i];
+				return name;
+			}
+		}
+		return name;
+	}
 	
     private void killOldMap() {
         SupportMapFragment mapFragment = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.gmap));
