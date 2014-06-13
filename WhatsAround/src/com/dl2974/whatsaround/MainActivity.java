@@ -11,15 +11,21 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.FeatureInfo;
 import android.content.pm.PackageManager;
@@ -43,6 +49,7 @@ GoogleMap.InfoWindowAdapter {
 	Location userLocation;
 	HashMap<String,String> activityLocationData;
 	ArrayList<HashMap<String,String>> localLocations;
+	GoogleMap map;
 	Projection projection;
 	int factualCategoryId;
 	final static String MAP_FRAGMENT = "mapfragment";
@@ -176,25 +183,33 @@ GoogleMap.InfoWindowAdapter {
 	
 	public void onUserCenteredLocationsView(){
 		
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+
 		FactualClient fc = new FactualClient(userLocation.getLatitude(), userLocation.getLongitude(), 20000);
 		this.localLocations = fc.getLocationsByCategory(this.factualCategoryId);
 		
+        }
+		
 		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentByTag(MAP_FRAGMENT);
-		GoogleMap map = mapFragment.getMap();
+		map = mapFragment.getMap();
+		map.setMyLocationEnabled(true);
         projection = map.getProjection();
         LatLng userLocationLatLng = new LatLng(userLocation.getLatitude(), userLocation.getLongitude());
-        Marker userLocationMarker = map.addMarker(new MarkerOptions().position(userLocationLatLng).title("YOU").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_action)));
-        userLocationMarker.showInfoWindow();
+        //Marker userLocationMarker = map.addMarker(new MarkerOptions().position(userLocationLatLng).title("YOU").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_action)));
+        //userLocationMarker.showInfoWindow();
+        CircleOptions circleOptions = new CircleOptions().center(userLocationLatLng).radius(500).fillColor(0x880099ff).strokeColor(0xaa0099ff).strokeWidth(1.0f);
+        Circle circle = map.addCircle(circleOptions);
         
         for (HashMap<String,String> ll : localLocations){
         	LatLng locationLongLat = new LatLng( Double.valueOf(ll.get("latitude")), Double.valueOf(ll.get("longitude")) );
         	int mapDrawable = getResources().getIdentifier(resolveCategoryName(this.factualCategoryId), "drawable", this.getPackageName());
-        	Log.i("MainActivityMapDrawable", String.format("%d", mapDrawable));
         	Marker marker = map.addMarker(new MarkerOptions().position(locationLongLat).title(ll.get("name")).icon(BitmapDescriptorFactory.fromResource(mapDrawable)));
         	//Marker marker = map.addMarker(new MarkerOptions().position(locationLongLat).title(ll.get("name")).icon(BitmapDescriptorFactory.fromResource(R.drawable.restaurant)));
         	//Marker marker = map.addMarker(new MarkerOptions().position(locationLongLat).alpha(0.7f).title(ll.get("name")));
-        	marker.showInfoWindow();
+        	//marker.showInfoWindow();
         }
         
         map.setInfoWindowAdapter(this);
@@ -238,6 +253,9 @@ GoogleMap.InfoWindowAdapter {
 		String websiteUrl = this.localLocations.get(markerIndex).get("website");
 		String link = String.format("<a href='%s'>%s</a>", websiteUrl, websiteUrl );
 		iw_website.setText(Html.fromHtml(link));
+		
+		CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(Double.valueOf(this.localLocations.get(markerIndex).get("latitude")),  Double.valueOf(this.localLocations.get(markerIndex).get("longitude")) )).zoom(15).bearing(90).tilt(65).build();
+		map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 		
 		return infoWindowView;
 	}	
