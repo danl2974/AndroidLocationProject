@@ -254,8 +254,8 @@ GoogleMap.InfoWindowAdapter {
 		String link = String.format("<a href='%s'>%s</a>", websiteUrl, websiteUrl );
 		iw_website.setText(Html.fromHtml(link));
 		
-		CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(Double.valueOf(this.localLocations.get(markerIndex).get("latitude")),  Double.valueOf(this.localLocations.get(markerIndex).get("longitude")) )).zoom(15).bearing(90).tilt(65).build();
-		map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+		//CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(Double.valueOf(this.localLocations.get(markerIndex).get("latitude")),  Double.valueOf(this.localLocations.get(markerIndex).get("longitude")) )).zoom(15).bearing(90).tilt(65).build();
+		//map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 		
 		return infoWindowView;
 	}	
