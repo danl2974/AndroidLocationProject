@@ -196,6 +196,7 @@ GoogleMap.InfoWindowAdapter {
                 .findFragmentByTag(MAP_FRAGMENT);
 		map = mapFragment.getMap();
 		map.setMyLocationEnabled(true);
+		//map.setMapType(GoogleMap.MAP_TYPE_HYBRID); // Satellite Map
         projection = map.getProjection();
         LatLng userLocationLatLng = new LatLng(userLocation.getLatitude(), userLocation.getLongitude());
         //Marker userLocationMarker = map.addMarker(new MarkerOptions().position(userLocationLatLng).title("YOU").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_action)));
@@ -220,11 +221,13 @@ GoogleMap.InfoWindowAdapter {
        	 
        	 @Override
             public void onInfoWindowClick(Marker marker) {
-       		 
+       		 /*
        		 String websiteUrl = MainActivity.this.localLocations.get(resolveLocationIndex(marker.getTitle())).get("website");
        		 Uri webpage = Uri.parse(websiteUrl);
        		 Intent webIntent = new Intent(Intent.ACTION_VIEW, webpage);
        		 startActivity(webIntent);
+       		 */
+       		startSingleFragment(marker);
        	 }
         });
 		
@@ -328,6 +331,23 @@ GoogleMap.InfoWindowAdapter {
 			}
 		}
 		return index;
+		
+	}
+	
+	public void startSingleFragment(Marker marker) {
+		
+		int markerIndex = resolveLocationIndex(marker.getTitle());
+		HashMap<String,String> singleLocationData = this.localLocations.get(markerIndex);
+		
+		SingleFragment sFragment = new SingleFragment();
+		sFragment.setSingleLocationData(singleLocationData);
+		
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        transaction.replace(R.id.fragment_container, sFragment);
+        transaction.addToBackStack(null);
+
+        transaction.commit();
 		
 	}
 	
