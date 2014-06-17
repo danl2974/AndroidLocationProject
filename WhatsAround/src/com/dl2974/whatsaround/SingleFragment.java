@@ -69,7 +69,11 @@ public class SingleFragment extends Fragment {
     	*/
 		
     	//GoogleMap gmap = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.gmap)).getMap();
-		GoogleMap gmap = ((SupportMapFragment) getActivity().getSupportFragmentManager().findFragmentByTag(SINGLE_MAP_FRAGMENT)).getMap();
+		try{
+			FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+			fragmentManager.executePendingTransactions();
+			
+		GoogleMap gmap = ((SupportMapFragment) fragmentManager.findFragmentByTag(SINGLE_MAP_FRAGMENT)).getMap();
         
     	gmap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
     	LatLng locationLongLat = new LatLng( Double.valueOf(locationData.get("latitude")), Double.valueOf(locationData.get("longitude")) );
@@ -77,6 +81,8 @@ public class SingleFragment extends Fragment {
          singleMarker.showInfoWindow();
          gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationLongLat, 17));
          gmap.animateCamera(CameraUpdateFactory.zoomTo(17), 2000, null);
+		}
+		catch(Exception e){}
          
         return singleView;
     }
