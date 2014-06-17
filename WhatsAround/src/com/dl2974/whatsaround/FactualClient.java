@@ -38,8 +38,8 @@ public class FactualClient {
 		    this.latitude = latitude;
 		    this.longitude = longitude;
 		    this.meterPerimeter = meterPerimeter;
-	        this.key = "iaDJkLcnsCp7uvSe025F7vYR39eTzAk7uMFalBaq";
-		    this.secret = "gkvlBEWzFWYJBnE1I9ZfAkcQWkAaAmCGWVGU7ojo";
+	        this.key = "ycoxfYkfS1kcS42ALb3qYPjGAip3Ui3BHodh5VQo";
+		    this.secret = "lADnpfEdLNuq2eEFoSpfxszuG04wDlPUNRwxSQ9I";
 		    this.nonce = computeNonce();
 		    this.timestamp = computeTimestamp();
 	  }

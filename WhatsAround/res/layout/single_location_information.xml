@@ -27,17 +27,19 @@ android:layout_width="match_parent"
 android:layout_height="match_parent"
 android:orientation="vertical" >
 
-<LinearLayout
+<LinearLayout 
+    android:id="@+id/single_map"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_weight="1.0"
     android:orientation="vertical" >
-
+     <!--
      <fragment
         android:id="@+id/gmap"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+        -->
 </LinearLayout>
 
 <LinearLayout

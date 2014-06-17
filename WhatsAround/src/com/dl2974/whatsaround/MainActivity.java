@@ -36,6 +36,7 @@ import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 public class MainActivity extends FragmentActivity implements 
@@ -53,6 +54,7 @@ GoogleMap.InfoWindowAdapter {
 	Projection projection;
 	int factualCategoryId;
 	final static String MAP_FRAGMENT = "mapfragment";
+	final static String SINGLE_MAP_FRAGMENT = "singlemapfragment";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -342,9 +344,13 @@ GoogleMap.InfoWindowAdapter {
 		SingleFragment sFragment = new SingleFragment();
 		sFragment.setSingleLocationData(singleLocationData);
 		
+		CustomMapFragment gmapFragment = CustomMapFragment.newInstance();
+		getLayoutInflater().inflate(R.layout.single_location_information, (ViewGroup) findViewById(R.id.fragment_container), false);
+		
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         transaction.replace(R.id.fragment_container, sFragment);
+        transaction.replace(R.id.single_map, gmapFragment, SINGLE_MAP_FRAGMENT);
         transaction.addToBackStack(null);
 
         transaction.commit();

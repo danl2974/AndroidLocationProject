@@ -29,13 +29,13 @@ public class SingleFragment extends Fragment {
 	
 	private HashMap<String,String> locationData;
 	private LinearLayout dataContainer;
+	final static String SINGLE_MAP_FRAGMENT = "singlemapfragment";
 	
 	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, 
         Bundle savedInstanceState) {
     	
-    	killOldMap();
         View singleView = inflater.inflate(R.layout.single_location_information, container, false);
         LinearLayout dataContainer = (LinearLayout) singleView.findViewById(R.id.location_information_overlay);
         dataContainer.setBackgroundColor(0xFFFFFFDB);
@@ -67,14 +67,17 @@ public class SingleFragment extends Fragment {
    	     dataContainer.addView(tv);
     	}
     	*/
-    	GoogleMap gmap = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.gmap)).getMap();
+		
+    	//GoogleMap gmap = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.gmap)).getMap();
+		GoogleMap gmap = ((SupportMapFragment) getActivity().getSupportFragmentManager().findFragmentByTag(SINGLE_MAP_FRAGMENT)).getMap();
+        
     	gmap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
     	LatLng locationLongLat = new LatLng( Double.valueOf(locationData.get("latitude")), Double.valueOf(locationData.get("longitude")) );
          Marker singleMarker = gmap.addMarker(new MarkerOptions().position(locationLongLat).title(locationData.get("name")));
          singleMarker.showInfoWindow();
          gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationLongLat, 17));
          gmap.animateCamera(CameraUpdateFactory.zoomTo(17), 2000, null);
-        
+         
         return singleView;
     }
     
