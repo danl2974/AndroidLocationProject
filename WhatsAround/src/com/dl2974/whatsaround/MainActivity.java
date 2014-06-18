@@ -1,5 +1,6 @@
 package com.dl2974.whatsaround;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -53,6 +54,7 @@ FactualFragment.OnUserLocationChange,
 LocationFragment.MapListener,
 CustomMapFragment.MapListener,
 GoogleMap.InfoWindowAdapter,
+SingleFragment.SingleLocationMapListener,
 LocationListener,
 GooglePlayServicesClient.ConnectionCallbacks,
 GooglePlayServicesClient.OnConnectionFailedListener {
@@ -383,16 +385,38 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 		sFragment.setSingleLocationData(singleLocationData);
 		
 		CustomMapFragment gmapFragment = CustomMapFragment.newInstance();
-		getLayoutInflater().inflate(R.layout.single_location_information, (ViewGroup) findViewById(R.id.fragment_container), false);
+		gmapFragment.setSingleLocationData(singleLocationData);
+		//getLayoutInflater().inflate(R.layout.single_location_information, (ViewGroup) findViewById(R.id.single_map), false);
 		
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         transaction.replace(R.id.fragment_container, sFragment);
-        transaction.replace(R.id.single_map, gmapFragment, SINGLE_MAP_FRAGMENT);
+        //transaction.replace(R.id.single_map, gmapFragment, SINGLE_MAP_FRAGMENT);
+        transaction.add(R.id.single_map, gmapFragment, SINGLE_MAP_FRAGMENT);
         transaction.addToBackStack(null);
 
         transaction.commit();
 		
+	}
+	
+	public void onSingleMapViewCreated(HashMap<String,String> singleLocationData){
+		
+		//getSupportFragmentManager().dump("", null, new PrintWriter(System.out, true), null);
+		try{
+		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentByTag(SINGLE_MAP_FRAGMENT);
+		Log.i("MainActivity", mapFragment.toString());
+		GoogleMap gmap = mapFragment.getMap();
+		Log.i("MainActivity", gmap.toString());
+		//FragmentManager fragmentManager = getSupportFragmentManager();
+		//GoogleMap gmap = ((SupportMapFragment) fragmentManager.findFragmentByTag(SINGLE_MAP_FRAGMENT)).getMap();
+    	gmap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+    	LatLng locationLongLat = new LatLng( Double.valueOf(singleLocationData.get("latitude")), Double.valueOf(singleLocationData.get("longitude")) );
+        Marker singleMarker = gmap.addMarker(new MarkerOptions().position(locationLongLat).title(singleLocationData.get("name")));
+        singleMarker.showInfoWindow();
+        gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationLongLat, 17));
+        gmap.animateCamera(CameraUpdateFactory.zoomTo(17), 2000, null);
+		}catch(Exception e){}
+	    
 	}
 	
 	
@@ -400,6 +424,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
     public void onLocationChanged(Location location) {
     	
     	this.userLocation = location;
+    	Log.i("MainActivityOnLocationChanged", String.format("location changed: lat %f long %f", location.getLatitude(), location.getLongitude()) );
     	
     }
 	
@@ -426,8 +451,8 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 		 
 	 }
 	 
-	    @Override
-	    public void onStop() {
+	 @Override
+	 public void onStop() {
 
 	        if (mLocationClient.isConnected()) {
 	        	mLocationClient.removeLocationUpdates(this);

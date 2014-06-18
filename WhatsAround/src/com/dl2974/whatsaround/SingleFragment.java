@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Html;
 
+import com.dl2974.whatsaround.LocationFragment.MapListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -16,6 +17,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,6 +29,13 @@ import android.widget.TextView;
 
 public class SingleFragment extends Fragment {
 	
+    public interface SingleLocationMapListener {
+
+        public void onSingleMapViewCreated(HashMap<String,String> singleLocationData);
+        
+    }
+	
+    SingleLocationMapListener mMapListenerCallback;
 	private HashMap<String,String> locationData;
 	private LinearLayout dataContainer;
 	final static String SINGLE_MAP_FRAGMENT = "singlemapfragment";
@@ -38,7 +47,7 @@ public class SingleFragment extends Fragment {
     	
         View singleView = inflater.inflate(R.layout.single_location_information, container, false);
         LinearLayout dataContainer = (LinearLayout) singleView.findViewById(R.id.location_information_overlay);
-        dataContainer.setBackgroundColor(0xFFFFFFDB);
+        //dataContainer.setBackgroundColor(0xFFFFFFDB);
         
         View textPortion = getActivity().getLayoutInflater().inflate(R.layout.single_location_information_text, container, false);
         
@@ -69,6 +78,8 @@ public class SingleFragment extends Fragment {
     	*/
 		
     	//GoogleMap gmap = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.gmap)).getMap();
+		/*
+		//This was added to callback implementation in MainActivity
 		try{
 			FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
 			fragmentManager.executePendingTransactions();
@@ -83,10 +94,21 @@ public class SingleFragment extends Fragment {
          gmap.animateCamera(CameraUpdateFactory.zoomTo(17), 2000, null);
 		}
 		catch(Exception e){}
-         
+		*/
+		 
         return singleView;
     }
     
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+    	
+    	super.onActivityCreated(savedInstanceState);
+    	//mMapListenerCallback.onSingleMapViewCreated(this.locationData);
+    	
+    }
+    
+    
+    @Override
     public void onPause()
     {
     	super.onPause();	
@@ -97,6 +119,19 @@ public class SingleFragment extends Fragment {
     	
     	this.locationData = singleLocationData;
     	
+    }
+    
+    
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        
+        try {
+        	mMapListenerCallback = (SingleLocationMapListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement SingleLocationMapListener");
+        }
     }
     
     private void killOldMap() {
