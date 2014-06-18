@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
@@ -25,6 +31,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.FeatureInfo;
@@ -45,14 +52,20 @@ FactualFragment.OnLocationSelectedListener,
 FactualFragment.OnUserLocationChange,
 LocationFragment.MapListener,
 CustomMapFragment.MapListener,
-GoogleMap.InfoWindowAdapter {
+GoogleMap.InfoWindowAdapter,
+LocationListener,
+GooglePlayServicesClient.ConnectionCallbacks,
+GooglePlayServicesClient.OnConnectionFailedListener {
 	
+    private LocationRequest mLocationRequest;
+    private LocationClient mLocationClient;
 	Location userLocation;
 	HashMap<String,String> activityLocationData;
 	ArrayList<HashMap<String,String>> localLocations;
 	GoogleMap map;
 	Projection projection;
 	int factualCategoryId;
+	boolean googlePlayServicesConnected;
 	final static String MAP_FRAGMENT = "mapfragment";
 	final static String SINGLE_MAP_FRAGMENT = "singlemapfragment";
 
@@ -60,6 +73,20 @@ GoogleMap.InfoWindowAdapter {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.container);
+		
+		int availableCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+		if (availableCode == ConnectionResult.SUCCESS)
+		{
+	      this.mLocationRequest = LocationRequest.create();
+	      this.mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+	      this.mLocationClient = new LocationClient(this, this, this);
+	      this.mLocationClient.connect();
+	      
+		}
+		else{
+			Dialog dialog = GooglePlayServicesUtil.getErrorDialog(availableCode, this, 0);
+			//do Toast here
+		}
 		
 		if (findViewById(R.id.fragment_container) != null) {
 			 if (savedInstanceState != null) {
@@ -77,7 +104,8 @@ GoogleMap.InfoWindowAdapter {
 
 	
 	public void onLocationTypeSelected(int categoryId) {
-		
+		//RESTORE BELOW COMMENTED BLOCK WITH FRAGMENT USING FactualClient
+		/*
 		FactualFragment fFragment = new FactualFragment();
 		fFragment.setCategoryId(categoryId);
 		this.factualCategoryId = categoryId;
@@ -85,6 +113,16 @@ GoogleMap.InfoWindowAdapter {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         transaction.replace(R.id.fragment_container, fFragment);
+        transaction.addToBackStack(null);
+
+        transaction.commit();
+        */
+        //BYPASS FACTUAL FRAG with LIST...GO DIRECT TO MAP..
+        this.factualCategoryId = categoryId;
+        CustomMapFragment mapFragment = CustomMapFragment.newInstance();
+		
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, mapFragment, MAP_FRAGMENT);
         transaction.addToBackStack(null);
 
         transaction.commit();
@@ -356,6 +394,48 @@ GoogleMap.InfoWindowAdapter {
         transaction.commit();
 		
 	}
+	
+	
+    @Override
+    public void onLocationChanged(Location location) {
+    	
+    	this.userLocation = location;
+    	
+    }
+	
+	@Override
+	public void onConnected(Bundle bundle) {
+	
+		googlePlayServicesConnected = true;
+		this.userLocation = mLocationClient.getLastLocation();
+		mLocationClient.requestLocationUpdates(mLocationRequest, this);
+		
+	}
+	
+    @Override
+    public void onDisconnected() {
+        
+    	googlePlayServicesConnected = false;
+    	
+    }
+    
+	 @Override
+	 public void onConnectionFailed(ConnectionResult connectionResult) {
+		  
+		 //FILL
+		 
+	 }
+	 
+	    @Override
+	    public void onStop() {
+
+	        if (mLocationClient.isConnected()) {
+	        	mLocationClient.removeLocationUpdates(this);
+	        }
+	        mLocationClient.disconnect();
+
+	        super.onStop();
+	    }
 	
     private void killOldMap() {
         SupportMapFragment mapFragment = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.gmap));
