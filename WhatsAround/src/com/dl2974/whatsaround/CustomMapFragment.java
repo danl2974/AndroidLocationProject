@@ -28,14 +28,10 @@ public class CustomMapFragment extends SupportMapFragment {
 	
 	public CustomMapFragment(){
 		super();
-		Log.i("CustomMap", getTag() + " constructor");
 	}
 	
 	public static CustomMapFragment newInstance(){
-		//return new CustomMapFragment();
-		CustomMapFragment cmf = new CustomMapFragment();
-		Log.i("CustomMap", cmf.getTag() + " newInstance");
-		return cmf;
+		return new CustomMapFragment();
 	}
 	
     @Override
@@ -43,9 +39,9 @@ public class CustomMapFragment extends SupportMapFragment {
     	
     	View view = super.onCreateView(inflater, container, savedInstanceState);
     	 //mapListenerCallback.onSingleLocationView(locationData);
-    	Log.i("CustomMap", getTag());
+    	
     	if ( getTag().equals(MainActivity.MAP_FRAGMENT) ){
-    		Log.i("CustomMap", getTag());
+    		
     	    mapListenerCallback.onUserCenteredLocationsView();
     	    
     	}
@@ -59,7 +55,7 @@ public class CustomMapFragment extends SupportMapFragment {
     	super.onActivityCreated(savedInstanceState);
     	if ( getTag().equals(MainActivity.SINGLE_MAP_FRAGMENT) ){
     	   mMapListenerCallback.onSingleMapViewCreated(this.locationData);
-    	   Log.i("CustomMaponActivityCreated", getTag());
+    	   
     	}
     	
     }
@@ -67,7 +63,7 @@ public class CustomMapFragment extends SupportMapFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i("CustomMap", getTag());
+        
     }
     
     @Override

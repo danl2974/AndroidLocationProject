@@ -18,7 +18,7 @@ public class FactualQueryParser {
 	 private static final String LOG_TAG = "FactualQueryParser";
 
 	public static ArrayList<HashMap<String,String>> parseJsonResponse(String response){
-		Log.i(LOG_TAG, response);
+		
 		ArrayList<HashMap<String,String>> hmlist = new ArrayList<HashMap<String,String>>();
 		JSONParser parser= new JSONParser();
 		JSONObject obj = null;
