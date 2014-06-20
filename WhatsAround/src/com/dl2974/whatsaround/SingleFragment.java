@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Html;
+import android.text.method.LinkMovementMethod;
 
 import com.dl2974.whatsaround.LocationFragment.MapListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -65,6 +66,7 @@ public class SingleFragment extends Fragment {
 		String websiteUrl = locationData.get("website");
 		String link = String.format("<a href='%s'>%s</a>", websiteUrl, websiteUrl );
 		single_website.setText(Html.fromHtml(link));
+		single_website.setMovementMethod(LinkMovementMethod.getInstance());
 		
 		dataContainer.addView(textPortion);
 		

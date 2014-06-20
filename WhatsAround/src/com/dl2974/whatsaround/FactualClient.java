@@ -18,6 +18,8 @@ import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.json.simple.JSONObject;
+
 import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
@@ -203,6 +205,22 @@ public class FactualClient {
 	            	Query q = new Query().within(new Circle(FactualClient.this.latitude, FactualClient.this.longitude, FactualClient.this.meterPerimeter));
 	            	ReadResponse rr = factual.fetch("places", q.field("category_ids").isEqual(categoryId[0]));
 	            	String factualResult = rr.getJson();
+	            	
+	            	try{
+	      		    YelpClient yc = new YelpClient();
+	      		    String searchResults = yc.search(FactualClient.this.latitude, FactualClient.this.longitude, FactualClient.this.meterPerimeter);
+	      		    Log.i("YELP", searchResults );
+	      		    String businessId = YelpClient.matchLocation(searchResults, "The Stanford Theatre");
+	      		    if (businessId != null){
+	      		      String businessJson = yc.business(businessId);
+	      		      Log.i("YELP", businessId + businessJson );
+	      		      ArrayList<HashMap<String,String>> reviews = YelpClient.getLocationReviews(businessJson);
+	      		      for (HashMap<String,String> r : reviews){
+	      		    	     Log.i("YELP", String.format("%s %s %s", r.get("rating"), r.get("user"), r.get("excerpt") ) );
+	      		    	  }
+	      		     }
+	      		   
+	            	}catch(Exception ex){Log.i("YELP", "exception");}
 	            	
 	            	//TURNED OFF own Implementation
 	                //String factualResult = callFactual(categoryId[0]);

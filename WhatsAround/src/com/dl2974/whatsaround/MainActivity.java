@@ -227,10 +227,11 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 		
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        
         if (networkInfo != null && networkInfo.isConnected()) {
 
-		FactualClient fc = new FactualClient(userLocation.getLatitude(), userLocation.getLongitude(), 20000);
-		this.localLocations = fc.getLocationsByCategory(this.factualCategoryId);
+		  FactualClient fc = new FactualClient(userLocation.getLatitude(), userLocation.getLongitude(), 20000);
+		  this.localLocations = fc.getLocationsByCategory(this.factualCategoryId);
 		
         }
 		
