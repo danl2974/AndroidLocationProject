@@ -1,6 +1,7 @@
 package com.dl2974.whatsaround;
 
 import java.io.PrintWriter;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +30,7 @@ import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -37,6 +39,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.FeatureInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -45,6 +49,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class MainActivity extends FragmentActivity implements 
@@ -64,12 +70,14 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	Location userLocation;
 	HashMap<String,String> activityLocationData;
 	ArrayList<HashMap<String,String>> localLocations;
+	ArrayList<HashMap<String,Object>> yelpLocations;
 	GoogleMap map;
 	Projection projection;
 	int factualCategoryId;
 	boolean googlePlayServicesConnected;
 	final static String MAP_FRAGMENT = "mapfragment";
 	final static String SINGLE_MAP_FRAGMENT = "singlemapfragment";
+	ArrayList<String> yelpMarkers = new ArrayList<String>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -232,6 +240,10 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 
 		  FactualClient fc = new FactualClient(userLocation.getLatitude(), userLocation.getLongitude(), 20000);
 		  this.localLocations = fc.getLocationsByCategory(this.factualCategoryId);
+		  
+		  YelpClient yc = new YelpClient(userLocation.getLatitude(), userLocation.getLongitude(), 20000);
+		  yc.setLocationTypeFilter("food");
+		  this.yelpLocations = yc.formatLocations();
 		
         }
 		
@@ -255,6 +267,15 @@ GooglePlayServicesClient.OnConnectionFailedListener {
         	//Marker marker = map.addMarker(new MarkerOptions().position(locationLongLat).alpha(0.7f).title(ll.get("name")));
         	//marker.showInfoWindow();
         }
+        
+        //YELP markers
+        for (HashMap<String,Object> yl : yelpLocations){
+        	LatLng locationLongLat = new LatLng( Double.valueOf((String) yl.get("latitude")), Double.valueOf( (String) yl.get("longitude")) );
+        	Marker marker = map.addMarker(new MarkerOptions().position(locationLongLat).title( (String) yl.get("name")).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));
+        	yelpMarkers.add(marker.getId());
+        	marker.showInfoWindow();
+        }        
+        
         
         map.setInfoWindowAdapter(this);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocationLatLng, 12));
@@ -280,10 +301,28 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	
 	public View getInfoWindow(Marker marker){
 		
-		View infoWindowView =  getLayoutInflater().inflate(R.layout.info_window, null);
+		LinearLayout infoWindowView =  (LinearLayout) getLayoutInflater().inflate(R.layout.info_window, null);
 		//infoWindowView.setBackgroundResource(getResources().getIdentifier("info_window_bg", "drawable", this.getPackageName()););
 		//infoWindowView.setBackgroundResource(R.drawable.custom_info_bubble);
+		if(yelpMarkers.contains(marker.getId())){
+			int markerIndex = resolveYelpLocationIndex(marker.getTitle());
+			TextView iw_name = (TextView) infoWindowView.findViewById(R.id.iw_name);
+			iw_name.setText((String) this.yelpLocations.get(markerIndex).get("name"));
+			
+			TextView iw_website = (TextView) infoWindowView.findViewById(R.id.iw_website);
+			iw_website.setClickable(true);
+			String websiteUrl = (String) this.yelpLocations.get(markerIndex).get("mobile_url");
+			String link = String.format("<a href='%s'>%s</a>", websiteUrl, websiteUrl );
+			iw_website.setText(Html.fromHtml(link));
+			
+			ImageView iv = new ImageView(this);
+			iv.setImageBitmap((Bitmap) this.yelpLocations.get(markerIndex).get("image_url"));
+			iv.setVisibility(View.VISIBLE);
+			infoWindowView.addView(iv);
 		
+		}
+		else{
+			
 		int markerIndex = resolveLocationIndex(marker.getTitle());
 		TextView iw_name = (TextView) infoWindowView.findViewById(R.id.iw_name);
 		iw_name.setText(this.localLocations.get(markerIndex).get("name"));
@@ -302,6 +341,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 		
 		//CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(Double.valueOf(this.localLocations.get(markerIndex).get("latitude")),  Double.valueOf(this.localLocations.get(markerIndex).get("longitude")) )).zoom(15).bearing(90).tilt(65).build();
 		//map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+		}
 		
 		return infoWindowView;
 	}	
@@ -369,6 +409,18 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 		int index = -1;
 		for(int i=0; i < localLocations.size(); i++){
 			if( name.equals(localLocations.get(i).get("name")) ){
+				index = i;
+				return index;
+			}
+		}
+		return index;
+		
+	}
+	
+	private int resolveYelpLocationIndex(String name){
+		int index = -1;
+		for(int i=0; i < yelpLocations.size(); i++){
+			if( name.equals(yelpLocations.get(i).get("name")) ){
 				index = i;
 				return index;
 			}
@@ -473,5 +525,9 @@ GooglePlayServicesClient.OnConnectionFailedListener {
         }
 
     }
+    
+    
+    
 
+    
 }
