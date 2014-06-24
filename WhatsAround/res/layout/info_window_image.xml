@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+   <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:background="@drawable/info_window_bg"   
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:orientation="vertical" >
+    
+        <ImageView
+        android:id="@+id/info_window_imageview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+        
+                <TextView 
+        android:id="@+id/iw_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"   
+            android:paddingLeft="10dp"
+            android:paddingRight="3dp"
+            android:textStyle="bold"
+        android:textSize="10sp" >
+        </TextView> 
+        <TextView 
+        android:id="@+id/iw_address"
+            android:textColor="#FFFFFF"
+            android:paddingLeft="10dp"
+            android:paddingRight="3dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="8sp" >
+        </TextView> 
+        <TextView 
+        android:id="@+id/iw_hours"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:paddingLeft="10dp"
+            android:paddingRight="3dp"
+        android:textSize="8sp" >
+        </TextView> 
+        <TextView 
+        android:id="@+id/iw_telephone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:paddingLeft="10dp"
+            android:paddingRight="3dp"
+        android:textSize="8sp" >
+        </TextView>        
+        <TextView 
+        android:id="@+id/iw_website"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:paddingLeft="10dp"
+            android:paddingRight="3dp"
+        android:textSize="8sp" >
+        </TextView>
+       
+       
+    </LinearLayout>

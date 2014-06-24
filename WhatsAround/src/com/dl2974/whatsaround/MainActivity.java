@@ -78,6 +78,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	final static String MAP_FRAGMENT = "mapfragment";
 	final static String SINGLE_MAP_FRAGMENT = "singlemapfragment";
 	ArrayList<String> yelpMarkers = new ArrayList<String>();
+	private String yelpFilter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -138,6 +139,12 @@ GooglePlayServicesClient.OnConnectionFailedListener {
         transaction.commit();
 		
 	}
+	
+	
+	public void onLocationTypeFilter(String filter){
+		this.yelpFilter = filter;
+	}
+	
 	
 	public void onLocationSelected(HashMap<String,String> locationMap) {
 		
@@ -242,7 +249,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 		  this.localLocations = fc.getLocationsByCategory(this.factualCategoryId);
 		  
 		  YelpClient yc = new YelpClient(userLocation.getLatitude(), userLocation.getLongitude(), 20000);
-		  yc.setLocationTypeFilter("food");
+		  yc.setLocationTypeFilter(this.yelpFilter);
 		  this.yelpLocations = yc.formatLocations();
 		
         }
@@ -273,7 +280,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
         	LatLng locationLongLat = new LatLng( Double.valueOf((String) yl.get("latitude")), Double.valueOf( (String) yl.get("longitude")) );
         	Marker marker = map.addMarker(new MarkerOptions().position(locationLongLat).title( (String) yl.get("name")).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));
         	yelpMarkers.add(marker.getId());
-        	marker.showInfoWindow();
+        	
         }        
         
         
@@ -291,7 +298,18 @@ GooglePlayServicesClient.OnConnectionFailedListener {
        		 Intent webIntent = new Intent(Intent.ACTION_VIEW, webpage);
        		 startActivity(webIntent);
        		 */
+       		if(yelpMarkers.contains(marker.getId())){
+       		 
+          		 String websiteUrl = (String) MainActivity.this.yelpLocations.get(resolveYelpLocationIndex(marker.getTitle())).get("link");
+           		 Uri webpage = Uri.parse(websiteUrl);
+           		 Intent webIntent = new Intent(Intent.ACTION_VIEW, webpage);
+           		 startActivity(webIntent);
+       			
+       		}
+       		else{	
        		startSingleFragment(marker);
+       		}
+       		
        	 }
         });
 		
@@ -301,28 +319,28 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	
 	public View getInfoWindow(Marker marker){
 		
-		LinearLayout infoWindowView =  (LinearLayout) getLayoutInflater().inflate(R.layout.info_window, null);
+		LinearLayout infoWindowImageView =  (LinearLayout) getLayoutInflater().inflate(R.layout.info_window_image, null);
 		//infoWindowView.setBackgroundResource(getResources().getIdentifier("info_window_bg", "drawable", this.getPackageName()););
 		//infoWindowView.setBackgroundResource(R.drawable.custom_info_bubble);
 		if(yelpMarkers.contains(marker.getId())){
 			int markerIndex = resolveYelpLocationIndex(marker.getTitle());
-			TextView iw_name = (TextView) infoWindowView.findViewById(R.id.iw_name);
+			TextView iw_name = (TextView) infoWindowImageView.findViewById(R.id.iw_name);
 			iw_name.setText((String) this.yelpLocations.get(markerIndex).get("name"));
 			
-			TextView iw_website = (TextView) infoWindowView.findViewById(R.id.iw_website);
+			TextView iw_website = (TextView) infoWindowImageView.findViewById(R.id.iw_website);
 			iw_website.setClickable(true);
-			String websiteUrl = (String) this.yelpLocations.get(markerIndex).get("mobile_url");
+			String websiteUrl = (String) this.yelpLocations.get(markerIndex).get("link");
 			String link = String.format("<a href='%s'>%s</a>", websiteUrl, websiteUrl );
 			iw_website.setText(Html.fromHtml(link));
 			
-			ImageView iv = new ImageView(this);
-			iv.setImageBitmap((Bitmap) this.yelpLocations.get(markerIndex).get("image_url"));
+			ImageView iv = (ImageView) infoWindowImageView.findViewById(R.id.info_window_imageview);
+			iv.setImageBitmap((Bitmap) this.yelpLocations.get(markerIndex).get("image"));
 			iv.setVisibility(View.VISIBLE);
-			infoWindowView.addView(iv);
-		
+
+			return infoWindowImageView;		
 		}
 		else{
-			
+		View infoWindowView = getLayoutInflater().inflate(R.layout.info_window, null);	
 		int markerIndex = resolveLocationIndex(marker.getTitle());
 		TextView iw_name = (TextView) infoWindowView.findViewById(R.id.iw_name);
 		iw_name.setText(this.localLocations.get(markerIndex).get("name"));
@@ -341,9 +359,10 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 		
 		//CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(Double.valueOf(this.localLocations.get(markerIndex).get("latitude")),  Double.valueOf(this.localLocations.get(markerIndex).get("longitude")) )).zoom(15).bearing(90).tilt(65).build();
 		//map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+		return infoWindowView;
 		}
 		
-		return infoWindowView;
+		
 	}	
 	
 	public View getInfoContents(Marker marker){
@@ -433,7 +452,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 		
 		int markerIndex = resolveLocationIndex(marker.getTitle());
 		HashMap<String,String> singleLocationData = this.localLocations.get(markerIndex);
-		
+
 		SingleFragment sFragment = new SingleFragment();
 		sFragment.setSingleLocationData(singleLocationData);
 		
@@ -457,9 +476,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 		//getSupportFragmentManager().dump("", null, new PrintWriter(System.out, true), null);
 		try{
 		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentByTag(SINGLE_MAP_FRAGMENT);
-		Log.i("MainActivity", mapFragment.toString());
 		GoogleMap gmap = mapFragment.getMap();
-		Log.i("MainActivity", gmap.toString());
 		//FragmentManager fragmentManager = getSupportFragmentManager();
 		//GoogleMap gmap = ((SupportMapFragment) fragmentManager.findFragmentByTag(SINGLE_MAP_FRAGMENT)).getMap();
     	gmap.setMapType(GoogleMap.MAP_TYPE_HYBRID);

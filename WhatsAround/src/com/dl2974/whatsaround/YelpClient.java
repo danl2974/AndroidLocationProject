@@ -28,6 +28,7 @@ import com.factual.driver.Factual;
 import com.factual.driver.Query;
 import com.factual.driver.ReadResponse;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -185,18 +186,21 @@ public class YelpClient {
 	  
 	  
 	  
-	  private Bitmap createBusinessBitmap(String src){   
-	  
-	  Bitmap bmp = null;
-      URL url;
-      try {
-         url = new URL(src);
-         bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-      }
-      catch (Exception e) {
-          Log.e(getClass().getName(), e.getMessage());
+
+	private Bitmap createBusinessBitmap(String src){   
+	     
+	     Bitmap bmp = null;
+         URL url;
+         try {
+            url = new URL(src);
+            bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+         }
+         catch (Exception e) {
+            Log.e(getClass().getName(), e.getMessage());
            }
-      return bmp;
+         
+         
+         return bmp;
       
   }
 	  

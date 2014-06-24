@@ -13,6 +13,7 @@ public class LocationsListFragment extends ListFragment {
     public interface OnLocationTypeSelectedListener {
         
         public void onLocationTypeSelected(int categoryId);
+        public void onLocationTypeFilter(String filter);
     }
 
     OnLocationTypeSelectedListener selectionCallback;
@@ -29,6 +30,18 @@ public class LocationsListFragment extends ListFragment {
 		"Sports and Recreation",
 		"Transportation",
 		"Travel"
+	};
+	final static private String[] YELP_FILTERS = {
+		"auto",
+		"health",
+		"shopping",
+		"food,restaurants",
+		"localservices",
+		"arts",
+		"nightlife",
+		"active",
+		"transport",
+		"hotelstravel"
 	};
 	
     @Override
@@ -60,6 +73,8 @@ public class LocationsListFragment extends ListFragment {
         // Notify the parent activity of selected item
     	int locationId = FACTUAL_IDS[position];
     	selectionCallback.onLocationTypeSelected(locationId);
+    	String yelpfilter = YELP_FILTERS[position];
+    	selectionCallback.onLocationTypeFilter(yelpfilter);
         getListView().setItemChecked(position, true);
         
     }    
