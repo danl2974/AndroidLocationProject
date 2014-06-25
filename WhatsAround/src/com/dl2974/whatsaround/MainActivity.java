@@ -34,8 +34,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.FeatureInfo;
 import android.content.pm.PackageManager;
@@ -44,14 +46,18 @@ import android.graphics.BitmapFactory;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NavUtils;
 import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends FragmentActivity implements 
 LocationsListFragment.OnLocationTypeSelectedListener, 
@@ -79,11 +85,15 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	final static String SINGLE_MAP_FRAGMENT = "singlemapfragment";
 	ArrayList<String> yelpMarkers = new ArrayList<String>();
 	private String yelpFilter;
+	private boolean connectionRetry = false;
+	boolean testflag = true;
 
+	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.container);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		
 		int availableCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
 		if (availableCode == ConnectionResult.SUCCESS)
@@ -243,16 +253,19 @@ GooglePlayServicesClient.OnConnectionFailedListener {
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         
-        if (networkInfo != null && networkInfo.isConnected()) {
-
-		  FactualClient fc = new FactualClient(userLocation.getLatitude(), userLocation.getLongitude(), 20000);
-		  this.localLocations = fc.getLocationsByCategory(this.factualCategoryId);
-		  
-		  YelpClient yc = new YelpClient(userLocation.getLatitude(), userLocation.getLongitude(), 20000);
-		  yc.setLocationTypeFilter(this.yelpFilter);
-		  this.yelpLocations = yc.formatLocations();
-		
+        if(testflag){
+        Log.i("Testflag", String.valueOf(testflag));
+        this.userLocation = null;
         }
+        
+        if (networkInfo != null && networkInfo.isConnected() && this.userLocation != null) {
+        	
+		    FactualClient fc = new FactualClient(userLocation.getLatitude(), userLocation.getLongitude(), 20000);
+		    this.localLocations = fc.getLocationsByCategory(this.factualCategoryId);
+		  
+		    YelpClient yc = new YelpClient(userLocation.getLatitude(), userLocation.getLongitude(), 20000);
+		    yc.setLocationTypeFilter(this.yelpFilter);
+		    this.yelpLocations = yc.formatLocations();	
 		
 		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentByTag(MAP_FRAGMENT);
@@ -292,12 +305,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
        	 
        	 @Override
             public void onInfoWindowClick(Marker marker) {
-       		 /*
-       		 String websiteUrl = MainActivity.this.localLocations.get(resolveLocationIndex(marker.getTitle())).get("website");
-       		 Uri webpage = Uri.parse(websiteUrl);
-       		 Intent webIntent = new Intent(Intent.ACTION_VIEW, webpage);
-       		 startActivity(webIntent);
-       		 */
+
        		if(yelpMarkers.contains(marker.getId())){
        		 
           		 String websiteUrl = (String) MainActivity.this.yelpLocations.get(resolveYelpLocationIndex(marker.getTitle())).get("link");
@@ -314,6 +322,38 @@ GooglePlayServicesClient.OnConnectionFailedListener {
         });
 		
 		
+        
+	   }//end IF
+        
+       //Present Dialog Box to trigger all events 
+       else{
+      	  AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity.this);
+      	  alertBuilder
+      	  .setTitle("Location")
+      	  .setMessage("Your Current Location Is Not Known. Do you want to enable?")
+            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+          	  @Override
+                public void onClick(DialogInterface dialog, int id) {
+          		  dialog.cancel();
+          		  Toast.makeText(MainActivity.this, "Trying To Find Your Location", Toast.LENGTH_LONG).show(); 
+          		  MainActivity.this.connectionRetry = true;
+              	  MainActivity.this.mLocationClient.connect();
+              	  testflag = false;  
+                }
+            })
+            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+          	  @Override
+                public void onClick(DialogInterface dialog, int id) {
+                     dialog.cancel();
+                }
+            });
+      	  AlertDialog alertDialog = alertBuilder.create();
+      	  alertDialog.show();
+      	  
+        } //end ELSE       
+        
+        
+        
 	}
 	
 	
@@ -505,6 +545,11 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 		this.userLocation = mLocationClient.getLastLocation();
 		mLocationClient.requestLocationUpdates(mLocationRequest, this);
 		
+		if(this.connectionRetry){
+			onUserCenteredLocationsView();
+			this.connectionRetry = false;
+		}
+		
 	}
 	
     @Override
@@ -531,6 +576,39 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 
 	        super.onStop();
 	    }
+	 
+	 
+	 
+	 @Override
+	 public boolean onCreateOptionsMenu(Menu menu) {
+	     
+	     MenuInflater inflater = getMenuInflater();
+	     inflater.inflate(R.menu.main, menu);
+	     return super.onCreateOptionsMenu(menu);
+	 }
+	 
+	 
+	 @Override
+	 public boolean onOptionsItemSelected(MenuItem item) {
+		 
+	     switch (item.getItemId()) {
+	     
+	     case android.R.id.home:
+	    	 Log.i("onOptionsItemSelected", String.format("%d", item.getItemId()) );
+	    	 //NavUtils.navigateUpTo(this, new Intent(this, MainActivity.class));
+	         //NavUtils.navigateUpFromSameTask(this);
+	    	 startActivity(new Intent(this, MainActivity.class));
+	         return true;
+	         
+	     case R.id.home_icon:
+	    	 Log.i("onOptionsItemSelected home icon", String.format("%d", item.getItemId()) );
+	    	 startActivity(new Intent(this, MainActivity.class));
+	    	 return true;
+	     }
+	     return super.onOptionsItemSelected(item);
+	 }
+	 
+	 
 	
     private void killOldMap() {
         SupportMapFragment mapFragment = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.gmap));
