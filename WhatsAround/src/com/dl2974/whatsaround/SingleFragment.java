@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -33,7 +34,7 @@ public class SingleFragment extends Fragment {
     public interface SingleLocationMapListener {
 
         public void onSingleMapViewCreated(HashMap<String,String> singleLocationData);
-        
+        public void onSingleMapStreetViewRequest(HashMap<String,String> singleLocationData);
     }
 	
     SingleLocationMapListener mMapListenerCallback;
@@ -47,8 +48,17 @@ public class SingleFragment extends Fragment {
         Bundle savedInstanceState) {
     	
         View singleView = inflater.inflate(R.layout.single_location_information, container, false);
-        LinearLayout dataContainer = (LinearLayout) singleView.findViewById(R.id.location_information_overlay);
+        FrameLayout dataContainer = (FrameLayout) singleView.findViewById(R.id.location_information_overlay);
         //dataContainer.setBackgroundColor(0xFFFFFFDB);
+        
+        TextView steetViewOverlay = (TextView) singleView.findViewById(R.id.street_view_request);
+        steetViewOverlay.setText("Street View");
+        steetViewOverlay.setOnClickListener(new View.OnClickListener() {         
+            @Override
+            public void onClick(View v) {
+            	mMapListenerCallback.onSingleMapStreetViewRequest(SingleFragment.this.locationData);
+            }
+        });
         
         View textPortion = getActivity().getLayoutInflater().inflate(R.layout.single_location_information_text, container, false);
         

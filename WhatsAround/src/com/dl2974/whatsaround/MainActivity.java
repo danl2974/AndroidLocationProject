@@ -17,7 +17,9 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.Projection;
+import com.google.android.gms.maps.StreetViewPanorama;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.SupportStreetViewPanoramaFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
@@ -67,6 +69,7 @@ LocationFragment.MapListener,
 CustomMapFragment.MapListener,
 GoogleMap.InfoWindowAdapter,
 SingleFragment.SingleLocationMapListener,
+CustomStreetViewFragment.StreetMapListener,
 LocationListener,
 GooglePlayServicesClient.ConnectionCallbacks,
 GooglePlayServicesClient.OnConnectionFailedListener {
@@ -83,10 +86,10 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	boolean googlePlayServicesConnected;
 	final static String MAP_FRAGMENT = "mapfragment";
 	final static String SINGLE_MAP_FRAGMENT = "singlemapfragment";
+	final static String STREET_MAP_FRAGMENT = "streetmapfragment";
 	ArrayList<String> yelpMarkers = new ArrayList<String>();
 	private String yelpFilter;
 	private boolean connectionRetry = false;
-	boolean testflag = true;
 
 	@SuppressLint("NewApi")
 	@Override
@@ -253,10 +256,6 @@ GooglePlayServicesClient.OnConnectionFailedListener {
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         
-        if(testflag){
-        Log.i("Testflag", String.valueOf(testflag));
-        this.userLocation = null;
-        }
         
         if (networkInfo != null && networkInfo.isConnected() && this.userLocation != null) {
         	
@@ -325,20 +324,19 @@ GooglePlayServicesClient.OnConnectionFailedListener {
         
 	   }//end IF
         
-       //Present Dialog Box to trigger all events 
+       //Present Dialog Box if Location not known
        else{
       	  AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity.this);
       	  alertBuilder
-      	  .setTitle("Location")
-      	  .setMessage("Your Current Location Is Not Known. Do you want to enable?")
+      	  .setTitle("Where Are You?")
+      	  .setMessage("Your current location isn't available from your device. Are we allowed to find you?")
             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
           	  @Override
                 public void onClick(DialogInterface dialog, int id) {
           		  dialog.cancel();
           		  Toast.makeText(MainActivity.this, "Trying To Find Your Location", Toast.LENGTH_LONG).show(); 
           		  MainActivity.this.connectionRetry = true;
-              	  MainActivity.this.mLocationClient.connect();
-              	  testflag = false;  
+              	  MainActivity.this.mLocationClient.connect(); 
                 }
             })
             .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -528,6 +526,32 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 		}catch(Exception e){}
 	    
 	}
+	
+	
+	public void onSingleMapStreetViewRequest(HashMap<String,String> singleLocationData){
+		
+		Log.i("MainActivity onSingleMapStreetViewRequest", "inside");
+		CustomStreetViewFragment streetFragment = CustomStreetViewFragment.newInstance();
+		streetFragment.setSingleLocationData(singleLocationData);
+		
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.single_map, streetFragment, STREET_MAP_FRAGMENT);
+        transaction.addToBackStack(null);
+        transaction.commit();
+		
+	}
+	
+	public void onStreetMapLocationView(HashMap<String,String> singleLocationData){
+	
+	 Log.i("MainActivity onStreetMapLocationView", "inside");
+     StreetViewPanorama svPanorama = ((SupportStreetViewPanoramaFragment)
+		        getSupportFragmentManager().findFragmentByTag(STREET_MAP_FRAGMENT)).getStreetViewPanorama();
+     
+     LatLng locationLongLat = new LatLng( Double.valueOf(singleLocationData.get("latitude")), Double.valueOf(singleLocationData.get("longitude")) );
+     svPanorama.setPosition(locationLongLat);
+		
+	}
+	
 	
 	
     @Override
