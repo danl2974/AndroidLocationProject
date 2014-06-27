@@ -3,19 +3,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
-android:orientation="vertical"  
+android:orientation="vertical" 
 android:background="@color/whatsaroundcolor" >
 
-<FrameLayout 
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">    
-    
 <RelativeLayout 
-    android:id="@+id/single_map"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"/>
-    
+    android:layout_weight="1">
+ 
+<FrameLayout 
+    android:id="@+id/single_map"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />
+
    
  <TextView
      android:id="@+id/street_view_request"
@@ -24,21 +24,22 @@ android:background="@color/whatsaroundcolor" >
      android:textStyle="bold"
      android:textSize="12sp"
      android:textColor="#FFFFFF"
-     android:layout_marginBottom="20dip"
-     android:layout_gravity="center_horizontal|bottom"
+     android:gravity="center"
      android:background="@drawable/streetviewoverlay" />
+ 
+ 
                     
-</FrameLayout>
+</RelativeLayout>
 
 
-<FrameLayout 
+<LinearLayout 
     android:id="@+id/location_information_overlay"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical" 
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_weight="1"
     android:background="@drawable/customborder" >
 
-
-</FrameLayout>
+</LinearLayout>
 
 </LinearLayout>

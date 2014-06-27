@@ -35,12 +35,16 @@ public class SingleFragment extends Fragment {
 
         public void onSingleMapViewCreated(HashMap<String,String> singleLocationData);
         public void onSingleMapStreetViewRequest(HashMap<String,String> singleLocationData);
+        public void onSingleMapAerialViewRequest(HashMap<String,String> singleLocationData);
+        
     }
 	
     SingleLocationMapListener mMapListenerCallback;
 	private HashMap<String,String> locationData;
 	private LinearLayout dataContainer;
 	final static String SINGLE_MAP_FRAGMENT = "singlemapfragment";
+	final static String STREETVIEW_TEXT = "Street View";
+	final static String AERIALVIEW_TEXT = "Aerial View";
 	
 	
     @Override
@@ -48,15 +52,30 @@ public class SingleFragment extends Fragment {
         Bundle savedInstanceState) {
     	
         View singleView = inflater.inflate(R.layout.single_location_information, container, false);
-        FrameLayout dataContainer = (FrameLayout) singleView.findViewById(R.id.location_information_overlay);
+        LinearLayout dataContainer = (LinearLayout) singleView.findViewById(R.id.location_information_overlay);
         //dataContainer.setBackgroundColor(0xFFFFFFDB);
         
         TextView steetViewOverlay = (TextView) singleView.findViewById(R.id.street_view_request);
-        steetViewOverlay.setText("Street View");
+        String currentOverlayText = (String) steetViewOverlay.getText();
+        String overlayText;
+        if (currentOverlayText.equals(STREETVIEW_TEXT)){
+        	overlayText = AERIALVIEW_TEXT;
+        }
+        else{
+        	overlayText = STREETVIEW_TEXT;
+        }
+        
+        steetViewOverlay.setText(overlayText);
         steetViewOverlay.setOnClickListener(new View.OnClickListener() {         
             @Override
             public void onClick(View v) {
-            	mMapListenerCallback.onSingleMapStreetViewRequest(SingleFragment.this.locationData);
+            	TextView tv = (TextView) v;
+            	if (((String) tv.getText()).equals(STREETVIEW_TEXT)){
+            	     mMapListenerCallback.onSingleMapAerialViewRequest(SingleFragment.this.locationData);
+            	}
+            	else{
+            		mMapListenerCallback.onSingleMapStreetViewRequest(SingleFragment.this.locationData);
+            	}
             }
         });
         

@@ -552,6 +552,19 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 		
 	}
 	
+	public void onSingleMapAerialViewRequest(HashMap<String,String> singleLocationData){
+		
+		Log.i("MainActivity onSingleMapAerialViewRequest", "inside");
+		CustomMapFragment gmapFragment = CustomMapFragment.newInstance();
+		gmapFragment.setSingleLocationData(singleLocationData);
+		
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.single_map, gmapFragment, SINGLE_MAP_FRAGMENT);
+        transaction.addToBackStack(null);
+        transaction.commit();
+		
+	}
+	
 	
 	
     @Override
