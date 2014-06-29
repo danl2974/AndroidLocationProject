@@ -57,24 +57,32 @@ public class SingleFragment extends Fragment {
         
         TextView steetViewOverlay = (TextView) singleView.findViewById(R.id.street_view_request);
         String currentOverlayText = (String) steetViewOverlay.getText();
+        Log.i("SingleFragment currentOverlayText",currentOverlayText);
         String overlayText;
         if (currentOverlayText.equals(STREETVIEW_TEXT)){
         	overlayText = AERIALVIEW_TEXT;
+        	 Log.i("SingleFragment", "inside IF");
         }
         else{
         	overlayText = STREETVIEW_TEXT;
+        	Log.i("SingleFragment", "inside else");
         }
-        
+        Log.i("SingleFragment verlayText",overlayText);
         steetViewOverlay.setText(overlayText);
         steetViewOverlay.setOnClickListener(new View.OnClickListener() {         
             @Override
             public void onClick(View v) {
             	TextView tv = (TextView) v;
+            	Log.i("SingleFragment", (String) tv.getText());
             	if (((String) tv.getText()).equals(STREETVIEW_TEXT)){
-            	     mMapListenerCallback.onSingleMapAerialViewRequest(SingleFragment.this.locationData);
+            		Log.i("SingleFragment", "inside onClick IF");
+            		mMapListenerCallback.onSingleMapStreetViewRequest(SingleFragment.this.locationData);
+            		tv.setText(AERIALVIEW_TEXT);
             	}
             	else{
-            		mMapListenerCallback.onSingleMapStreetViewRequest(SingleFragment.this.locationData);
+            		Log.i("SingleFragment", "inside onClick ELSE");
+            		mMapListenerCallback.onSingleMapAerialViewRequest(SingleFragment.this.locationData);
+            		tv.setText(STREETVIEW_TEXT);
             	}
             }
         });

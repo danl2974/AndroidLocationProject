@@ -210,7 +210,7 @@ public class YelpClient {
 		  
 		  ArrayList<HashMap<String,Object>> result = null;
 		  AsyncTask<Void, Void, ArrayList<HashMap<String,Object>>> task = new YelpClientTask().execute();
-		   
+		  
 		  try {
 			 result = task.get();
 		} catch (InterruptedException e) {
