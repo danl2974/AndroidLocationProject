@@ -173,7 +173,7 @@ public class YelpClient {
 				   hm.put("name", bObj.get("name").toString());
 				   hm.put("image", createBusinessBitmap(bObj.get("image_url").toString()) );
 				   hm.put("link", bObj.get("mobile_url").toString());
-		
+				   hm.put("id", bObj.get("id").toString());
 				
 				   list.add(hm);
 				   
@@ -232,6 +232,7 @@ public class YelpClient {
 	              
 	            try {
 	      		    String searchResults = search();
+	      		    Log.i("YELP search results", searchResults);
 	                return  parseLocations(searchResults);
 	                
 	                

@@ -288,10 +288,10 @@ GooglePlayServicesClient.OnConnectionFailedListener {
         }
         
         //YELP markers
-        
         for (HashMap<String,Object> yl : yelpLocations){
         	LatLng locationLongLat = new LatLng( Double.valueOf((String) yl.get("latitude")), Double.valueOf( (String) yl.get("longitude")) );
-        	Marker marker = map.addMarker(new MarkerOptions().position(locationLongLat).title( (String) yl.get("name")).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));
+        	//Marker marker = map.addMarker(new MarkerOptions().position(locationLongLat).title( (String) yl.get("name")).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));
+        	Marker marker = map.addMarker(new MarkerOptions().position(locationLongLat).title( (String) yl.get("name")).icon(BitmapDescriptorFactory.fromResource(R.drawable.yelp)));
         	yelpMarkers.add(marker.getId());
         	
         }        
