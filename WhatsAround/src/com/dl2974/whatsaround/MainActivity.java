@@ -629,20 +629,18 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	 @Override
 	 public boolean onOptionsItemSelected(MenuItem item) {
 		 
-	     switch (item.getItemId()) {
-	     
-	     case android.R.id.home:
-	    	 Log.i("onOptionsItemSelected", String.format("%d", item.getItemId()) );
-	    	 //NavUtils.navigateUpTo(this, new Intent(this, MainActivity.class));
+	     int itemId = item.getItemId();
+		if (itemId == android.R.id.home) {
+			Log.i("onOptionsItemSelected", String.format("%d", item.getItemId()) );
+			//NavUtils.navigateUpTo(this, new Intent(this, MainActivity.class));
 	         //NavUtils.navigateUpFromSameTask(this);
 	    	 startActivity(new Intent(this, MainActivity.class));
-	         return true;
-	         
-	     case R.id.home_icon:
-	    	 Log.i("onOptionsItemSelected home icon", String.format("%d", item.getItemId()) );
-	    	 startActivity(new Intent(this, MainActivity.class));
-	    	 return true;
-	     }
+			return true;
+		} else if (itemId == R.id.home_icon) {
+			Log.i("onOptionsItemSelected home icon", String.format("%d", item.getItemId()) );
+			startActivity(new Intent(this, MainActivity.class));
+			return true;
+		}
 	     return super.onOptionsItemSelected(item);
 	 }
 	 
