@@ -33,7 +33,7 @@ import com.factual.driver.ReadResponse;
 
 public class PlacesClient {
 	
-    private String apiKey;
+    private static String apiKey = "AIzaSyCi1enQk9Q222E5zniPTc7WJHS74DgGhgY";
 	private double latitude;
 	private double longitude;
 	private int meterPerimeter = 20000;
@@ -52,9 +52,9 @@ public class PlacesClient {
 		photos
 	}
 	
-	public PlacesClient(HashMap<String,Object> parameters, String apiKey, PlacesCallType callType){
+	public PlacesClient(HashMap<String,Object> parameters, PlacesCallType callType){
 		  
-		this.apiKey = apiKey;
+		//this.apiKey = apiKey;
 		
 		switch(callType){
 		
@@ -148,7 +148,7 @@ public class PlacesClient {
 	     	     }
 	     	     
 	     	     callResponse = sb.toString();
-	         
+	     	     Log.i("PlacesClient callResponse", callResponse);
 			}
 			catch(Exception e){
 				Log.e("PlacesClientException", "Exception call " + e.getMessage());
@@ -170,6 +170,7 @@ public class PlacesClient {
 	              
 	        try {
 	        	
+	        	    Log.i("PlacesClient PlacesClientTask url", PlacesClient.this.endpoint + urlParams[0]);
                     String placesResult = call(PlacesClient.this.endpoint, urlParams[0]);
                     ArrayList<HashMap<String,Object>> response = null;
                     
@@ -238,14 +239,17 @@ public class PlacesClient {
     	     sb.append(String.format("%s=%s", kv.getKey(), String.valueOf(kv.getValue()) ));
     		 sb.append("&");
     	}
+    	sb.append(String.format("key=%s", this.apiKey));
     	
-    	return sb.deleteCharAt(sb.length() - 1).toString();
+    	//return sb.deleteCharAt(sb.length() - 1).toString();
+    	return sb.toString();
     	
     }
     
     
     ArrayList<HashMap<String,Object>>  parseJsonSearchResponse(String jsonString){
     	
+    	Log.i("PlacesClient", "inside parseJsonSearchResponse");
 		ArrayList<HashMap<String,Object>> hmlist = new ArrayList<HashMap<String,Object>>();
 		JSONParser parser= new JSONParser();
 		JSONObject obj = null;
@@ -291,6 +295,7 @@ public class PlacesClient {
     
     ArrayList<HashMap<String,Object>>  parseJsonDetailsResponse(String jsonString){
     	 	
+    	Log.i("PlacesClient", "inside parseJsonDetailsResponse");
 		ArrayList<HashMap<String,Object>> hmlist = new ArrayList<HashMap<String,Object>>();
 		JSONParser parser= new JSONParser();
 		JSONObject obj = null;
@@ -301,19 +306,24 @@ public class PlacesClient {
 			Log.e("parseJsonDetailsResponse", e.getMessage());
 		  }
 		  
-		  if (obj.get("status").equals("OK")){
+		  if (obj != null){
 			  
 			  JSONObject resultObj = (JSONObject) obj.get("result");
 			  HashMap<String,Object> hm = new HashMap<String,Object>();
 			  
 			  for(int f = 0; f < PlacesClient.detailsDataFields.length; f++){
 				  String field = PlacesClient.detailsDataFields[f];
+				  try{
 				  hm.put(field, (String) resultObj.get(field));
+				  Log.i("PlacesClient", "Detail: " + field  + " " + hm.get(field));
+				  }catch(Exception e){ Log.i("PlacesClient", "Detail Exception: " + field); }
 			  }
 			  
 			  hm.put("hours", formatDetailsHours((JSONObject) resultObj.get("opening_hours")));
+			  Log.i("PlacesClient", "hours: " + hm.get("hours"));
 			  hm.put("photos", formatDetailsPhotos((JSONArray) resultObj.get("photos")));
 			  hm.put("reviews", formatDetailsReviews((JSONArray) resultObj.get("reviews")));
+			  Log.i("PlacesClient", "end parse details");
 			  hmlist.add(hm);
 		  }
 		  
@@ -348,37 +358,47 @@ public class PlacesClient {
     private String formatDetailsHours(JSONObject jsonObj){
     	
     	StringBuilder sb = new StringBuilder();
-    	
+    	Log.i("PlacesClient", "inside formatDetailsHours");
     	Boolean opened = (Boolean) jsonObj.get("open_now");
+    	Log.i("PlacesClient", String.valueOf(opened) );
     	String businessState = opened ? "Opened Now": "Closed Now";
+    	Log.i("PlacesClient", businessState );
     	sb.append(businessState + "\n");
     	
     	JSONArray periods = (JSONArray) jsonObj.get("periods");
     	Iterator iter = periods.iterator();
     	while(iter.hasNext()){
+    	    try{
     		JSONObject dayOfWeek = (JSONObject) iter.next();
-    		int dayIndex = (Integer) ((JSONObject) dayOfWeek.get("open")).get("day");
+    		Long dayIndex = (Long) ((JSONObject) dayOfWeek.get("open")).get("day");
+    		//Log.i("PlacesClient dayIndex", String.valueOf(dayIndex) );
     		String open = (String) ((JSONObject) dayOfWeek.get("open")).get("time");
-    		String openStr = Integer.valueOf(open.substring(0,2)) > 12 ? (String.valueOf(Integer.valueOf(open.substring(0,2)) - 12) + ":" + open.substring(2,2)) : (open.substring(0,2) + ":" + open.substring(2,2));
+    		//Log.i("PlacesClient open", open );
+    		String openStr = Integer.valueOf(open.substring(0,2)) > 12 ? (String.valueOf(Integer.valueOf(open.substring(0,2)) - 12) + ":" + open.substring(2,4)) : (open.substring(0,2) + ":" + open.substring(2,4));
+    		//Log.i("PlacesClient openStr", openStr );
     		String close = (String) ((JSONObject) dayOfWeek.get("close")).get("time");
-    		String closeStr = Integer.valueOf(close.substring(0,2)) > 12 ? (String.valueOf(Integer.valueOf(close.substring(0,2)) - 12) + ":" + close.substring(2,2)) : (close.substring(0,2) + ":" + close.substring(2,2));
-    		sb.append(String.format("%s: %s - %s\n", PlacesClient.days[dayIndex], openStr, closeStr));
+    		//Log.i("PlacesClient close", close );
+    		String closeStr = Integer.valueOf(close.substring(0,2)) > 12 ? (String.valueOf(Integer.valueOf(close.substring(0,2)) - 12) + ":" + close.substring(2,4)) : (close.substring(0,2) + ":" + close.substring(2,4));
+    		//Log.i("PlacesClient close", closeStr );
+    		sb.append(String.format("%s: %s - %s\n", PlacesClient.days[dayIndex.intValue()], openStr, closeStr));
+    		}catch(Exception e){}
     	}
-    	
+    	Log.i("PlacesClient Hours final", sb.toString() );
     	return sb.toString();
     }
     
     
     private ArrayList<HashMap<String,Object>> formatDetailsPhotos(JSONArray jsonArr){
     	
+    	Log.i("PlacesClient", "inside formatDetailsPhotos");
     	ArrayList<HashMap<String,Object>> hmlist = new ArrayList<HashMap<String,Object>>();
     	Iterator iter = jsonArr.iterator();
     	while(iter.hasNext()){
     		JSONObject photos = (JSONObject) iter.next();
     		HashMap<String,Object> hm = new HashMap<String,Object>();
     		hm.put("photo_reference", (String) photos.get("photo_reference"));
-    		hm.put("width", (Integer) photos.get("width"));
-    		hm.put("height", (Integer) photos.get("height"));
+    		hm.put("width", ((Long) photos.get("width")).intValue());
+    		hm.put("height", ((Long) photos.get("height")).intValue());
     		hmlist.add(hm);
     	}
     	return hmlist;
@@ -386,6 +406,7 @@ public class PlacesClient {
     
     private ArrayList<HashMap<String,Object>> formatDetailsReviews(JSONArray jsonArr){
     	
+    	Log.i("PlacesClient", "inside formatDetailsReviews");
     	ArrayList<HashMap<String,Object>> hmlist = new ArrayList<HashMap<String,Object>>();
     	Iterator iter = jsonArr.iterator();
     	while(iter.hasNext()){

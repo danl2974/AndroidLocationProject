@@ -82,6 +82,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	Location userLocation;
 	HashMap<String,Object> activityLocationData;
 	ArrayList<HashMap<String,Object>> placesLocations;
+	HashMap<String,Object> placesLocationDetailsData;
 	ArrayList<HashMap<String,String>> localLocations;
 	ArrayList<HashMap<String,Object>> yelpLocations;
 	GoogleMap map;
@@ -163,6 +164,14 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	public void onLocationTypeFilter(String filter){
 		//this.yelpFilter = filter;
 		this.placesFilter = filter;
+		
+        CustomMapFragment mapFragment = CustomMapFragment.newInstance();
+		
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, mapFragment, MAP_FRAGMENT);
+        transaction.addToBackStack(null);
+
+        transaction.commit();
 	}
 	
 	
@@ -251,6 +260,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
         	searchParams.put("radius", "5000");
         	searchParams.put("types", this.placesFilter);
         	
+        	/*
         	ApplicationInfo appInfo = null;
         	if(this.placesKey == null){
 			try {
@@ -261,9 +271,11 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 				Log.e("ApplicationInfo NameNotFoundException", e.getMessage());
 			    }
             }
-			
-        	PlacesClient pc = new PlacesClient(searchParams, this.placesKey, PlacesCallType.search);
+			*/
+        	
+        	PlacesClient pc = new PlacesClient(searchParams, PlacesCallType.search);
         	this.placesLocations = pc.getPlacesData();
+        	Log.i("Places data size ", String.valueOf(this.placesLocations.size()) );
 		
 		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentByTag(MAP_FRAGMENT);
@@ -390,6 +402,31 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 			return infoWindowImageView;		
 		}
 		else{
+			int markerIndex = resolvePlacesIndex(marker.getTitle());
+			Log.i("Places", "markerIndex " + String.valueOf(markerIndex));
+			HashMap<String,Object> detailsParams = new HashMap<String,Object>();
+			detailsParams.put("placeid", (String) this.placesLocations.get(markerIndex).get("place_id"));
+			PlacesClient dpc = new PlacesClient(detailsParams, PlacesCallType.details);
+			this.placesLocationDetailsData = dpc.getPlacesData().get(0);
+			Log.i("Places", "placesLocationDetailsData " + String.valueOf(this.placesLocationDetailsData));
+			
+			View infoWindowView = getLayoutInflater().inflate(R.layout.info_window, null);
+			TextView iw_name = (TextView) infoWindowView.findViewById(R.id.iw_name);
+			iw_name.setText((String) this.placesLocations.get(markerIndex).get("name"));
+			TextView iw_address = (TextView) infoWindowView.findViewById(R.id.iw_address);
+			iw_address.setText((String) this.placesLocationDetailsData.get("formatted_address"));
+			TextView iw_hours = (TextView) infoWindowView.findViewById(R.id.iw_hours);
+			iw_hours.setText((String) this.placesLocationDetailsData.get("hours"));
+			TextView iw_telephone = (TextView) infoWindowView.findViewById(R.id.iw_telephone);
+			iw_telephone.setText((String) this.placesLocationDetailsData.get("formatted_phone_number"));
+			
+			TextView iw_website = (TextView) infoWindowView.findViewById(R.id.iw_website);
+			iw_website.setClickable(true);
+			String websiteUrl = (String) this.placesLocationDetailsData.get("website");
+			String link = String.format("<a href='%s'>%s</a>", websiteUrl, websiteUrl );
+			iw_website.setText(Html.fromHtml(link));
+			
+	    /*		
 		View infoWindowView = getLayoutInflater().inflate(R.layout.info_window, null);	
 		int markerIndex = resolveLocationIndex(marker.getTitle());
 		TextView iw_name = (TextView) infoWindowView.findViewById(R.id.iw_name);
@@ -406,6 +443,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 		String websiteUrl = this.localLocations.get(markerIndex).get("website");
 		String link = String.format("<a href='%s'>%s</a>", websiteUrl, websiteUrl );
 		iw_website.setText(Html.fromHtml(link));
+		*/
 		
 		//CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(Double.valueOf(this.localLocations.get(markerIndex).get("latitude")),  Double.valueOf(this.localLocations.get(markerIndex).get("longitude")) )).zoom(15).bearing(90).tilt(65).build();
 		//map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -518,13 +556,14 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 		HashMap<String,Object> singleLocationData = this.placesLocations.get(markerIndex);
 
 		SingleFragment sFragment = new SingleFragment();
+		/*
 		HashMap<String,Object> detailsParams = null;
 		detailsParams.put("placeid", (String) singleLocationData.get("place_id"));
-		PlacesClient dpc = new PlacesClient(detailsParams, this.placesKey, PlacesCallType.details);
+		PlacesClient dpc = new PlacesClient(detailsParams, PlacesCallType.details);
 		HashMap<String,Object> singleLocationDetailsData = dpc.getPlacesData().get(0);
-		
+		*/
 		sFragment.setSingleLocationData(singleLocationData);
-		sFragment.setSingleLocationDetailsData(singleLocationDetailsData);
+		sFragment.setSingleLocationDetailsData(this.placesLocationDetailsData);
 		
 		CustomMapFragment gmapFragment = CustomMapFragment.newInstance();
 		gmapFragment.setSingleLocationData(singleLocationData);
@@ -580,6 +619,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 		        getSupportFragmentManager().findFragmentByTag(STREET_MAP_FRAGMENT)).getStreetViewPanorama();
      
      LatLng locationLongLat = new LatLng( Double.valueOf((String) singleLocationData.get("latitude")), Double.valueOf((String) singleLocationData.get("longitude")) );
+     Log.i("MainActivity onStreetMapLocationView", String.format("%f %f", locationLongLat.latitude, locationLongLat.longitude));
      svPanorama.setPosition(locationLongLat);
 		
 	}
