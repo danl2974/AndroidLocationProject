@@ -358,6 +358,7 @@ public class PlacesClient {
     private String formatDetailsHours(JSONObject jsonObj){
     	
     	StringBuilder sb = new StringBuilder();
+    	try{
     	Log.i("PlacesClient", "inside formatDetailsHours");
     	Boolean opened = (Boolean) jsonObj.get("open_now");
     	Log.i("PlacesClient", String.valueOf(opened) );
@@ -368,23 +369,27 @@ public class PlacesClient {
     	JSONArray periods = (JSONArray) jsonObj.get("periods");
     	Iterator iter = periods.iterator();
     	while(iter.hasNext()){
-    	    try{
+    	   
     		JSONObject dayOfWeek = (JSONObject) iter.next();
     		Long dayIndex = (Long) ((JSONObject) dayOfWeek.get("open")).get("day");
-    		//Log.i("PlacesClient dayIndex", String.valueOf(dayIndex) );
+    		Log.i("PlacesClient dayIndex", String.valueOf(dayIndex) );
     		String open = (String) ((JSONObject) dayOfWeek.get("open")).get("time");
-    		//Log.i("PlacesClient open", open );
-    		String openStr = Integer.valueOf(open.substring(0,2)) > 12 ? (String.valueOf(Integer.valueOf(open.substring(0,2)) - 12) + ":" + open.substring(2,4)) : (open.substring(0,2) + ":" + open.substring(2,4));
-    		//Log.i("PlacesClient openStr", openStr );
+    		Log.i("PlacesClient open", open );
+    		String openStr = Integer.valueOf(open.substring(0,2)) > 12 ? (String.valueOf(Integer.valueOf(open.substring(0,2)) - 12) + ":" + open.substring(2,4)  + " p.m.") : (open.substring(0,2) + ":" + open.substring(2,4));
+    		Log.i("PlacesClient openStr", openStr );
     		String close = (String) ((JSONObject) dayOfWeek.get("close")).get("time");
-    		//Log.i("PlacesClient close", close );
-    		String closeStr = Integer.valueOf(close.substring(0,2)) > 12 ? (String.valueOf(Integer.valueOf(close.substring(0,2)) - 12) + ":" + close.substring(2,4)) : (close.substring(0,2) + ":" + close.substring(2,4));
-    		//Log.i("PlacesClient close", closeStr );
+    		Log.i("PlacesClient close", close );
+    		String closeStr = Integer.valueOf(close.substring(0,2)) > 12 ? (String.valueOf(Integer.valueOf(close.substring(0,2)) - 12) + ":" + close.substring(2,4) + " p.m.") : (close.substring(0,2) + ":" + close.substring(2,4));
+    		Log.i("PlacesClient close", closeStr );
     		sb.append(String.format("%s: %s - %s\n", PlacesClient.days[dayIndex.intValue()], openStr, closeStr));
-    		}catch(Exception e){}
+    		
     	}
     	Log.i("PlacesClient Hours final", sb.toString() );
-    	return sb.toString();
+    	 
+    	 }catch(Exception e){}
+    	
+    	 return sb.toString();
+
     }
     
     
