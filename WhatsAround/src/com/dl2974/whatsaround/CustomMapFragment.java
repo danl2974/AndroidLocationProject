@@ -17,14 +17,14 @@ public class CustomMapFragment extends SupportMapFragment {
 	
     public interface MapListener {
         
-        public void onSingleLocationView(HashMap<String,String> locationData);
+        public void onSingleLocationView(HashMap<String,Object> locationData);
         public void onUserCenteredLocationsView();
     }
     
     MapListener mapListenerCallback;
     SingleFragment.SingleLocationMapListener mMapListenerCallback;
 	
-	HashMap<String,String> locationData;
+	HashMap<String,Object> locationData;
 	
 	public CustomMapFragment(){
 		super();
@@ -87,13 +87,13 @@ public class CustomMapFragment extends SupportMapFragment {
         
     }
 
-    public void setSingleLocationData(HashMap<String,String> singleLocationData){
+    public void setSingleLocationData(HashMap<String,Object> singleLocationData){
     	
     	this.locationData = singleLocationData;
     	
     }
     
-    public void setLocationData(HashMap<String,String> locationMap){
+    public void setLocationData(HashMap<String,Object> locationMap){
     	
     	this.locationData = locationMap;
     	

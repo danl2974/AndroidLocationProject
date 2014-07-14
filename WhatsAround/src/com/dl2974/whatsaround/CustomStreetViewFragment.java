@@ -14,12 +14,12 @@ public class CustomStreetViewFragment extends SupportStreetViewPanoramaFragment 
 	
     public interface StreetMapListener {
         
-        public void onStreetMapLocationView(HashMap<String,String> singleLocationData);
+        public void onStreetMapLocationView(HashMap<String,Object> singleLocationData);
         
     }
     
     private StreetMapListener mStreetMapCallback;
-    private HashMap<String,String> locationData;
+    private HashMap<String,Object> locationData;
 	
 	public CustomStreetViewFragment(){
 		super();
@@ -66,7 +66,7 @@ public class CustomStreetViewFragment extends SupportStreetViewPanoramaFragment 
     }	
     
     
-    public void setSingleLocationData(HashMap<String,String> singleLocationData){
+    public void setSingleLocationData(HashMap<String,Object> singleLocationData){
     	
     	this.locationData = singleLocationData;
     	

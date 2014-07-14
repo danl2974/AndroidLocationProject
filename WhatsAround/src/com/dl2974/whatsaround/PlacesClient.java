@@ -19,6 +19,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -95,6 +97,23 @@ public class PlacesClient {
 		
 	}
 	
+	public Bitmap getPhotoBitmap(){
+		
+		Bitmap photo = null;
+		AsyncTask<String, Void, Bitmap> task = new PlacesClientPhotoTask().execute(this.requestParameters);
+		   
+		try {
+			 photo = task.get();
+		} catch (InterruptedException e) {
+			Log.e(this.getClass().getName(), e.getMessage());
+		} catch (ExecutionException e) {
+			Log.e(this.getClass().getName(), e.getMessage());
+		}
+		  
+		  return photo;
+		
+	}	
+	
 	
 	
 	private String call(String requestpath, String requestParams){
@@ -163,10 +182,6 @@ public class PlacesClient {
             		case details:
             			response = parseJsonDetailsResponse(placesResult);
             			break;
-            			
-            		case photos:
-            			response = parseJsonPhotosResponse(placesResult);
-            			break;
             		
             		}
                     
@@ -185,6 +200,32 @@ public class PlacesClient {
 	        	
 	       }
 	    }
+    
+    
+    
+    public class PlacesClientPhotoTask extends AsyncTask<String, Void, Bitmap> {
+   	 
+        @Override
+        protected Bitmap doInBackground(String... urlParams) {
+              
+        try {
+        	    Bitmap photo = null;
+                photo = callPhoto(PlacesClient.this.endpoint, urlParams[0]);  
+                return photo;
+                
+            } catch (Exception e) {
+                
+                return null;
+            }
+        }
+        	        
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            //No UI to update      	
+        	
+       }
+    }
 	  
 
     
@@ -273,7 +314,7 @@ public class PlacesClient {
 			  hm.put("hours", formatDetailsHours((JSONObject) resultObj.get("opening_hours")));
 			  hm.put("photos", formatDetailsPhotos((JSONArray) resultObj.get("photos")));
 			  hm.put("reviews", formatDetailsReviews((JSONArray) resultObj.get("reviews")));
-			  
+			  hmlist.add(hm);
 		  }
 		  
         }
@@ -285,26 +326,21 @@ public class PlacesClient {
     
     
     
-    ArrayList<HashMap<String,Object>>  parseJsonPhotosResponse(String jsonString){
+    Bitmap callPhoto(String endpoint, String requestParams){
 
-		ArrayList<HashMap<String,Object>> hmlist = new ArrayList<HashMap<String,Object>>();
-		JSONParser parser= new JSONParser();
-		JSONObject obj = null;
-        if(jsonString != null){
-		  try {
-			obj = (JSONObject) parser.parse(jsonString);
-		  } catch (ParseException e) {
-			Log.e("parseJsonSearchResponse", e.getMessage());
-		  }
-		  
-		  
-		  
-		  
-        }
-        
-        return hmlist;
-      	
-      	
+    	 String src = String.format("%s?%s");
+	     Bitmap bmp = null;
+	        URL url;
+	        try {
+	           url = new URL(src);
+	           bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+	        }
+	        catch (Exception e) {
+	           Log.e(getClass().getName(), e.getMessage());
+	          }
+	        
+	        
+	        return bmp;   	
       }     
     
     

@@ -33,14 +33,15 @@ public class SingleFragment extends Fragment {
 	
     public interface SingleLocationMapListener {
 
-        public void onSingleMapViewCreated(HashMap<String,String> singleLocationData);
-        public void onSingleMapStreetViewRequest(HashMap<String,String> singleLocationData);
-        public void onSingleMapAerialViewRequest(HashMap<String,String> singleLocationData);
+        public void onSingleMapViewCreated(HashMap<String,Object> singleLocationData);
+        public void onSingleMapStreetViewRequest(HashMap<String,Object> singleLocationData);
+        public void onSingleMapAerialViewRequest(HashMap<String,Object> singleLocationData);
         
     }
 	
     SingleLocationMapListener mMapListenerCallback;
-	private HashMap<String,String> locationData;
+	private HashMap<String,Object> locationData;
+	private HashMap<String,Object> placeDetailsData;
 	private LinearLayout dataContainer;
 	final static String SINGLE_MAP_FRAGMENT = "singlemapfragment";
 	final static String STREETVIEW_TEXT = "Street View";
@@ -90,17 +91,21 @@ public class SingleFragment extends Fragment {
         View textPortion = getActivity().getLayoutInflater().inflate(R.layout.single_location_information_text, container, false);
         
 		TextView single_name = (TextView) textPortion.findViewById(R.id.single_name);
-		single_name.setText(locationData.get("name"));
+		single_name.setText((String) locationData.get("name"));
 		TextView single_address = (TextView) textPortion.findViewById(R.id.single_address);
-		single_address.setText(locationData.get("address") + "\n" +  locationData.get("locality") + " " + locationData.get("region") + " " + locationData.get("postcode"));
+		//single_address.setText(locationData.get("address") + "\n" +  locationData.get("locality") + " " + locationData.get("region") + " " + locationData.get("postcode"));
+		single_address.setText((String) placeDetailsData.get("formatted_address"));
 		TextView single_hours = (TextView) textPortion.findViewById(R.id.single_hours);
-		single_hours.setText(locationData.get("hours_display"));
+		//single_hours.setText(locationData.get("hours_display"));
+		single_hours.setText((String) placeDetailsData.get("hours"));
 		TextView single_telephone = (TextView) textPortion.findViewById(R.id.single_telephone);
-		single_telephone.setText(locationData.get("tel"));
+		//single_telephone.setText(locationData.get("tel"));
+		single_telephone.setText((String) placeDetailsData.get("formatted_phone_number"));
 		
 		TextView single_website = (TextView) textPortion.findViewById(R.id.single_website);
 		single_website.setClickable(true);
-		String websiteUrl = locationData.get("website");
+		//String websiteUrl = (String) locationData.get("website");
+		String websiteUrl = (String) placeDetailsData.get("website");
 		String link = String.format("<a href='%s'>%s</a>", websiteUrl, websiteUrl );
 		single_website.setText(Html.fromHtml(link));
 		single_website.setMovementMethod(LinkMovementMethod.getInstance());
@@ -154,9 +159,15 @@ public class SingleFragment extends Fragment {
     	
     }
     
-    public void setSingleLocationData(HashMap<String,String> singleLocationData){
+    public void setSingleLocationData(HashMap<String,Object> singleLocationData){
     	
     	this.locationData = singleLocationData;
+    	
+    }
+    
+    public void setSingleLocationDetailsData(HashMap<String,Object> singleLocationDetailsData){
+    	
+    	this.placeDetailsData = singleLocationDetailsData;
     	
     }
     
