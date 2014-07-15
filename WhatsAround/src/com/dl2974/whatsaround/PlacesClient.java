@@ -319,10 +319,15 @@ public class PlacesClient {
 				  }catch(Exception e){ Log.i("PlacesClient", "Detail Exception: " + field); }
 			  }
 			  
-			  hm.put("hours", formatDetailsHours((JSONObject) resultObj.get("opening_hours")));
-			  Log.i("PlacesClient", "hours: " + hm.get("hours"));
-			  hm.put("photos", formatDetailsPhotos((JSONArray) resultObj.get("photos")));
-			  hm.put("reviews", formatDetailsReviews((JSONArray) resultObj.get("reviews")));
+			  if(resultObj.get("opening_hours") != null){
+			      hm.put("hours", formatDetailsHours((JSONObject) resultObj.get("opening_hours")));
+			  }
+			  if(resultObj.get("photos") != null){
+			      hm.put("photos", formatDetailsPhotos((JSONArray) resultObj.get("photos")));
+			  }
+			  if(resultObj.get("reviews") != null){
+			      hm.put("reviews", formatDetailsReviews((JSONArray) resultObj.get("reviews")));
+			  }
 			  Log.i("PlacesClient", "end parse details");
 			  hmlist.add(hm);
 		  }
@@ -359,7 +364,7 @@ public class PlacesClient {
     	
     	StringBuilder sb = new StringBuilder();
     	try{
-    	Log.i("PlacesClient", "inside formatDetailsHours");
+    	Log.i("PlacesClient formatDetailsHours", jsonObj.toJSONString());
     	Boolean opened = (Boolean) jsonObj.get("open_now");
     	Log.i("PlacesClient", String.valueOf(opened) );
     	String businessState = opened ? "Opened Now": "Closed Now";
@@ -395,8 +400,9 @@ public class PlacesClient {
     
     private ArrayList<HashMap<String,Object>> formatDetailsPhotos(JSONArray jsonArr){
     	
-    	Log.i("PlacesClient", "inside formatDetailsPhotos");
+    	Log.i("PlacesClient formatDetailsPhotos", jsonArr.toJSONString());
     	ArrayList<HashMap<String,Object>> hmlist = new ArrayList<HashMap<String,Object>>();
+    	try{
     	Iterator iter = jsonArr.iterator();
     	while(iter.hasNext()){
     		JSONObject photos = (JSONObject) iter.next();
@@ -406,13 +412,16 @@ public class PlacesClient {
     		hm.put("height", ((Long) photos.get("height")).intValue());
     		hmlist.add(hm);
     	}
+    	
+    	}catch(Exception e){}
     	return hmlist;
     }
     
     private ArrayList<HashMap<String,Object>> formatDetailsReviews(JSONArray jsonArr){
     	
-    	Log.i("PlacesClient", "inside formatDetailsReviews");
+    	Log.i("PlacesClient formatDetailsReviews", jsonArr.toJSONString());
     	ArrayList<HashMap<String,Object>> hmlist = new ArrayList<HashMap<String,Object>>();
+    	try{
     	Iterator iter = jsonArr.iterator();
     	while(iter.hasNext()){
     		JSONObject reviews = (JSONObject) iter.next();
@@ -424,6 +433,9 @@ public class PlacesClient {
     		   hmlist.add(hm);
     		}
     	}
+    	
+    	}catch(Exception e){}
+    	
     	return hmlist;    	
     	
     }

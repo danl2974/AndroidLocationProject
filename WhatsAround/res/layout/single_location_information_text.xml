@@ -40,7 +40,10 @@
             android:textColor="#311919"
             android:paddingLeft="10dp"
             android:paddingRight="3dp"
-        android:textSize="12sp" >
+            android:paddingTop="10dp"
+            android:paddingBottom="20dp"
+        android:textSize="14sp"
+        android:textStyle="bold" >"
         </TextView>        
         <TextView 
         android:id="@+id/single_website"

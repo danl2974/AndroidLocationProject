@@ -19,6 +19,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -100,7 +103,18 @@ public class SingleFragment extends Fragment {
 		single_hours.setText((String) placeDetailsData.get("hours"));
 		TextView single_telephone = (TextView) textPortion.findViewById(R.id.single_telephone);
 		//single_telephone.setText(locationData.get("tel"));
+		single_telephone.setClickable(true);
 		single_telephone.setText((String) placeDetailsData.get("formatted_phone_number"));
+		single_telephone.setTextColor(0xFF59c2a3);
+		single_telephone.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
+		single_telephone.setOnClickListener(new View.OnClickListener() {
+			  @Override
+			  public void onClick(View v) {
+				  Intent callIntent = new Intent(Intent.ACTION_CALL);
+				  callIntent.setData(Uri.parse(String.format("tel:%s", ((String) SingleFragment.this.placeDetailsData.get("formatted_phone_number")).replaceAll( "[^\\d]", "" )) ));
+				  startActivity(callIntent);
+			  }
+			});
 		
 		TextView single_website = (TextView) textPortion.findViewById(R.id.single_website);
 		single_website.setClickable(true);

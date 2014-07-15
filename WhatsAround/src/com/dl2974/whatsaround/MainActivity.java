@@ -65,7 +65,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends FragmentActivity implements 
-LocationsListFragment.OnLocationTypeSelectedListener, 
+LocationsListFragment.OnLocationTypeSelectedListener,
+HomeGridFragment.OnPlaceTypeSelectedListener,
 FactualFragment.OnLocationSelectedListener,
 FactualFragment.OnUserLocationChange,
 //LocationFragment.MapListener,
@@ -124,11 +125,13 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	                return;
 	            }
 			 
-			 LocationsListFragment llFragment = new LocationsListFragment();
-
-			 llFragment.setArguments(getIntent().getExtras());
-
-	         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, llFragment).commit();
+			 //LocationsListFragment llFragment = new LocationsListFragment();
+			 //llFragment.setArguments(getIntent().getExtras());
+	         //getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, llFragment).commit();
+	         
+	         HomeGridFragment hgFragment = new HomeGridFragment();
+	         hgFragment.setArguments(getIntent().getExtras());
+	         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, hgFragment).commit();
 			 
 		}
 	}
@@ -173,6 +176,19 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 
         transaction.commit();
 	}
+	
+	public void onPlaceTypeFilter(String filter){
+		//this.yelpFilter = filter;
+		this.placesFilter = filter;
+		
+        CustomMapFragment mapFragment = CustomMapFragment.newInstance();
+		
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, mapFragment, MAP_FRAGMENT);
+        transaction.addToBackStack(null);
+
+        transaction.commit();
+	}	
 	
 	
 	public void onLocationSelected(HashMap<String,String> locationMap) {
@@ -417,8 +433,20 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 			iw_address.setText((String) this.placesLocationDetailsData.get("formatted_address"));
 			TextView iw_hours = (TextView) infoWindowView.findViewById(R.id.iw_hours);
 			iw_hours.setText((String) this.placesLocationDetailsData.get("hours"));
+			
+			
 			TextView iw_telephone = (TextView) infoWindowView.findViewById(R.id.iw_telephone);
+			iw_telephone.setClickable(true);
 			iw_telephone.setText((String) this.placesLocationDetailsData.get("formatted_phone_number"));
+			iw_telephone.setOnClickListener(new View.OnClickListener() {
+				  @Override
+				  public void onClick(View v) {
+					  Intent callIntent = new Intent(Intent.ACTION_CALL);
+					  callIntent.setData(Uri.parse((String) MainActivity.this.placesLocationDetailsData.get("formatted_phone_number")));
+					  startActivity(callIntent);
+				  }
+				});
+			
 			
 			TextView iw_website = (TextView) infoWindowView.findViewById(R.id.iw_website);
 			iw_website.setClickable(true);
