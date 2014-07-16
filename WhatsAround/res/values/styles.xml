@@ -20,7 +20,6 @@
     
     
     
-    
         <!-- the theme applied to the application or activity -->
     <style name="CustomActionBarTheme"
            parent="@android:style/Theme.Holo.Light.DarkActionBar">
@@ -31,6 +30,11 @@
     <style name="WhatsAroundActionBar"
            parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
         <item name="android:background">@drawable/actionbar_background</item>
+    </style>
+    
+    <style name="PhotoGridLayout">
+        <item name="android:drawSelectorOnTop">true</item>
+        <item name="android:listSelector">@drawable/photogrid_list_selector</item>
     </style>
     
 
