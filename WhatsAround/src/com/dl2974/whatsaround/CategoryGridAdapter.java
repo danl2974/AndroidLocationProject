@@ -1,6 +1,17 @@
 package com.dl2974.whatsaround;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import com.dl2974.whatsaround.PlacesClient.PlacesCallType;
+
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.util.Log;
+import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
@@ -12,14 +23,21 @@ import android.widget.TextView;
 
 public class CategoryGridAdapter extends BaseAdapter {
 	
+	static class ViewHolder {
+		  TextView text;
+		  ImageView image;
+	}
+	
     private Context mContext;
     private String[] placeTypes;
     private Integer[] categoryImages;
+    private HashMap<String,String> typephotoMap;;
 
-    public CategoryGridAdapter(Context c, String[] categories, Integer[] imgResourceIds) {
+    public CategoryGridAdapter(Context c, String[] categories, Integer[] imgResourceIds, HashMap<String,String> hm) {
         mContext = c;
         placeTypes = categories;
         categoryImages = imgResourceIds;
+        this.typephotoMap = hm;
     }
 
     public int getCount() {
@@ -34,7 +52,8 @@ public class CategoryGridAdapter extends BaseAdapter {
         return 0;
     }
 
-    public View getView(int position, View convertView, ViewGroup parent) {
+    @SuppressLint("NewApi")
+	public View getView(int position, View convertView, ViewGroup parent) {
     	/*
         TextView tView;
         if (convertView == null) {  // if it's not recycled, initialize some attributes
@@ -48,6 +67,9 @@ public class CategoryGridAdapter extends BaseAdapter {
         tView.setText(placeTypes[position]);
         return tView;
         */
+    	
+    	/////
+    	/*
         ImageView imageView;
         if (convertView == null) {  // if it's not recycled, initialize some attributes
             imageView = new ImageView(mContext);
@@ -61,9 +83,71 @@ public class CategoryGridAdapter extends BaseAdapter {
             imageView = (ImageView) convertView;
         }
 
-        imageView.setImageResource(categoryImages[position]);
+        imageView.setImageResource(categoryImages[position]);  
         //imageView.setImageDrawable(categoryImages[position].getDrawable());
         return imageView;
+        */
+        
+    	
+        TextView textView;
+        if (convertView == null) {  
+            textView = new TextView(mContext);
+            textView.setLayoutParams(new GridView.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+            //textView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            textView.setPadding(2, 2, 2, 2);
+            //textView.setAdjustViewBounds(true);
+            //imageView.setBackgroundResource(R.drawable.customborder);
+            //imageView.setBackgroundColor(0xFFF1F1F0);
+        } else {
+            textView = (TextView) convertView;
+        }
+        
+        if(this.typephotoMap.containsKey(placeTypes[position])){
+        	Log.i("TypePhotoAdapter", String.format("%s %s", placeTypes[position], this.typephotoMap.get(placeTypes[position])));
+        	HashMap<String,Object> params = new HashMap<String,Object>();
+        	params.put("photoreference", this.typephotoMap.get(placeTypes[position]));
+        	PlacesClient pc = new PlacesClient(params, PlacesCallType.photos);
+        	Bitmap typePhotoBitmap = pc.getPhotoBitmap();
+        	Log.i("TypePhotoAdapter", String.format("%s %d %d", placeTypes[position], typePhotoBitmap.getByteCount(), typePhotoBitmap.getHeight()) );
+        	textView.setBackground(new BitmapDrawable(mContext.getResources(), typePhotoBitmap));
+        }
+        else{
+        	textView.setBackgroundResource(categoryImages[position]);
+        }
+        
+        //textView.setBackgroundResource(categoryImages[position]);
+        textView.setText(placeTypes[position]);
+        textView.setTextColor(0xFFFFFFFF);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
+        
+        return textView;
+    	
+    	/*
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        ViewHolder holder;
+        ImageView imageView;
+        if (convertView == null) { 
+        	convertView = inflater.inflate(R.layout.home_grid, parent, true);                       
+            holder = new ViewHolder();
+            imageView = new ImageView(mContext);
+            imageView.setLayoutParams(new GridView.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            imageView.setPadding(2, 2, 2, 2);
+            imageView.setAdjustViewBounds(true);
+            holder.image = imageView;
+            holder.text = new TextView(mContext);
+            convertView.setTag(holder);
+
+        } else {    
+            holder = (ViewHolder) convertView.getTag();
+        }
+
+        holder.image.setImageResource(categoryImages[position]);
+        holder.text.setText(placeTypes[position]);
+
+        return convertView;
+    	*/
+    	
     }
 
 

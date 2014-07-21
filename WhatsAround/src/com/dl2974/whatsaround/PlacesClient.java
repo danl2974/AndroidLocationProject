@@ -97,6 +97,25 @@ public class PlacesClient {
 		
 	}
 	
+	
+	public HashMap<String,String> getTypePhotoMap(){
+		
+		HashMap<String,String> result = null;
+		AsyncTask<String, Void,HashMap<String,String>> task = new TypePhotoSearchTask().execute(this.requestParameters);
+		   
+		try {
+			 result = task.get();
+		} catch (InterruptedException e) {
+			Log.e(this.getClass().getName(), e.getMessage());
+		} catch (ExecutionException e) {
+			Log.e(this.getClass().getName(), e.getMessage());
+		}
+		  
+		  return result;
+		
+	}	
+	
+	
 	public Bitmap getPhotoBitmap(){
 		
 		Bitmap photo = null;
@@ -201,6 +220,34 @@ public class PlacesClient {
 	        	
 	       }
 	    }
+    
+    
+    
+    public class TypePhotoSearchTask extends AsyncTask<String, Void, HashMap<String,String> > {
+   	 
+        @Override
+        protected HashMap<String,String> doInBackground(String... urlParams) {
+              
+        try {
+                String placesResult = call(PlacesClient.this.endpoint, urlParams[0]);
+                HashMap<String,String> response = null;
+                response = parseJsonSearchForPhotoRef(placesResult);
+                
+                return response;
+                
+            } catch (Exception e) {
+                
+                return null;
+            }
+        }
+        	        
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(HashMap<String,String> result) {
+            //No UI to update      	
+        	
+       }
+    }    
     
     
     
@@ -439,6 +486,40 @@ public class PlacesClient {
     	return hmlist;    	
     	
     }
+    
+    
+   HashMap<String,String>  parseJsonSearchForPhotoRef(String jsonString){
+    	
+	    HashMap<String,String> pairs = new HashMap<String,String>();
+		JSONParser parser= new JSONParser();
+		JSONObject obj = null;
+        if(jsonString != null){
+		  try {
+			obj = (JSONObject) parser.parse(jsonString);
+		  } catch (ParseException e) {
+			Log.e("parseJsonSearchResponse", e.getMessage());
+		  }
+        
+		  if (obj.get("status").equals("OK")){
+		  
+			  JSONArray resultsArray = (JSONArray) obj.get("results");
+			  Iterator i = resultsArray.iterator();
+			  while (i.hasNext()) {
+				  
+				 JSONObject resultItem = (JSONObject) i.next();
+				 try{
+				  String photoRef = (String) ((JSONObject) ((JSONArray) resultItem.get("photos")).get(0)).get("photo_reference");
+				  String type = (String) ((JSONArray) resultItem.get("types")).get(0);
+				  pairs.put(type, photoRef);
+				 }catch(Exception e){}
+				  
+			  }
+		  
+		  }
+        }
+		return pairs;    	
+    	
+    }     
     
     
 }
