@@ -23,21 +23,16 @@ import android.widget.TextView;
 
 public class CategoryGridAdapter extends BaseAdapter {
 	
-	static class ViewHolder {
-		  TextView text;
-		  ImageView image;
-	}
-	
     private Context mContext;
     private String[] placeTypes;
     private Integer[] categoryImages;
-    private HashMap<String,String> typephotoMap;;
+    private HashMap<String,Object> typephotoMap;
 
-    public CategoryGridAdapter(Context c, String[] categories, Integer[] imgResourceIds, HashMap<String,String> hm) {
+    public CategoryGridAdapter(Context c, String[] categories, Integer[] imgResourceIds, HashMap<String,Object> hm) {
         mContext = c;
         placeTypes = categories;
         categoryImages = imgResourceIds;
-        this.typephotoMap = hm;
+        this.typephotoMap = (hm != null) ? hm : new HashMap<String,Object>();
     }
 
     public int getCount() {
@@ -103,13 +98,8 @@ public class CategoryGridAdapter extends BaseAdapter {
         }
         
         if(this.typephotoMap.containsKey(placeTypes[position])){
-        	Log.i("TypePhotoAdapter", String.format("%s %s", placeTypes[position], this.typephotoMap.get(placeTypes[position])));
-        	HashMap<String,Object> params = new HashMap<String,Object>();
-        	params.put("photoreference", this.typephotoMap.get(placeTypes[position]));
-        	PlacesClient pc = new PlacesClient(params, PlacesCallType.photos);
-        	Bitmap typePhotoBitmap = pc.getPhotoBitmap();
-        	Log.i("TypePhotoAdapter", String.format("%s %d %d", placeTypes[position], typePhotoBitmap.getByteCount(), typePhotoBitmap.getHeight()) );
-        	textView.setBackground(new BitmapDrawable(mContext.getResources(), typePhotoBitmap));
+
+        	textView.setBackground(new BitmapDrawable(mContext.getResources(), (Bitmap) this.typephotoMap.get(placeTypes[position]) ));
         }
         else{
         	textView.setBackgroundResource(categoryImages[position]);

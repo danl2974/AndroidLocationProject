@@ -19,6 +19,9 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -33,6 +36,8 @@ import com.factual.driver.ReadResponse;
 
 public class PlacesClient {
 	
+	private IPlacesClientTaskCompleted mainCallback;
+	private Context mContext;
     private static String apiKey = "AIzaSyCi1enQk9Q222E5zniPTc7WJHS74DgGhgY";
 	private double latitude;
 	private double longitude;
@@ -51,6 +56,11 @@ public class PlacesClient {
 		details,
 		photos
 	}
+	
+    public interface IPlacesClientTaskCompleted {
+        
+        public void startGridFragment(HashMap<String,Object> obj);
+    }
 	
 	public PlacesClient(HashMap<String,Object> parameters, PlacesCallType callType){
 		  
@@ -80,11 +90,42 @@ public class PlacesClient {
 		  
 	}
 	
+	public PlacesClient(Context cxt, HashMap<String,Object> parameters, PlacesCallType callType){
+		  
+		//this.apiKey = apiKey;
+		this.mainCallback = (IPlacesClientTaskCompleted) cxt;
+		this.mContext = cxt;
+		
+		switch(callType){
+		
+		case search:
+			this.placesCallType = PlacesCallType.search;
+			this.endpoint = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
+			this.requestParameters = createUrlParameters(parameters);
+			break;
+			
+		case details:
+			this.placesCallType = PlacesCallType.details;
+			this.endpoint = "https://maps.googleapis.com/maps/api/place/details/json";
+			this.requestParameters = createUrlParameters(parameters);
+			break;
+			
+		case photos:
+			this.placesCallType = PlacesCallType.photos;
+			this.endpoint = "https://maps.googleapis.com/maps/api/place/photo";
+			this.requestParameters = createUrlParameters(parameters);
+			break;
+		
+		}
+		  
+	}	
+	
+	
 	public ArrayList<HashMap<String,Object>> getPlacesData(){
 		
 		ArrayList<HashMap<String,Object>> result = null;
 		AsyncTask<String, Void, ArrayList<HashMap<String,Object>>> task = new PlacesClientTask().execute(this.requestParameters);
-		   
+		 
 		try {
 			 result = task.get();
 		} catch (InterruptedException e) {
@@ -98,10 +139,10 @@ public class PlacesClient {
 	}
 	
 	
-	public HashMap<String,String> getTypePhotoMap(){
+	public HashMap<String,Object> getTypePhotoMap(){
 		
-		HashMap<String,String> result = null;
-		AsyncTask<String, Void,HashMap<String,String>> task = new TypePhotoSearchTask().execute(this.requestParameters);
+		HashMap<String,Object> result = null;
+		AsyncTask<String, Void,HashMap<String,Object>> task = new TypePhotoSearchTask().execute(this.requestParameters);
 		   
 		try {
 			 result = task.get();
@@ -116,6 +157,7 @@ public class PlacesClient {
 	}	
 	
 	
+	@SuppressLint("NewApi")
 	public Bitmap getPhotoBitmap(){
 		
 		Bitmap photo = null;
@@ -141,7 +183,8 @@ public class PlacesClient {
 			HttpURLConnection conn = null;
 			InputStream is = null;
 			try{
-			    String urlString = this.endpoint + "?" + requestParams;
+			    //String urlString = this.endpoint + "?" + requestParams;
+				String urlString = String.format("%s?%s", requestpath, requestParams);
 		        URL url = new URL(urlString);
 	            conn = (HttpURLConnection) url.openConnection();
 	            conn.setRequestMethod("GET");
@@ -186,10 +229,8 @@ public class PlacesClient {
 	    	 
 	        @Override
 	        protected ArrayList<HashMap<String,Object>> doInBackground(String... urlParams) {
-	              
+	        	 
 	        try {
-	        	
-	        	    Log.i("PlacesClient PlacesClientTask url", PlacesClient.this.endpoint + urlParams[0]);
                     String placesResult = call(PlacesClient.this.endpoint, urlParams[0]);
                     ArrayList<HashMap<String,Object>> response = null;
                     
@@ -204,7 +245,7 @@ public class PlacesClient {
             			break;
             		
             		}
-                    
+            		
 	                return response;
 	                
 	            } catch (Exception e) {
@@ -223,14 +264,23 @@ public class PlacesClient {
     
     
     
-    public class TypePhotoSearchTask extends AsyncTask<String, Void, HashMap<String,String> > {
+    public class TypePhotoSearchTask extends AsyncTask<String, Void, HashMap<String,Object> > {
+    	
+    	ProgressDialog dialog = new ProgressDialog(PlacesClient.this.mContext);
+    	
+    	@Override
+    	protected void onPreExecute() {
+           dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+           dialog.setMessage("Getting Your Location Information");
+           dialog.show();
+    	}
    	 
         @Override
-        protected HashMap<String,String> doInBackground(String... urlParams) {
+        protected HashMap<String,Object> doInBackground(String... urlParams) {
               
         try {
                 String placesResult = call(PlacesClient.this.endpoint, urlParams[0]);
-                HashMap<String,String> response = null;
+                HashMap<String,Object> response = null;
                 response = parseJsonSearchForPhotoRef(placesResult);
                 
                 return response;
@@ -243,9 +293,11 @@ public class PlacesClient {
         	        
         // onPostExecute displays the results of the AsyncTask.
         @Override
-        protected void onPostExecute(HashMap<String,String> result) {
-            //No UI to update      	
-        	
+        protected void onPostExecute(HashMap<String,Object> result) {
+    		if (dialog.isShowing()) {
+            	dialog.dismiss();
+            }   	
+        	PlacesClient.this.mainCallback.startGridFragment(result);
        }
     }    
     
@@ -259,6 +311,7 @@ public class PlacesClient {
         try {
         	    Bitmap photo = null;
                 photo = callPhoto(PlacesClient.this.endpoint, urlParams[0]);  
+                
                 return photo;
                 
             } catch (Exception e) {
@@ -388,14 +441,31 @@ public class PlacesClient {
     
     
     
-    Bitmap callPhoto(String endpoint, String requestParams){
-
-    	 String src = String.format("%s?%s");
+    
+	private Bitmap callPhoto(String endpoint, String requestParams){
+    	
+    	 String src = String.format("%s?%s", endpoint, requestParams);
+    	 Log.i("PlacesClientPhotoCallPhoto", src);
 	     Bitmap bmp = null;
 	        URL url;
+	        HttpURLConnection conn = null;
+			InputStream is = null;
 	        try {
 	           url = new URL(src);
-	           bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+	           conn = (HttpURLConnection) url.openConnection();
+	           int response = conn.getResponseCode();
+	            if (response == 200){
+	              is = conn.getInputStream();
+	              bmp = BitmapFactory.decodeStream(is);
+	              Log.i("PlacesClient callPhoto", String.valueOf(response));
+	            }
+	            else{
+	        	  is = conn.getErrorStream();
+	        	  Log.i("PlacesClient callPhoto", String.valueOf(response));
+	            }
+	           
+	           //bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+	           //Log.i("PlacesClientPhoto Bitmap", String.valueOf(bmp.getHeight()) );
 	        }
 	        catch (Exception e) {
 	           Log.e(getClass().getName(), e.getMessage());
@@ -488,9 +558,9 @@ public class PlacesClient {
     }
     
     
-   HashMap<String,String>  parseJsonSearchForPhotoRef(String jsonString){
+   private HashMap<String,Object>  parseJsonSearchForPhotoRef(String jsonString){
     	
-	    HashMap<String,String> pairs = new HashMap<String,String>();
+	    HashMap<String,Object> pairs = new HashMap<String,Object>();
 		JSONParser parser= new JSONParser();
 		JSONObject obj = null;
         if(jsonString != null){
@@ -508,10 +578,36 @@ public class PlacesClient {
 				  
 				 JSONObject resultItem = (JSONObject) i.next();
 				 try{
-				  String photoRef = (String) ((JSONObject) ((JSONArray) resultItem.get("photos")).get(0)).get("photo_reference");
+				  //String photoRef = (String) ((JSONObject) ((JSONArray) resultItem.get("photos")).get(0)).get("photo_reference"); 
 				  String type = (String) ((JSONArray) resultItem.get("types")).get(0);
-				  pairs.put(type, photoRef);
-				 }catch(Exception e){}
+				  String placeId = (String) resultItem.get("place_id");
+
+				  if(!pairs.containsKey(type)){
+					  
+					  HashMap<String,Object> detailsParams = new HashMap<String,Object>();
+					  detailsParams.put("placeid", placeId);
+					  String detailsJsonRespoonse = call("https://maps.googleapis.com/maps/api/place/details/json", createUrlParameters(detailsParams));
+					  Log.i("PlacesClientPhotoRefJson" + placeId, detailsJsonRespoonse );
+					  ArrayList<HashMap<String, Object>> details = parseJsonDetailsResponse(detailsJsonRespoonse);
+					  //Log.i("PlacesClientPhotoRef", String.valueOf(details.size()) );
+					  ArrayList<HashMap<String,Object>> photoList =  (ArrayList<HashMap<String,Object>>) details.get(0).get("photos");
+					  
+					     String photoRef = (String) ((HashMap<String,Object>) photoList.get(0)).get("photo_reference");
+					     HashMap<String,Object> photoParams = new HashMap<String,Object>();
+					     photoParams.put("photoreference", photoRef);
+					     photoParams.put("maxwidth", 1600);
+					     Bitmap typePhotoBitmap = callPhoto("https://maps.googleapis.com/maps/api/place/photo", createUrlParameters(photoParams));
+					  
+					     if (typePhotoBitmap != null){
+						    Log.i("typePhotoBitmap", String.valueOf(typePhotoBitmap.getHeight()) );
+				            pairs.put(type, typePhotoBitmap);
+				            
+					     }
+					     
+					     
+					  
+				  }
+				 }catch(Exception e){Log.i(getClass().getName(), "Exception in parseJsonSearchForPhotoRef()" );}
 				  
 			  }
 		  
