@@ -178,7 +178,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
         searchParams.put("location", String.format("%s,%s", userLocation.getLatitude(), userLocation.getLongitude() ));
         searchParams.put("radius", "5000");
         PlacesClient homeGridPC = new PlacesClient(this, searchParams, PlacesCallType.search);
-        homeGridPC.getTypePhotoMap(); // Async: will call startGridFragment
+        homeGridPC.getTypePhotoMap(this); // Async: will call startGridFragment
         
         
         /*

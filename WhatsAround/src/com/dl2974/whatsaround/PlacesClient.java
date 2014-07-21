@@ -20,6 +20,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -139,10 +140,10 @@ public class PlacesClient {
 	}
 	
 	
-	public HashMap<String,Object> getTypePhotoMap(){
+	public HashMap<String,Object> getTypePhotoMap(Activity uiactivity){
 		
 		HashMap<String,Object> result = null;
-		AsyncTask<String, Void,HashMap<String,Object>> task = new TypePhotoSearchTask().execute(this.requestParameters);
+		AsyncTask<String, Void,HashMap<String,Object>> task = new TypePhotoSearchTask(uiactivity).execute(this.requestParameters);
 		   
 		try {
 			 result = task.get();
@@ -266,10 +267,15 @@ public class PlacesClient {
     
     public class TypePhotoSearchTask extends AsyncTask<String, Void, HashMap<String,Object> > {
     	
-    	ProgressDialog dialog = new ProgressDialog(PlacesClient.this.mContext);
+    	private ProgressDialog dialog;
+    	
+    	public TypePhotoSearchTask(Activity uiactivity) {
+            dialog = new ProgressDialog(uiactivity);
+        }
     	
     	@Override
     	protected void onPreExecute() {
+    	   super.onPreExecute();
            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
            dialog.setMessage("Getting Your Location Information");
            dialog.show();
@@ -291,10 +297,10 @@ public class PlacesClient {
             }
         }
         	        
-        // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(HashMap<String,Object> result) {
     		if (dialog.isShowing()) {
+    			Log.i("DialogShowing","inside dialog showing");
             	dialog.dismiss();
             }   	
         	PlacesClient.this.mainCallback.startGridFragment(result);
