@@ -67,7 +67,6 @@ import android.widget.Toast;
 
 public class MainActivity extends FragmentActivity implements 
 LocationsListFragment.OnLocationTypeSelectedListener,
-PlacesClient.IPlacesClientTaskCompleted,
 HomeGridFragment.OnPlaceTypeSelectedListener,
 FactualFragment.OnLocationSelectedListener,
 FactualFragment.OnUserLocationChange,
@@ -83,6 +82,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
     private LocationRequest mLocationRequest;
     private LocationClient mLocationClient;
 	Location userLocation;
+	HashMap<String,Object> gridPhotoState = new HashMap<String,Object>();
 	HashMap<String,Object> activityLocationData;
 	ArrayList<HashMap<String,Object>> placesLocations;
 	HashMap<String,Object> placesLocationDetailsData;
@@ -105,9 +105,15 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Log.i("Main", "inside mainactivity");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.container);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
+
+		Intent mIntent = this.getIntent();
+		this.userLocation = mIntent.getParcelableExtra(InitialActivity.LOCATION_EXTRA);
+		//this.gridPhotoState = (HashMap<String, Object>) mIntent.getSerializableExtra(InitialActivity.PHOTO_TYPE_MAP_EXTRA);
+		Log.i("Main", String.valueOf(this.gridPhotoState.size()));
 		
 		int availableCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
 		if (availableCode == ConnectionResult.SUCCESS)
@@ -116,7 +122,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	      this.mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 	      this.mLocationClient = new LocationClient(this, this, this);
 	      this.mLocationClient.connect();
-	      
+	      Log.i("Main", "this.mLocationClient.connect() called");
 		}
 		else{
 			Dialog dialog = GooglePlayServicesUtil.getErrorDialog(availableCode, this, 0);
@@ -131,55 +137,82 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 			 //LocationsListFragment llFragment = new LocationsListFragment();
 			 //llFragment.setArguments(getIntent().getExtras());
 	         //getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, llFragment).commit();
-	         
-			 ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		     NetworkInfo networkInfo = connMgr.getActiveNetworkInfo(); 
-		        
-		     if (networkInfo != null && networkInfo.isConnected() && this.userLocation != null) {
-		    	 
-			    initGridHome();
 			 
-		     }
-		     else{
-		       	  AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity.this);
-		       	  alertBuilder
-		       	  .setTitle("Where Are You?")
-		       	  .setMessage("Your current location isn't available from your device. Are we allowed to find you?")
-		             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-		           	  @Override
-		                 public void onClick(DialogInterface dialog, int id) {
-		           		  dialog.cancel();
-		           		  Toast.makeText(MainActivity.this, "Trying To Find Your Location", Toast.LENGTH_LONG).show(); 
-		           		  MainActivity.this.connectionRetry = true;
-		               	  MainActivity.this.mLocationClient.connect(); 
-		                 }
-		             })
-		             .setNegativeButton("No", new DialogInterface.OnClickListener() {
-		           	  @Override
-		                 public void onClick(DialogInterface dialog, int id) {
-		                      dialog.cancel();
-		                 }
-		             });
-		       	  AlertDialog alertDialog = alertBuilder.create();
-		       	  alertDialog.show();
-		       	  
-		         } //end ELSE    
-   
-		       
+			 
+			 //InitialFragment initFrag = new InitialFragment();
+			 //getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, initFrag).commit();
+			 
+			  Log.i("Main", "before HomeGridFragment");			 
+			  HomeGridFragment hgFragment = new HomeGridFragment();
+		      hgFragment.setTypePhotoMap(this.gridPhotoState);
+		      hgFragment.setArguments(getIntent().getExtras());
+		      getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, hgFragment).commit();
+		      Log.i("Main", "after HomeGridFragment");
+			 
 			 
 		}
 	}
 	
+	/*
+	@Override
+	protected void onStart (){
+		
+		 super.onStart();
+		
+		 if (this.gridPhotoState != null)
+		 {
+			 startGridFragment(this.gridPhotoState);
+			 return;
+		 }
+		 
+		 ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+	     NetworkInfo networkInfo = connMgr.getActiveNetworkInfo(); 
+	     String locTest = this.userLocation != null ? "true" : "false";
+	     Log.i("InitGridCheck", String.format("%s %s %s", String.valueOf(networkInfo.isAvailable()), String.valueOf(networkInfo.isConnected()), locTest)  );
+	        
+	     if (networkInfo != null && networkInfo.isConnected() && this.userLocation != null) {
+	    	 
+		    initGridHome();
+		 
+	     }
+	     else{
+	       	  AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity.this);
+	       	  alertBuilder
+	       	  .setTitle("Where Are You?")
+	       	  .setMessage("Your current location isn't available from your device. Are we allowed to find you?")
+	             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+	           	  @Override
+	                 public void onClick(DialogInterface dialog, int id) {
+	           		  dialog.cancel();
+	           		  Toast.makeText(MainActivity.this, "Trying To Find Your Location", Toast.LENGTH_LONG).show(); 
+	           		  MainActivity.this.connectionRetry = true;
+	               	  MainActivity.this.mLocationClient.connect();
+	                 }
+	             })
+	             .setNegativeButton("No", new DialogInterface.OnClickListener() {
+	           	  @Override
+	                 public void onClick(DialogInterface dialog, int id) {
+	                      dialog.cancel();
+	                 }
+	             });
+	       	  AlertDialog alertDialog = alertBuilder.create();
+	       	  alertDialog.show();
+	       	  
+	         } //end ELSE
+		
+	}
+	*/
+	
 	
 	private void initGridHome(){
 		
-        
+        /*
         HashMap<String,Object> searchParams = new HashMap<String,Object>();
         searchParams.put("location", String.format("%s,%s", userLocation.getLatitude(), userLocation.getLongitude() ));
         searchParams.put("radius", "5000");
         PlacesClient homeGridPC = new PlacesClient(this, searchParams, PlacesCallType.search);
-        homeGridPC.getTypePhotoMap(this); // Async: will call startGridFragment
-        
+        this.gridPhotoState = homeGridPC.getTypePhotoMap(this); // Async: will call startGridFragment
+        */
         
         /*
         //start original in onCreate
@@ -191,6 +224,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
          */
 	 
 	}
+    
 	
 	public void startGridFragment(HashMap<String,Object> locationTypePhotoMap){
 		 
@@ -198,7 +232,8 @@ GooglePlayServicesClient.OnConnectionFailedListener {
         HomeGridFragment hgFragment = new HomeGridFragment();
         hgFragment.setTypePhotoMap(locationTypePhotoMap);
         hgFragment.setArguments(getIntent().getExtras());
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, hgFragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, hgFragment,"gridfragment").commit();
+        //getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, hgFragment).commit();
         //end original in onCreate
 		
 	}
@@ -746,15 +781,16 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	public void onConnected(Bundle bundle) {
 	
 		googlePlayServicesConnected = true;
-		this.userLocation = mLocationClient.getLastLocation();
+		//this.userLocation = mLocationClient.getLastLocation();
 		mLocationClient.requestLocationUpdates(mLocationRequest, this);
 		
+		/*
 		if(this.connectionRetry){
 			//onUserCenteredLocationsView();
 			initGridHome();
 			this.connectionRetry = false;
 		}
-		
+		*/
 	}
 	
     @Override

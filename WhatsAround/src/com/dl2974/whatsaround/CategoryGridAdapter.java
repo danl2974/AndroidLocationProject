@@ -85,9 +85,11 @@ public class CategoryGridAdapter extends BaseAdapter {
         
     	
         TextView textView;
+
         if (convertView == null) {  
             textView = new TextView(mContext);
             textView.setLayoutParams(new GridView.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+            
             //textView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             textView.setPadding(2, 2, 2, 2);
             //textView.setAdjustViewBounds(true);
@@ -98,7 +100,6 @@ public class CategoryGridAdapter extends BaseAdapter {
         }
         
         if(this.typephotoMap.containsKey(placeTypes[position])){
-
         	textView.setBackground(new BitmapDrawable(mContext.getResources(), (Bitmap) this.typephotoMap.get(placeTypes[position]) ));
         }
         else{

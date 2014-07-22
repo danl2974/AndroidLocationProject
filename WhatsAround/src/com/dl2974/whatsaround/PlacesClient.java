@@ -26,6 +26,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.dl2974.whatsaround.FactualClient.FactualClientTask;
@@ -60,7 +61,8 @@ public class PlacesClient {
 	
     public interface IPlacesClientTaskCompleted {
         
-        public void startGridFragment(HashMap<String,Object> obj);
+        //public void startGridFragment(HashMap<String,Object> obj);
+    	public void startMain(Bundle obj);
     }
 	
 	public PlacesClient(HashMap<String,Object> parameters, PlacesCallType callType){
@@ -140,10 +142,10 @@ public class PlacesClient {
 	}
 	
 	
-	public HashMap<String,Object> getTypePhotoMap(Activity uiactivity){
+	public Bundle getTypePhotoMap(Activity uiactivity){
 		
-		HashMap<String,Object> result = null;
-		AsyncTask<String, Void,HashMap<String,Object>> task = new TypePhotoSearchTask(uiactivity).execute(this.requestParameters);
+		Bundle result = null;
+		AsyncTask<String, Void,Bundle> task = new TypePhotoSearchTask(uiactivity).execute(this.requestParameters);
 		   
 		try {
 			 result = task.get();
@@ -265,7 +267,7 @@ public class PlacesClient {
     
     
     
-    public class TypePhotoSearchTask extends AsyncTask<String, Void, HashMap<String,Object> > {
+    public class TypePhotoSearchTask extends AsyncTask<String, Void, Bundle> {
     	
     	private ProgressDialog dialog;
     	
@@ -279,14 +281,15 @@ public class PlacesClient {
            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
            dialog.setMessage("Getting Your Location Information");
            dialog.show();
+           Log.i("DialogShowing",dialog.getClass().getName() + " " + dialog.getContext().toString());
     	}
    	 
         @Override
-        protected HashMap<String,Object> doInBackground(String... urlParams) {
+        protected Bundle doInBackground(String... urlParams) {
               
         try {
                 String placesResult = call(PlacesClient.this.endpoint, urlParams[0]);
-                HashMap<String,Object> response = null;
+                Bundle response = null;
                 response = parseJsonSearchForPhotoRef(placesResult);
                 
                 return response;
@@ -298,12 +301,14 @@ public class PlacesClient {
         }
         	        
         @Override
-        protected void onPostExecute(HashMap<String,Object> result) {
+        protected void onPostExecute(Bundle result) {
+        	Log.i("TypePhotoMapResult", String.valueOf(result.size()));
     		if (dialog.isShowing()) {
     			Log.i("DialogShowing","inside dialog showing");
             	dialog.dismiss();
             }   	
-        	PlacesClient.this.mainCallback.startGridFragment(result);
+        	//PlacesClient.this.mainCallback.startGridFragment(result);
+    		PlacesClient.this.mainCallback.startMain(result);
        }
     }    
     
@@ -355,7 +360,6 @@ public class PlacesClient {
     
     ArrayList<HashMap<String,Object>>  parseJsonSearchResponse(String jsonString){
     	
-    	Log.i("PlacesClient", "inside parseJsonSearchResponse");
 		ArrayList<HashMap<String,Object>> hmlist = new ArrayList<HashMap<String,Object>>();
 		JSONParser parser= new JSONParser();
 		JSONObject obj = null;
@@ -401,7 +405,6 @@ public class PlacesClient {
     
     ArrayList<HashMap<String,Object>>  parseJsonDetailsResponse(String jsonString){
     	 	
-    	Log.i("PlacesClient", "inside parseJsonDetailsResponse");
 		ArrayList<HashMap<String,Object>> hmlist = new ArrayList<HashMap<String,Object>>();
 		JSONParser parser= new JSONParser();
 		JSONObject obj = null;
@@ -421,7 +424,6 @@ public class PlacesClient {
 				  String field = PlacesClient.detailsDataFields[f];
 				  try{
 				  hm.put(field, (String) resultObj.get(field));
-				  Log.i("PlacesClient", "Detail: " + field  + " " + hm.get(field));
 				  }catch(Exception e){ Log.i("PlacesClient", "Detail Exception: " + field); }
 			  }
 			  
@@ -434,7 +436,7 @@ public class PlacesClient {
 			  if(resultObj.get("reviews") != null){
 			      hm.put("reviews", formatDetailsReviews((JSONArray) resultObj.get("reviews")));
 			  }
-			  Log.i("PlacesClient", "end parse details");
+			  
 			  hmlist.add(hm);
 		  }
 		  
@@ -451,7 +453,6 @@ public class PlacesClient {
 	private Bitmap callPhoto(String endpoint, String requestParams){
     	
     	 String src = String.format("%s?%s", endpoint, requestParams);
-    	 Log.i("PlacesClientPhotoCallPhoto", src);
 	     Bitmap bmp = null;
 	        URL url;
 	        HttpURLConnection conn = null;
@@ -463,7 +464,6 @@ public class PlacesClient {
 	            if (response == 200){
 	              is = conn.getInputStream();
 	              bmp = BitmapFactory.decodeStream(is);
-	              Log.i("PlacesClient callPhoto", String.valueOf(response));
 	            }
 	            else{
 	        	  is = conn.getErrorStream();
@@ -487,11 +487,8 @@ public class PlacesClient {
     	
     	StringBuilder sb = new StringBuilder();
     	try{
-    	Log.i("PlacesClient formatDetailsHours", jsonObj.toJSONString());
     	Boolean opened = (Boolean) jsonObj.get("open_now");
-    	Log.i("PlacesClient", String.valueOf(opened) );
     	String businessState = opened ? "Opened Now": "Closed Now";
-    	Log.i("PlacesClient", businessState );
     	sb.append(businessState + "\n");
     	
     	JSONArray periods = (JSONArray) jsonObj.get("periods");
@@ -500,19 +497,14 @@ public class PlacesClient {
     	   
     		JSONObject dayOfWeek = (JSONObject) iter.next();
     		Long dayIndex = (Long) ((JSONObject) dayOfWeek.get("open")).get("day");
-    		Log.i("PlacesClient dayIndex", String.valueOf(dayIndex) );
     		String open = (String) ((JSONObject) dayOfWeek.get("open")).get("time");
-    		Log.i("PlacesClient open", open );
     		String openStr = Integer.valueOf(open.substring(0,2)) > 12 ? (String.valueOf(Integer.valueOf(open.substring(0,2)) - 12) + ":" + open.substring(2,4)  + " p.m.") : (open.substring(0,2) + ":" + open.substring(2,4));
-    		Log.i("PlacesClient openStr", openStr );
     		String close = (String) ((JSONObject) dayOfWeek.get("close")).get("time");
-    		Log.i("PlacesClient close", close );
     		String closeStr = Integer.valueOf(close.substring(0,2)) > 12 ? (String.valueOf(Integer.valueOf(close.substring(0,2)) - 12) + ":" + close.substring(2,4) + " p.m.") : (close.substring(0,2) + ":" + close.substring(2,4));
-    		Log.i("PlacesClient close", closeStr );
+
     		sb.append(String.format("%s: %s - %s\n", PlacesClient.days[dayIndex.intValue()], openStr, closeStr));
     		
     	}
-    	Log.i("PlacesClient Hours final", sb.toString() );
     	 
     	 }catch(Exception e){}
     	
@@ -523,7 +515,6 @@ public class PlacesClient {
     
     private ArrayList<HashMap<String,Object>> formatDetailsPhotos(JSONArray jsonArr){
     	
-    	Log.i("PlacesClient formatDetailsPhotos", jsonArr.toJSONString());
     	ArrayList<HashMap<String,Object>> hmlist = new ArrayList<HashMap<String,Object>>();
     	try{
     	Iterator iter = jsonArr.iterator();
@@ -542,11 +533,10 @@ public class PlacesClient {
     
     private ArrayList<HashMap<String,Object>> formatDetailsReviews(JSONArray jsonArr){
     	
-    	Log.i("PlacesClient formatDetailsReviews", jsonArr.toJSONString());
     	ArrayList<HashMap<String,Object>> hmlist = new ArrayList<HashMap<String,Object>>();
     	try{
-    	Iterator iter = jsonArr.iterator();
-    	while(iter.hasNext()){
+    	  Iterator iter = jsonArr.iterator();
+    	  while(iter.hasNext()){
     		JSONObject reviews = (JSONObject) iter.next();
     		if ( ((String) ((JSONObject) ((JSONArray) reviews.get("aspects")).get(0)).get("type")).equals("quality") ){
     		   HashMap<String,Object> hm = new HashMap<String,Object>();
@@ -564,9 +554,9 @@ public class PlacesClient {
     }
     
     
-   private HashMap<String,Object>  parseJsonSearchForPhotoRef(String jsonString){
+   private Bundle parseJsonSearchForPhotoRef(String jsonString){
     	
-	    HashMap<String,Object> pairs = new HashMap<String,Object>();
+	   Bundle pairs = new Bundle();
 		JSONParser parser= new JSONParser();
 		JSONObject obj = null;
         if(jsonString != null){
@@ -593,24 +583,20 @@ public class PlacesClient {
 					  HashMap<String,Object> detailsParams = new HashMap<String,Object>();
 					  detailsParams.put("placeid", placeId);
 					  String detailsJsonRespoonse = call("https://maps.googleapis.com/maps/api/place/details/json", createUrlParameters(detailsParams));
-					  Log.i("PlacesClientPhotoRefJson" + placeId, detailsJsonRespoonse );
 					  ArrayList<HashMap<String, Object>> details = parseJsonDetailsResponse(detailsJsonRespoonse);
-					  //Log.i("PlacesClientPhotoRef", String.valueOf(details.size()) );
 					  ArrayList<HashMap<String,Object>> photoList =  (ArrayList<HashMap<String,Object>>) details.get(0).get("photos");
+					  if(photoList.size() > 0){
+					    String photoRef = (String) ((HashMap<String,Object>) photoList.get(0)).get("photo_reference");
+					    HashMap<String,Object> photoParams = new HashMap<String,Object>();
+					    photoParams.put("photoreference", photoRef);
+					    photoParams.put("maxwidth", 1600);
+					    Bitmap typePhotoBitmap = callPhoto("https://maps.googleapis.com/maps/api/place/photo", createUrlParameters(photoParams));
 					  
-					     String photoRef = (String) ((HashMap<String,Object>) photoList.get(0)).get("photo_reference");
-					     HashMap<String,Object> photoParams = new HashMap<String,Object>();
-					     photoParams.put("photoreference", photoRef);
-					     photoParams.put("maxwidth", 1600);
-					     Bitmap typePhotoBitmap = callPhoto("https://maps.googleapis.com/maps/api/place/photo", createUrlParameters(photoParams));
-					  
-					     if (typePhotoBitmap != null){
-						    Log.i("typePhotoBitmap", String.valueOf(typePhotoBitmap.getHeight()) );
-				            pairs.put(type, typePhotoBitmap);
-				            
-					     }
+					    if (typePhotoBitmap != null){
+				            pairs.putParcelable(type, scaleBitmapForGrid(typePhotoBitmap));
+					      }
 					     
-					     
+					  }   
 					  
 				  }
 				 }catch(Exception e){Log.i(getClass().getName(), "Exception in parseJsonSearchForPhotoRef()" );}
@@ -621,7 +607,47 @@ public class PlacesClient {
         }
 		return pairs;    	
     	
-    }     
+    }
+   
+    
+   private Bitmap scaleBitmapForGrid(Bitmap srcBmp){
+
+       Bitmap gridBmp = null;
+       Bitmap squaredBmp = null;
+       int layoutWidth = 160;
+       int layoutHeight = 160;
+       
+       if(srcBmp.getWidth() >= layoutWidth && srcBmp.getHeight() >= layoutHeight){
+     	  
+    	   if (srcBmp.getWidth() >= srcBmp.getHeight()){
+    		
+    		   squaredBmp = Bitmap.createBitmap(
+    			     srcBmp, 
+    			     srcBmp.getWidth()/2 - srcBmp.getHeight()/2,
+    			     0,
+    			     srcBmp.getHeight(), 
+    			     srcBmp.getHeight()
+    			     );
+    		
+    	   }
+    	   else{
+    		   squaredBmp = Bitmap.createBitmap(
+    				     srcBmp,
+    				     0, 
+    				     srcBmp.getHeight()/2 - srcBmp.getWidth()/2,
+    				     srcBmp.getWidth(),
+    				     srcBmp.getWidth() 
+    				     );
+    	   }
+    	
+    	   gridBmp = Bitmap.createScaledBitmap(squaredBmp, layoutWidth, layoutHeight, false);
+    	}
+    	else{
+    	   gridBmp = srcBmp;
+    	}       
+	   
+       return gridBmp;
+   }
     
     
 }
