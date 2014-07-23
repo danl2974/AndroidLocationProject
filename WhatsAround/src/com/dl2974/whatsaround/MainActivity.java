@@ -105,7 +105,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		Log.i("Main", "inside mainactivity");
+		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.container);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -113,7 +113,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 		Intent mIntent = this.getIntent();
 		this.userLocation = mIntent.getParcelableExtra(InitialActivity.LOCATION_EXTRA);
 		//this.gridPhotoState = (HashMap<String, Object>) mIntent.getSerializableExtra(InitialActivity.PHOTO_TYPE_MAP_EXTRA);
-		Log.i("Main", String.valueOf(this.gridPhotoState.size()));
+		
 		
 		int availableCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
 		if (availableCode == ConnectionResult.SUCCESS)
@@ -122,7 +122,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	      this.mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 	      this.mLocationClient = new LocationClient(this, this, this);
 	      this.mLocationClient.connect();
-	      Log.i("Main", "this.mLocationClient.connect() called");
+	     
 		}
 		else{
 			Dialog dialog = GooglePlayServicesUtil.getErrorDialog(availableCode, this, 0);
@@ -142,13 +142,13 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 			 //InitialFragment initFrag = new InitialFragment();
 			 //getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, initFrag).commit();
 			 
-			  Log.i("Main", "before HomeGridFragment");			 
+			  		 
 			  HomeGridFragment hgFragment = new HomeGridFragment();
-		      hgFragment.setTypePhotoMap(this.gridPhotoState);
-		      hgFragment.setArguments(getIntent().getExtras());
+			  hgFragment.setLocation(this.userLocation);
+		      //hgFragment.setTypePhotoMap(this.gridPhotoState);
+		      //hgFragment.setArguments(getIntent().getExtras());
 		      getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, hgFragment).commit();
-		      Log.i("Main", "after HomeGridFragment");
-			 
+		     
 			 
 		}
 	}

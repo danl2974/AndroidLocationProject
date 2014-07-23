@@ -25,9 +25,11 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.dl2974.whatsaround.FactualClient.FactualClientTask;
 import com.factual.driver.Circle;
@@ -96,7 +98,7 @@ public class PlacesClient {
 	public PlacesClient(Context cxt, HashMap<String,Object> parameters, PlacesCallType callType){
 		  
 		//this.apiKey = apiKey;
-		this.mainCallback = (IPlacesClientTaskCompleted) cxt;
+		//this.mainCallback = (IPlacesClientTaskCompleted) cxt;
 		this.mContext = cxt;
 		
 		switch(callType){
@@ -141,11 +143,16 @@ public class PlacesClient {
 		
 	}
 	
-	
-	public Bundle getTypePhotoMap(Activity uiactivity){
+	public void startGridPhotoTask(TypePhotoGridParams tpgParams){
+		
+		AsyncTask<TypePhotoGridParams, Void, Bitmap> task = new TypePhotoSearchTask().execute(tpgParams);
+		
+	}
+	/*
+	public Bundle getTypePhotoMap(TypePhotoGridParams tpgParams){
 		
 		Bundle result = null;
-		AsyncTask<String, Void,Bundle> task = new TypePhotoSearchTask(uiactivity).execute(this.requestParameters);
+		AsyncTask<String, Void, Bitmap> task = new TypePhotoSearchTask().execute(tpgParams);
 		   
 		try {
 			 result = task.get();
@@ -158,7 +165,7 @@ public class PlacesClient {
 		  return result;
 		
 	}	
-	
+	*/
 	
 	@SuppressLint("NewApi")
 	public Bitmap getPhotoBitmap(){
@@ -267,32 +274,32 @@ public class PlacesClient {
     
     
     
-    public class TypePhotoSearchTask extends AsyncTask<String, Void, Bundle> {
+    public class TypePhotoSearchTask extends AsyncTask<TypePhotoGridParams, Void, Bitmap> {
     	
-    	private ProgressDialog dialog;
-    	
-    	public TypePhotoSearchTask(Activity uiactivity) {
-            dialog = new ProgressDialog(uiactivity);
-        }
-    	
+    	TextView textView;
+
     	@Override
     	protected void onPreExecute() {
     	   super.onPreExecute();
+    	   /*
            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
            dialog.setMessage("Getting Your Location Information");
            dialog.show();
            Log.i("DialogShowing",dialog.getClass().getName() + " " + dialog.getContext().toString());
+           */
     	}
-   	 
+   	    
         @Override
-        protected Bundle doInBackground(String... urlParams) {
+        protected Bitmap doInBackground(TypePhotoGridParams... params) {
               
+        textView = params[0].textView;
         try {
-                String placesResult = call(PlacesClient.this.endpoint, urlParams[0]);
-                Bundle response = null;
-                response = parseJsonSearchForPhotoRef(placesResult);
+                String placesResult = call(PlacesClient.this.endpoint, PlacesClient.this.requestParameters);
+                Bitmap bmp = null;
+                //bmp = parseJsonSearchForPhotoRef(placesResult);
+                bmp = parseJsonSearchForBitmap(placesResult);
                 
-                return response;
+                return bmp;
                 
             } catch (Exception e) {
                 
@@ -300,15 +307,23 @@ public class PlacesClient {
             }
         }
         	        
-        @Override
-        protected void onPostExecute(Bundle result) {
+        @SuppressLint("NewApi")
+		@Override
+        protected void onPostExecute(Bitmap bmp) {
+        	
+        	if(bmp != null){
+        	 textView.setBackground(new BitmapDrawable(PlacesClient.this.mContext.getResources(), bmp));
+        	 Log.i("AsyncGridUpdate", String.valueOf(textView.getText()) );
+        	}
+        	/*
         	Log.i("TypePhotoMapResult", String.valueOf(result.size()));
     		if (dialog.isShowing()) {
     			Log.i("DialogShowing","inside dialog showing");
             	dialog.dismiss();
-            }   	
+            }   
+            */	
         	//PlacesClient.this.mainCallback.startGridFragment(result);
-    		PlacesClient.this.mainCallback.startMain(result);
+    		//PlacesClient.this.mainCallback.startMain(result);
        }
     }    
     
@@ -609,6 +624,59 @@ public class PlacesClient {
     	
     }
    
+   
+   private Bitmap parseJsonSearchForBitmap(String jsonString){
+	   
+	    Bitmap bmp = null;
+		JSONParser parser= new JSONParser();
+		JSONObject obj = null;
+        if(jsonString != null){
+		  try {
+			obj = (JSONObject) parser.parse(jsonString);
+		  } catch (ParseException e) {
+			Log.e("parseJsonSearchResponse", e.getMessage());
+		  }
+        
+		  if (obj.get("status").equals("OK")){
+		  
+			  JSONArray resultsArray = (JSONArray) obj.get("results");
+			  Iterator i = resultsArray.iterator();
+			  while (i.hasNext()) {
+				  
+				 JSONObject resultItem = (JSONObject) i.next();
+				 try{
+				  String type = (String) ((JSONArray) resultItem.get("types")).get(0);
+				  String placeId = (String) resultItem.get("place_id");
+					  
+					  HashMap<String,Object> detailsParams = new HashMap<String,Object>();
+					  detailsParams.put("placeid", placeId);
+					  String detailsJsonRespoonse = call("https://maps.googleapis.com/maps/api/place/details/json", createUrlParameters(detailsParams));
+					  ArrayList<HashMap<String, Object>> details = parseJsonDetailsResponse(detailsJsonRespoonse);
+					  ArrayList<HashMap<String,Object>> photoList =  (ArrayList<HashMap<String,Object>>) details.get(0).get("photos");
+					  if(photoList.size() > 0){
+					  String photoRef = (String) ((HashMap<String,Object>) photoList.get(0)).get("photo_reference");
+					  HashMap<String,Object> photoParams = new HashMap<String,Object>();
+					  photoParams.put("photoreference", photoRef);
+					  photoParams.put("maxwidth", 1600);
+					  Bitmap typePhotoBitmap = callPhoto("https://maps.googleapis.com/maps/api/place/photo", createUrlParameters(photoParams));
+					  
+					  if (typePhotoBitmap != null){
+				            bmp = scaleBitmapForGrid(typePhotoBitmap);
+				            break;
+					    }
+
+				  }
+				 }catch(Exception e){Log.i(getClass().getName(), "Exception in parseJsonSearchForBitmap" );}
+				  
+				 
+			  }
+		  
+		  }
+        }
+		return bmp; 
+	   
+	   
+   }
     
    private Bitmap scaleBitmapForGrid(Bitmap srcBmp){
 

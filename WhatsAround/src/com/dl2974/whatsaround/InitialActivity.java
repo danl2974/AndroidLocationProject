@@ -73,13 +73,16 @@ PlacesClient.IPlacesClientTaskCompleted{
 		
 		googlePlayServicesConnected = true;
 		this.userLocation = mLocationClient.getLastLocation();
-		
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra(LOCATION_EXTRA, this.userLocation);
+        startActivity(intent);
+		/*
         HashMap<String,Object> searchParams = new HashMap<String,Object>();
         searchParams.put("location", String.format("%s,%s", userLocation.getLatitude(), userLocation.getLongitude() ));
         searchParams.put("radius", "5000");
         PlacesClient homeGridPC = new PlacesClient(this, searchParams, PlacesCallType.search);
         homeGridPC.getTypePhotoMap(this);
-        
+        */
 		//mLocationClient.requestLocationUpdates(mLocationRequest, MainActivity);
 		
 	}
@@ -88,13 +91,6 @@ PlacesClient.IPlacesClientTaskCompleted{
 		
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(LOCATION_EXTRA, this.userLocation);
-        for (String key : locationTypePhotoMap.keySet()){
-            intent.putExtra(key, locationTypePhotoMap.getParcelable(key));
-        }
-        //Bundle bundle = new Bundle();
-        //bundle.putParcelable(LOCATION_EXTRA, this.userLocation);
-        //bundle.putSerializable(PHOTO_TYPE_MAP_EXTRA, locationTypePhotoMap);
-        //intent.putExtras(bundle);
         startActivity(intent);
        
 	}
