@@ -29,6 +29,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.TextView;
 
 import com.dl2974.whatsaround.FactualClient.FactualClientTask;
@@ -277,6 +278,7 @@ public class PlacesClient {
     public class TypePhotoSearchTask extends AsyncTask<TypePhotoGridParams, Void, Bitmap> {
     	
     	TextView textView;
+    	String placeType;
 
     	@Override
     	protected void onPreExecute() {
@@ -293,11 +295,12 @@ public class PlacesClient {
         protected Bitmap doInBackground(TypePhotoGridParams... params) {
               
         textView = params[0].textView;
+        placeType = params[0].type;
         try {
                 String placesResult = call(PlacesClient.this.endpoint, PlacesClient.this.requestParameters);
                 Bitmap bmp = null;
                 //bmp = parseJsonSearchForPhotoRef(placesResult);
-                bmp = parseJsonSearchForBitmap(placesResult);
+                bmp = parseJsonSearchForBitmap(placesResult, params[0].width, params[0].height);
                 
                 return bmp;
                 
@@ -313,7 +316,10 @@ public class PlacesClient {
         	
         	if(bmp != null){
         	 textView.setBackground(new BitmapDrawable(PlacesClient.this.mContext.getResources(), bmp));
-        	 Log.i("AsyncGridUpdate", String.valueOf(textView.getText()) );
+        	 GridViewCacheSingleton gridViewCache = GridViewCacheSingleton.getInstance();
+        	 gridViewCache.put(placeType, bmp);
+        	 
+        	 Log.i("GridAdapterOnce", String.valueOf(textView.getText()) );
         	}
         	/*
         	Log.i("TypePhotoMapResult", String.valueOf(result.size()));
@@ -568,7 +574,7 @@ public class PlacesClient {
     	
     }
     
-    
+    /*
    private Bundle parseJsonSearchForPhotoRef(String jsonString){
     	
 	   Bundle pairs = new Bundle();
@@ -623,9 +629,9 @@ public class PlacesClient {
 		return pairs;    	
     	
     }
+   */
    
-   
-   private Bitmap parseJsonSearchForBitmap(String jsonString){
+   private Bitmap parseJsonSearchForBitmap(String jsonString, int w, int h){
 	   
 	    Bitmap bmp = null;
 		JSONParser parser= new JSONParser();
@@ -661,7 +667,7 @@ public class PlacesClient {
 					  Bitmap typePhotoBitmap = callPhoto("https://maps.googleapis.com/maps/api/place/photo", createUrlParameters(photoParams));
 					  
 					  if (typePhotoBitmap != null){
-				            bmp = scaleBitmapForGrid(typePhotoBitmap);
+				            bmp = scaleBitmapForGrid(typePhotoBitmap, w, h);
 				            break;
 					    }
 
@@ -678,12 +684,12 @@ public class PlacesClient {
 	   
    }
     
-   private Bitmap scaleBitmapForGrid(Bitmap srcBmp){
+   private Bitmap scaleBitmapForGrid(Bitmap srcBmp, int w, int h){
 
        Bitmap gridBmp = null;
        Bitmap squaredBmp = null;
-       int layoutWidth = 160;
-       int layoutHeight = 160;
+       int layoutWidth = w;
+       int layoutHeight = h;
        
        if(srcBmp.getWidth() >= layoutWidth && srcBmp.getHeight() >= layoutHeight){
      	  
