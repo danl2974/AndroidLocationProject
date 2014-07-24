@@ -3,16 +3,20 @@
     android:id="@+id/initial"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    
     <TextView
         android:id="@+id/progressText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent" 
-        style="?android:attr/progressBarStyleHorizontal" 
-        android:layout_alignParentBottom="true"
-        android:layout_margin="10dp"
-    />
+    
+     <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:visibility="gone" >
+        </ProgressBar>
+
 </RelativeLayout>

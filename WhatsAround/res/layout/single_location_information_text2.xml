@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-   <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:padding="10dp"
-    android:orientation="vertical" >
-    
-        <TextView 
+
+  <TableLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+       android:id="@+id/tableLayout"
+       android:orientation="vertical"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent" >
+       
+       
+       <TableRow 
+           android:layout_height="wrap_content" 
+           android:layout_width="wrap_content" > 
+           
+       <TextView 
         android:id="@+id/single_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -15,6 +21,13 @@
             android:textStyle="bold"
         android:textSize="16sp" >
         </TextView> 
+        
+       </TableRow>
+       
+        <TableRow 
+           android:layout_height="wrap_content" 
+           android:layout_width="wrap_content" >
+       
         <TextView 
         android:id="@+id/single_address"
             android:textColor="#311919"
@@ -23,35 +36,71 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="12sp" >
-        </TextView> 
-        <TextView 
-        android:id="@+id/single_hours"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        </TextView>
+        
+        </TableRow>
+        
+        <TableRow 
+           android:layout_height="wrap_content" 
+           android:layout_width="wrap_content" >
+       
+          <LinearLayout 
+             android:layout_height="wrap_content"
+             android:layout_width="0dp"
+             android:layout_weight="1"
+             android:layout_gravity="left"
+             android:padding="10dp"
+             android:orientation="vertical" >
+             
+            <TextView 
+            android:id="@+id/single_hours"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textColor="#311919"
             android:paddingLeft="10dp"
             android:paddingRight="3dp"
-        android:textSize="12sp" >
-        </TextView> 
-        <TextView 
-        android:id="@+id/single_telephone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+            android:textSize="12sp" >
+            </TextView> 
+       
+
+    
+          </LinearLayout>
+        
+          <LinearLayout 
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical" >
+            
+           <TextView 
+            android:id="@+id/single_telephone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:textColor="#311919"
             android:paddingLeft="10dp"
             android:paddingRight="3dp"
             android:paddingTop="10dp"
-            android:paddingBottom="20dp"
-        android:textSize="14sp"
-        android:textStyle="bold" >"
-        </TextView>        
-        <TextView 
-        android:id="@+id/single_website"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-            android:textColor="#311919"
-            android:paddingLeft="10dp"
-            android:paddingRight="3dp"
-        android:textSize="12sp" >
-        </TextView>
- </LinearLayout>       
+            android:paddingBottom="10dp"
+            android:textSize="14sp"
+            android:textStyle="bold" >
+           </TextView>
+           
+           <TextView 
+             android:id="@+id/single_website"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:textColor="#311919"
+             android:paddingLeft="10dp"
+             android:paddingRight="3dp"
+             android:textSize="12sp" >
+            </TextView>
+        
+        </LinearLayout>
+
+        
+        </TableRow>        
+        
+         
+
+ </TableLayout>     

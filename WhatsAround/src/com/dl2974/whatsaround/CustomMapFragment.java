@@ -23,6 +23,7 @@ public class CustomMapFragment extends SupportMapFragment {
     
     MapListener mapListenerCallback;
     SingleFragment.SingleLocationMapListener mMapListenerCallback;
+    SingleLocationFragment.SingleLocationMapListener mapSingleLocationCallback;
 	
 	HashMap<String,Object> locationData;
 	
@@ -40,11 +41,14 @@ public class CustomMapFragment extends SupportMapFragment {
     	View view = super.onCreateView(inflater, container, savedInstanceState);
     	 //mapListenerCallback.onSingleLocationView(locationData);
     	
-    	if ( getTag().equals(MainActivity.MAP_FRAGMENT) ){
+    	if (getTag() != null){
+    	  if ( getTag().equals(MainActivity.MAP_FRAGMENT) ){
     		
-    	    mapListenerCallback.onUserCenteredLocationsView();
+    	      mapListenerCallback.onUserCenteredLocationsView();
     	    
+    	  }
     	}
+    	 	
     	 
     	return view;
     }
@@ -53,10 +57,21 @@ public class CustomMapFragment extends SupportMapFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
     	
     	super.onActivityCreated(savedInstanceState);
+    	
     	if ( getTag().equals(MainActivity.SINGLE_MAP_FRAGMENT) ){
-    	   mMapListenerCallback.onSingleMapViewCreated(this.locationData);
-    	   
+    	   //mMapListenerCallback.onSingleMapViewCreated(this.locationData);
+    	   mapSingleLocationCallback.onSingleMapViewCreated(this.locationData);
     	}
+    	
+    	/*
+    	if(getArguments() != null){
+    	  if ( getArguments().getString("origin").equals(MainActivity.SINGLE_MAP_FRAGMENT) ){
+    		 Log.i("SingleLocationCustomMap", String.valueOf(this.getId()) );
+    		 this.locationData.put("fragmentId", this.getId());
+     	     mapSingleLocationCallback.onSingleMapViewCreated(this.locationData);
+     	  }
+    	}
+    	*/
     	
     }
     
@@ -69,6 +84,13 @@ public class CustomMapFragment extends SupportMapFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        
+        try {
+        	mapSingleLocationCallback = (SingleLocationFragment.SingleLocationMapListener) activity;
+       } catch (ClassCastException e) {
+           throw new ClassCastException(activity.toString()
+                   + " must implement SingleLocationFragment.SingleLocationMapListener");
+       }        
         
         try {
         	 mapListenerCallback = (MapListener) activity;

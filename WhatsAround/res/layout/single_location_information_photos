@@ -9,9 +9,10 @@
         android:id="@+id/single_photo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" 
-        android:layout_gravity="fill"
+        android:layout_gravity="center_vertical|center_horizontal"
         android:paddingLeft="10dp"
         android:paddingRight="3dp" >
-        </ImageView> 
+        </ImageView>
+        
    
  </LinearLayout>       

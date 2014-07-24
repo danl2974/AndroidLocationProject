@@ -365,8 +365,9 @@ public class PlacesClient {
         @Override
         protected void onPostExecute(Bitmap result) {
         	if(result != null){
-            Log.i("PhotoSingle", String.valueOf(result.getHeight()));
-            this.imageView.setImageDrawable(new BitmapDrawable(PlacesClient.this.mContext.getResources(), scaleBitmapForGrid(result, 250, 250) ));
+               this.imageView.setImageDrawable(new BitmapDrawable(PlacesClient.this.mContext.getResources(), result ));
+               SingleLocationPhotoCacheSingleton pCache = SingleLocationPhotoCacheSingleton.getInstance();
+               pCache.put(String.valueOf(imageView.getTag()), result);
         	}
        }
     }  
@@ -721,6 +722,7 @@ public class PlacesClient {
 	   
 	   
    }
+      
     
    private Bitmap scaleBitmapForGrid(Bitmap srcBmp, int w, int h){
 

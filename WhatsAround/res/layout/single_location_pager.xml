@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:orientation="vertical" 
+android:background="@color/whatsaroundcolor" >
+
+<RelativeLayout 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_weight="1">
+ 
+<FrameLayout 
+    android:id="@+id/single_map"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />
+
+   
+ <TextView
+     android:id="@+id/street_view_request"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:textStyle="bold"
+     android:textSize="12sp"
+     android:textColor="#FFFFFF"
+     android:gravity="center"
+     android:background="@drawable/streetviewoverlay" />
+ 
+ 
+                    
+</RelativeLayout>
+
+<RelativeLayout 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_weight="1">
+ 
+<android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/pager"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />
+                    
+</RelativeLayout>
+
+
+<LinearLayout 
+    android:id="@+id/location_information_overlay"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:layout_weight="1"
+    android:background="@drawable/customborder" >
+
+</LinearLayout>
+
+</LinearLayout>

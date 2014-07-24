@@ -18,6 +18,8 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 
 
 public class InitialActivity extends Activity
@@ -35,7 +37,7 @@ PlacesClient.IPlacesClientTaskCompleted{
 	boolean googlePlayServicesConnected;
 	public final static String LOCATION_EXTRA = "Location";
 	public final static String PHOTO_TYPE_MAP_EXTRA = "GridPhotoTypeMap";
-	
+	ProgressBar bar;
 	
 	
     @SuppressLint("NewApi")
@@ -44,6 +46,8 @@ PlacesClient.IPlacesClientTaskCompleted{
     	
     	super.onCreate(savedInstanceState);
     	setContentView(R.layout.initial_progress);
+    	bar = (ProgressBar) this.findViewById(R.id.progressBar);
+    	bar.setVisibility(View.VISIBLE);
     	getActionBar().setDisplayHomeAsUpEnabled(true);
     	
 		int availableCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
@@ -75,6 +79,7 @@ PlacesClient.IPlacesClientTaskCompleted{
 		this.userLocation = mLocationClient.getLastLocation();
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(LOCATION_EXTRA, this.userLocation);
+        bar.setVisibility(View.GONE);
         startActivity(intent);
 		/*
         HashMap<String,Object> searchParams = new HashMap<String,Object>();

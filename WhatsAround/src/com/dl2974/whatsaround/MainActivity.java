@@ -43,10 +43,12 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.FeatureInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.FragmentActivity;
@@ -74,6 +76,7 @@ FactualFragment.OnUserLocationChange,
 CustomMapFragment.MapListener,
 GoogleMap.InfoWindowAdapter,
 SingleFragment.SingleLocationMapListener,
+SingleLocationFragment.SingleLocationMapListener,
 CustomStreetViewFragment.StreetMapListener,
 LocationListener,
 GooglePlayServicesClient.ConnectionCallbacks,
@@ -700,29 +703,26 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	
 	public void startSingleFragment(Marker marker) {
 		
-		//int markerIndex = resolveLocationIndex(marker.getTitle());
-		//HashMap<String,String> singleLocationData = this.localLocations.get(markerIndex);
 		int markerIndex = resolvePlacesIndex(marker.getTitle());
 		HashMap<String,Object> singleLocationData = this.placesLocations.get(markerIndex);
 
-		SingleFragment sFragment = new SingleFragment();
-		/*
-		HashMap<String,Object> detailsParams = null;
-		detailsParams.put("placeid", (String) singleLocationData.get("place_id"));
-		PlacesClient dpc = new PlacesClient(detailsParams, PlacesCallType.details);
-		HashMap<String,Object> singleLocationDetailsData = dpc.getPlacesData().get(0);
-		*/
+		//SingleFragment sFragment = new SingleFragment();
+		//sFragment.setSingleLocationData(singleLocationData);
+		//sFragment.setSingleLocationDetailsData(this.placesLocationDetailsData);
+		
+		//CustomMapFragment gmapFragment = CustomMapFragment.newInstance();
+		//gmapFragment.setSingleLocationData(singleLocationData);
+		
+		SingleLocationFragment sFragment = new SingleLocationFragment();
 		sFragment.setSingleLocationData(singleLocationData);
 		sFragment.setSingleLocationDetailsData(this.placesLocationDetailsData);
 		
 		CustomMapFragment gmapFragment = CustomMapFragment.newInstance();
 		gmapFragment.setSingleLocationData(singleLocationData);
-		//getLayoutInflater().inflate(R.layout.single_location_information, (ViewGroup) findViewById(R.id.single_map), false);
 		
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         transaction.replace(R.id.fragment_container, sFragment);
-        //transaction.replace(R.id.single_map, gmapFragment, SINGLE_MAP_FRAGMENT);
         transaction.add(R.id.single_map, gmapFragment, SINGLE_MAP_FRAGMENT);
         transaction.addToBackStack(null);
 
@@ -744,7 +744,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
         singleMarker.showInfoWindow();
         gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationLongLat, 17));
         gmap.animateCamera(CameraUpdateFactory.zoomTo(17), 2000, null);
-		}catch(Exception e){}
+		}catch(Exception e){Log.i("SingleLocationCustomMap Main", e.getMessage() );}
 	    
 	}
 	
@@ -873,6 +873,13 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	     return super.onOptionsItemSelected(item);
 	 }
 	 
+	 
+	 
+	 @Override
+	 public void onConfigurationChanged(Configuration newConfig) {
+	     super.onConfigurationChanged(newConfig);
+	     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+	 } 
 	 
 	
     private void killOldMap() {
