@@ -30,6 +30,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dl2974.whatsaround.FactualClient.FactualClientTask;
@@ -141,6 +142,13 @@ public class PlacesClient {
 		}
 		  
 		  return result;
+		
+	}
+	
+	
+	public void getSingleLocationPhoto(ImageView iv){
+		
+		AsyncTask<ImageView, Void, Bitmap> task = new SinglePhotoTask().execute(iv);
 		
 	}
 	
@@ -332,6 +340,36 @@ public class PlacesClient {
     		//PlacesClient.this.mainCallback.startMain(result);
        }
     }    
+    
+ 
+    public class SinglePhotoTask extends AsyncTask<ImageView, Void, Bitmap> {
+      	
+    	ImageView imageView;
+    	
+        @Override
+        protected Bitmap doInBackground(ImageView... iv) {
+        this.imageView = iv[0];
+        try {
+        	    Bitmap photo = null;
+                photo = callPhoto(PlacesClient.this.endpoint, PlacesClient.this.requestParameters);  
+                
+                return photo;
+                
+            } catch (Exception e) {
+                
+                return null;
+            }
+        }
+        	        
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(Bitmap result) {
+        	if(result != null){
+            Log.i("PhotoSingle", String.valueOf(result.getHeight()));
+            this.imageView.setImageDrawable(new BitmapDrawable(PlacesClient.this.mContext.getResources(), scaleBitmapForGrid(result, 250, 250) ));
+        	}
+       }
+    }  
     
     
     

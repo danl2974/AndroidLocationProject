@@ -141,7 +141,7 @@ public class CategoryGridAdapter extends BaseAdapter {
                counter++;
                Log.i("GridAdapterOnce", String.valueOf(counter) + " " + String.valueOf(textView.getText()));
              } 
-             */  
+             */
         }
         Spannable spanStr = new SpannableString(placeTypes[position]);        
         spanStr.setSpan(new BackgroundColorSpan(0xFF59c2a3), 0, placeTypes[position].length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);

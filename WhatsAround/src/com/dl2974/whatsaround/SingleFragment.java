@@ -1,5 +1,6 @@
 package com.dl2974.whatsaround;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import android.text.Html;
 import android.text.method.LinkMovementMethod;
 
 import com.dl2974.whatsaround.LocationFragment.MapListener;
+import com.dl2974.whatsaround.PlacesClient.PlacesCallType;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -29,6 +31,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -55,7 +58,8 @@ public class SingleFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, 
         Bundle savedInstanceState) {
     	
-        View singleView = inflater.inflate(R.layout.single_location_information, container, false);
+        //View singleView = inflater.inflate(R.layout.single_location_information, container, false);
+        View singleView = inflater.inflate(R.layout.single_location_information2, container, false);
         LinearLayout dataContainer = (LinearLayout) singleView.findViewById(R.id.location_information_overlay);
         //dataContainer.setBackgroundColor(0xFFFFFFDB);
         
@@ -69,29 +73,28 @@ public class SingleFragment extends Fragment {
         }
         else{
         	overlayText = STREETVIEW_TEXT;
-        	Log.i("SingleFragment", "inside else");
         }
-        Log.i("SingleFragment verlayText",overlayText);
         steetViewOverlay.setText(overlayText);
         steetViewOverlay.setOnClickListener(new View.OnClickListener() {         
             @Override
             public void onClick(View v) {
             	TextView tv = (TextView) v;
-            	Log.i("SingleFragment", (String) tv.getText());
+            	
             	if (((String) tv.getText()).equals(STREETVIEW_TEXT)){
-            		Log.i("SingleFragment", "inside onClick IF");
+            		
             		mMapListenerCallback.onSingleMapStreetViewRequest(SingleFragment.this.locationData);
             		tv.setText(AERIALVIEW_TEXT);
             	}
             	else{
-            		Log.i("SingleFragment", "inside onClick ELSE");
+            		
             		mMapListenerCallback.onSingleMapAerialViewRequest(SingleFragment.this.locationData);
             		tv.setText(STREETVIEW_TEXT);
             	}
             }
         });
         
-        View textPortion = getActivity().getLayoutInflater().inflate(R.layout.single_location_information_text, container, false);
+        //View textPortion = getActivity().getLayoutInflater().inflate(R.layout.single_location_information_text, container, false);
+        View textPortion = getActivity().getLayoutInflater().inflate(R.layout.single_location_information_text2, container, false);
         
 		TextView single_name = (TextView) textPortion.findViewById(R.id.single_name);
 		single_name.setText((String) locationData.get("name"));
@@ -125,6 +128,20 @@ public class SingleFragment extends Fragment {
 		single_website.setMovementMethod(LinkMovementMethod.getInstance());
 		
 		dataContainer.addView(textPortion);
+		
+		View photoPortion = getActivity().getLayoutInflater().inflate(R.layout.single_location_information_photos, container, false);
+		ImageView imageView = (ImageView) photoPortion.findViewById(R.id.single_photo);
+		if(placeDetailsData.get("photos") != null){
+			ArrayList<HashMap<String,Object>> placePhotos = (ArrayList<HashMap<String, Object>>) placeDetailsData.get("photos");
+			Log.i("PhotoSingle", String.valueOf(placePhotos.size()));
+			HashMap<String,Object> photoParams = new HashMap<String,Object>();
+			photoParams.put("photoreference", placePhotos.get(0).get("photo_reference"));
+			photoParams.put("maxwidth", 1600);
+			PlacesClient ppc = new PlacesClient(getActivity(), photoParams, PlacesCallType.photos);
+			ppc.getSingleLocationPhoto(imageView);
+		}
+		
+		dataContainer.addView(photoPortion);
 		
         /*
     	for (Map.Entry<String,String> entry : locationData.entrySet() ){
