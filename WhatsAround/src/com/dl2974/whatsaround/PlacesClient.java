@@ -365,6 +365,7 @@ public class PlacesClient {
         @Override
         protected void onPostExecute(Bitmap result) {
         	if(result != null){
+        	   this.imageView.setBackground(null);
                this.imageView.setImageDrawable(new BitmapDrawable(PlacesClient.this.mContext.getResources(), result ));
                SingleLocationPhotoCacheSingleton pCache = SingleLocationPhotoCacheSingleton.getInstance();
                pCache.put(String.valueOf(imageView.getTag()), result);

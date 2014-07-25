@@ -73,9 +73,16 @@ public class SingleLocationFragment extends Fragment {
         View singleView = inflater.inflate(R.layout.single_location_pager, container, false);
         LinearLayout dataContainer = (LinearLayout) singleView.findViewById(R.id.location_information_overlay);
         
-        SingleLocationPagerAdapter slPagerAdapter = new SingleLocationPagerAdapter(mContext.getSupportFragmentManager(), this.locationData, this.placeDetailsData);
-        mViewPager = (ViewPager) singleView.findViewById(R.id.pager);
-        mViewPager.setAdapter(slPagerAdapter);
+        ArrayList<HashMap<String, Object>> placePhotosList = (ArrayList<HashMap<String, Object>>) this.placeDetailsData.get("photos");
+        if(placePhotosList != null){
+          SingleLocationPagerAdapter slPagerAdapter = new SingleLocationPagerAdapter(mContext.getSupportFragmentManager(), this.locationData, this.placeDetailsData);
+          mViewPager = (ViewPager) singleView.findViewById(R.id.pager);
+          mViewPager.setAdapter(slPagerAdapter);
+        }
+        else{
+    	   ((LinearLayout) singleView).removeView(singleView.findViewById(R.id.pager_photo_container));
+    	}	
+        
        
         TextView steetViewOverlay = (TextView) singleView.findViewById(R.id.street_view_request);
         String currentOverlayText = (String) steetViewOverlay.getText();
@@ -280,18 +287,19 @@ public class SingleLocationFragment extends Fragment {
             placeDetailsData = (HashMap<String, Object>) args.getSerializable("details");
             int photoindex = args.getInt("index");
     		ImageView imageView = (ImageView) photoView.findViewById(R.id.single_photo);
+    		ArrayList<HashMap<String, Object>> placePhotos = (ArrayList<HashMap<String, Object>>) placeDetailsData.get("photos");
     		
-    		if(placeDetailsData.get("photos") != null){
+    		if(placePhotos.size() > 0){
     		  
-    			ArrayList<HashMap<String,Object>> placePhotos = (ArrayList<HashMap<String, Object>>) placeDetailsData.get("photos");
-    			Log.i("PhotoSingle", String.valueOf(placePhotos.size()));
+    			//ArrayList<HashMap<String,Object>> placePhotos = (ArrayList<HashMap<String, Object>>) placeDetailsData.get("photos");
     			Bitmap bmp = pCache.get((String) placePhotos.get(photoindex).get("photo_reference"));
+    			
     			if(bmp != null){ //photo exists in cache
     			    imageView.setImageDrawable(new BitmapDrawable(getActivity().getResources(), bmp ));
     			}
     			else{
-    			   imageView.setBackgroundResource(R.drawable.drawable_animation);
-    			   ((AnimationDrawable) imageView.getBackground()).start();
+    			   imageView.setBackgroundResource(R.drawable.empty_photo);
+    			   //((AnimationDrawable) imageView.getBackground()).start();
     			   HashMap<String,Object> photoParams = new HashMap<String,Object>();
     			   photoParams.put("photoreference", placePhotos.get(photoindex).get("photo_reference"));
     			   photoParams.put("maxwidth", 1600);
@@ -301,6 +309,7 @@ public class SingleLocationFragment extends Fragment {
     			}
     			
     		}
+
             
             return photoView;
         }
