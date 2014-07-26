@@ -14,11 +14,18 @@ import com.google.android.gms.location.LocationRequest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 
@@ -46,9 +53,38 @@ PlacesClient.IPlacesClientTaskCompleted{
     	
     	super.onCreate(savedInstanceState);
     	setContentView(R.layout.initial_progress);
-    	bar = (ProgressBar) this.findViewById(R.id.progressBar);
-    	bar.setVisibility(View.VISIBLE);
+    	//bar = (ProgressBar) this.findViewById(R.id.progressBar);
+    	//bar.setVisibility(View.VISIBLE);
+    	
+    	//Drawable logod = getResources().getDrawable(R.drawable.logo_spin);
+    	//ImageView imgview = new ImageView(this);
+    	//imgview.setImageDrawable(logod);
+    	ImageView imgview = (ImageView) this.findViewById(R.id.spinlogo);
+    	Animation animation = AnimationUtils.loadAnimation(this, R.anim.rotate_logo);
+        imgview.startAnimation(animation);
+        
     	getActionBar().setDisplayHomeAsUpEnabled(true);
+    	
+    	
+    	 ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+	     NetworkInfo networkInfo = connMgr.getActiveNetworkInfo(); 
+	     
+	     if (networkInfo != null && !networkInfo.isConnected()) {
+	    	 
+	    	 initGooglePlayClient();
+	     }
+	     else{
+	    	 Intent intent = new Intent(this, NotConnectedActivity.class);
+	         startActivity(intent);
+	     }
+    	
+    	
+
+    	
+    }
+
+    
+    private void initGooglePlayClient(){
     	
 		int availableCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
 		if (availableCode == ConnectionResult.SUCCESS)
@@ -65,7 +101,9 @@ PlacesClient.IPlacesClientTaskCompleted{
 		}
     	
     }
-
+    
+    
+    
 	@Override
 	public void onConnectionFailed(ConnectionResult result) {
 		// TODO Auto-generated method stub
@@ -79,7 +117,8 @@ PlacesClient.IPlacesClientTaskCompleted{
 		this.userLocation = mLocationClient.getLastLocation();
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(LOCATION_EXTRA, this.userLocation);
-        bar.setVisibility(View.GONE);
+        //bar.setVisibility(View.GONE);
+        Log.i("InitialActivity", "start main");
         startActivity(intent);
 		/*
         HashMap<String,Object> searchParams = new HashMap<String,Object>();
@@ -109,7 +148,7 @@ PlacesClient.IPlacesClientTaskCompleted{
 	}
 
 	@Override
-	public void onLocationChanged(Location arg0) {
+	public void onLocationChanged(Location loc) {
 		// TODO Auto-generated method stub
 		
 	}

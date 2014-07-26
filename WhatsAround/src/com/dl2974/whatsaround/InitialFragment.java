@@ -10,7 +10,7 @@ import android.widget.TextView;
 public class InitialFragment extends DialogFragment {
     int mNum;
 
-/*
+
     static InitialFragment newInstance(int num) {
     	InitialFragment f = new InitialFragment();
 
@@ -21,12 +21,11 @@ public class InitialFragment extends DialogFragment {
 
         return f;
     }
-*/
-    
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*
+        
         mNum = getArguments().getInt("num");
 
         // Pick a style based on the num.
@@ -50,9 +49,10 @@ public class InitialFragment extends DialogFragment {
         }
         
         setStyle(style, theme);
-        */
+        
     }
 
+/*    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
@@ -69,8 +69,9 @@ public class InitialFragment extends DialogFragment {
                 ((FragmentDialog)getActivity()).showDialog();
             }
         });
-        */
+        
 
         return v;
     }
+*/
 }
