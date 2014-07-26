@@ -49,16 +49,16 @@
         <meta-data 
             android:name="com.google.android.gms.version" 
             android:value="@integer/google_play_services_version" />
-         
+         <!-- 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyCjD9Mcn8eToSY708PYjsT8KBs_AxmV4To" />
-        
-         <!--  
+        -->
+          
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyCyZQMhsEWIujK7tGKQjw3XnaHQ8nKQA1w" />
-         -->
+         
     </application>
 
 </manifest>
