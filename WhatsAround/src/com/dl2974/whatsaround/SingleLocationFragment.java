@@ -124,7 +124,12 @@ public class SingleLocationFragment extends Fragment {
 		single_address.setText((String) placeDetailsData.get("formatted_address"));
 		TextView single_hours = (TextView) textPortion.findViewById(R.id.single_hours);
 		//single_hours.setText(locationData.get("hours_display"));
-		single_hours.setText((String) placeDetailsData.get("hours"));
+		if(((String) placeDetailsData.get("hours")) != null){
+		  single_hours.setText((String) placeDetailsData.get("hours"));
+		}
+		else{
+		  single_hours.setText(getResources().getString(R.string.hoursunavailable));
+		}
 		TextView single_telephone = (TextView) textPortion.findViewById(R.id.single_telephone);
 		//single_telephone.setText(locationData.get("tel"));
 		single_telephone.setClickable(true);
@@ -140,13 +145,17 @@ public class SingleLocationFragment extends Fragment {
 			  }
 			});
 		
-		TextView single_website = (TextView) textPortion.findViewById(R.id.single_website);
-		single_website.setClickable(true);
+
 		//String websiteUrl = (String) locationData.get("website");
-		String websiteUrl = (String) placeDetailsData.get("website");
-		String link = String.format("<a href='%s'>%s</a>", websiteUrl, websiteUrl );
-		single_website.setText(Html.fromHtml(link));
-		single_website.setMovementMethod(LinkMovementMethod.getInstance());
+		
+		if (placeDetailsData.get("website") != null){
+		   TextView single_website = (TextView) textPortion.findViewById(R.id.single_website);
+		   single_website.setClickable(true);
+		   String websiteUrl = (String) placeDetailsData.get("website");
+		   String link = String.format("<a href='%s'>%s</a>", websiteUrl, websiteUrl );
+		   single_website.setText(Html.fromHtml(link));
+		   single_website.setMovementMethod(LinkMovementMethod.getInstance());
+		}
 		
 		dataContainer.addView(textPortion);
 		

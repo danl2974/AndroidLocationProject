@@ -69,7 +69,7 @@ PlacesClient.IPlacesClientTaskCompleted{
     	 ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 	     NetworkInfo networkInfo = connMgr.getActiveNetworkInfo(); 
 	     
-	     if (networkInfo != null && !networkInfo.isConnected()) {
+	     if (networkInfo != null && networkInfo.isConnected()) {
 	    	 
 	    	 initGooglePlayClient();
 	     }
