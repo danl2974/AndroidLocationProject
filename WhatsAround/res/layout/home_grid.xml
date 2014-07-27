@@ -25,5 +25,5 @@
     android:horizontalSpacing="2dp"
     android:stretchMode="columnWidth"
     android:gravity="center"
-    android:background="#F1F1F0"
+    android:background="@drawable/grid_bg"
 />

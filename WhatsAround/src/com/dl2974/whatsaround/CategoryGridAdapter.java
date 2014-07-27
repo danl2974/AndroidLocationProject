@@ -7,9 +7,12 @@ import com.dl2974.whatsaround.PlacesClient.PlacesCallType;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.location.Location;
 import android.support.v4.util.LruCache;
 import android.text.Spannable;
@@ -95,32 +98,39 @@ public class CategoryGridAdapter extends BaseAdapter {
         //imageView.setImageDrawable(categoryImages[position].getDrawable());
         return imageView;
         */
-        TextView textView;
+        ImageView imageView;
     	
         if (convertView == null) {	
 
-                textView = new TextView(mContext);
+                imageView = new ImageView(mContext);
                 GridView.LayoutParams layoutParams = new GridView.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-                textView.setLayoutParams(layoutParams);
+                imageView.setLayoutParams(layoutParams);
                 
-                //textView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                textView.setPadding(2, 2, 2, 2);
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                imageView.setPadding(2, 2, 2, 2);
                 //textView.setAdjustViewBounds(true);
                 //imageView.setBackgroundResource(R.drawable.customborder);
                 //imageView.setBackgroundColor(0xFFF1F1F0);
 
        }
        else {
-            textView = (TextView) convertView;
-            Log.i("RepeatTextView", String.valueOf(textView.getText()));
+            imageView = (ImageView) convertView;
         }
         
         
         if(gridViewCache.get(placeTypes[position]) != null){ 
-        	  textView.setBackground(new BitmapDrawable(mContext.getResources(), gridViewCache.get(placeTypes[position])));
+        	  //textView.setBackground(new BitmapDrawable(mContext.getResources(), gridViewCache.get(placeTypes[position])));
+        	  //textView.setBackgroundResource(R.drawable.grid_bg);
         }
         else{	
-            textView.setBackgroundResource(categoryImages[position]);
+        	Resources r = mContext.getResources();
+        	Drawable[] layers = new Drawable[2];
+        	layers[0] = r.getDrawable(R.drawable.grid_bg);
+        	layers[1] = r.getDrawable(categoryImages[position]);
+        	LayerDrawable layerDrawable = new LayerDrawable(layers);
+        	imageView.setImageDrawable(layerDrawable);
+            //textView.setBackgroundResource(categoryImages[position]);
+            //textView.setBackgroundResource(R.drawable.grid_bg);
 
             // DO GRID PHOTO ASYNC FETCH
             /*
@@ -143,16 +153,19 @@ public class CategoryGridAdapter extends BaseAdapter {
              } 
              */
         }
+        /*
         Spannable spanStr = new SpannableString(placeTypes[position]);        
-        spanStr.setSpan(new BackgroundColorSpan(0xFF59c2a3), 0, placeTypes[position].length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        //spanStr.setSpan(new BackgroundColorSpan(0xFF59c2a3), 0, placeTypes[position].length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         textView.setText(spanStr);
         textView.setTextColor(0xFFFFFFFF);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
         textView.setTypeface(null, Typeface.BOLD);
         textView.setTextScaleX(1.5f);
-        
+        */
+        imageView.setMaxHeight(160);
+        //imageView.setWidth(100);
     	
-       return textView;
+       return imageView;
     	/*
         LayoutInflater inflater = LayoutInflater.from(mContext);
         ViewHolder holder;
