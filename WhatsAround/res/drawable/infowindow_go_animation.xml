@@ -1,0 +1,6 @@
+ <animation-list 
+      xmlns:android="http://schemas.android.com/apk/res/android"
+     android:id="@+id/selected" android:oneshot="false">
+    <item android:drawable="@drawable/golocation1" android:duration="100" />
+    <item android:drawable="@drawable/golocation2" android:duration="100" />
+ </animation-list>

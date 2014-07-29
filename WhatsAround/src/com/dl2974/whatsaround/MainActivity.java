@@ -25,6 +25,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.GroundOverlay;
+import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -92,6 +94,8 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	ArrayList<HashMap<String,String>> localLocations;
 	ArrayList<HashMap<String,Object>> yelpLocations;
 	GoogleMap map;
+	Marker activeMarker;
+	GroundOverlay closeButton;
 	Projection projection;
 	int factualCategoryId;
 	boolean googlePlayServicesConnected;
@@ -435,6 +439,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
         	LatLng locationLongLat = new LatLng( Double.valueOf( (String) pl.get("latitude")), Double.valueOf( (String) pl.get("longitude")) );
         	int mapDrawable = getResources().getIdentifier(resolveCategoryName(0), "drawable", this.getPackageName());
         	Marker marker = map.addMarker(new MarkerOptions().position(locationLongLat).title((String) pl.get("name")).icon(BitmapDescriptorFactory.fromResource(mapDrawable)));
+        	
         	//Marker marker = map.addMarker(new MarkerOptions().position(locationLongLat).title(ll.get("name")).icon(BitmapDescriptorFactory.fromResource(R.drawable.restaurant)));
         	//Marker marker = map.addMarker(new MarkerOptions().position(locationLongLat).alpha(0.7f).title(ll.get("name")));
         	//marker.showInfoWindow();
@@ -464,7 +469,53 @@ GooglePlayServicesClient.OnConnectionFailedListener {
         map.setInfoWindowAdapter(this);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocationLatLng, 12));
         map.animateCamera(CameraUpdateFactory.zoomTo(12), 2000, null);
+        map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
         
+        	@Override
+            public boolean onMarkerClick(Marker marker){
+        		
+        		if(marker.equals(MainActivity.this.activeMarker)){
+        			resetMapMarker();
+        		}
+        		else{
+        		  marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_active));
+        		}
+        		/*
+        		double latOffset = marker.getPosition().latitude - 0.003;
+        		Log.i("LatOffset", String.valueOf(marker.getPosition().latitude) + " " + String.valueOf(latOffset));
+        		MainActivity.this.closeButton =  map.addGroundOverlay(new GroundOverlayOptions()
+        		        .position(new LatLng(latOffset, marker.getPosition().longitude), 1000)
+        				.image(BitmapDescriptorFactory.fromResource(R.drawable.close))); 
+                */
+        		return false;
+        	}
+        	
+        });
+        map.setOnMapClickListener(new GoogleMap.OnMapClickListener(){
+
+            @Override
+            public void onMapClick(LatLng point) {
+                  
+            	if(MainActivity.this.activeMarker != null){
+            		//Restore original marker
+            		resetMapMarker();            		
+            		//MainActivity.this.activeMarker.setRotation(0.0f);
+            		//int mapDrawable = getResources().getIdentifier(resolveCategoryName(0), "drawable", MainActivity.this.getPackageName());
+            		//MainActivity.this.activeMarker.setIcon(BitmapDescriptorFactory.fromResource(mapDrawable)); 
+            		//MainActivity.this.activeMarker.hideInfoWindow();
+	
+            	}
+            	/*
+            	if((Math.abs(point.longitude  -  MainActivity.this.closeButton.getPosition().longitude) < .004) 
+            			&& (Math.abs(point.latitude  -  MainActivity.this.closeButton.getPosition().latitude) < .004))
+            	{
+            		MainActivity.this.closeButton.remove();
+            	}
+            	*/
+
+            }
+
+        });
         map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
        	 
        	 @Override
@@ -478,8 +529,10 @@ GooglePlayServicesClient.OnConnectionFailedListener {
            		 startActivity(webIntent);
        			
        		}
-       		else{	
-       		startSingleFragment(marker);
+       		else{
+       			
+       		     startSingleFragment(marker);
+       		     
        		}
        		
        	 }
@@ -522,7 +575,11 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	
 	public View getInfoWindow(Marker marker){
 		
-		marker.setRotation(180.0f);
+		if (this.activeMarker != null){
+			resetMapMarker();
+		}
+		this.activeMarker = marker;
+		//marker.setRotation(180.0f);
 		
 		LinearLayout infoWindowImageView =  (LinearLayout) getLayoutInflater().inflate(R.layout.info_window_image, null);
 		//infoWindowView.setBackgroundResource(getResources().getIdentifier("info_window_bg", "drawable", this.getPackageName()););
@@ -553,7 +610,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 			this.placesLocationDetailsData = dpc.getPlacesData().get(0);
 			Log.i("Places", "placesLocationDetailsData " + String.valueOf(this.placesLocationDetailsData));
 			
-			View infoWindowView = getLayoutInflater().inflate(R.layout.info_window2, null);
+			View infoWindowView = getLayoutInflater().inflate(R.layout.info_window, null);
 			TextView iw_name = (TextView) infoWindowView.findViewById(R.id.iw_name);
 			iw_name.setText((String) this.placesLocations.get(markerIndex).get("name"));
 			TextView iw_address = (TextView) infoWindowView.findViewById(R.id.iw_address);
@@ -894,8 +951,27 @@ GooglePlayServicesClient.OnConnectionFailedListener {
         }
 
     }
+
+
+    private void resetMapMarker(){
+    	
+    	if (this.activeMarker != null){
+    	  int mapDrawable = getResources().getIdentifier(resolveCategoryName(0), "drawable", MainActivity.this.getPackageName());
+		  this.activeMarker.setIcon(BitmapDescriptorFactory.fromResource(mapDrawable));
+		  this.activeMarker.hideInfoWindow();
+    	}
+    	
+    }
     
-    
+    private double calculateLatOffset(double lat, int meters){
+    	
+    	//Earth’s radius, sphere
+    	int er = 6378137;
+        double dLat = meters/er;
+        
+        return lat + dLat * 180/Math.PI;
+    	
+    }
     
 
     
