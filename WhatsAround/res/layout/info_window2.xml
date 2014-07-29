@@ -1,0 +1,74 @@
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"  
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+ 
+   <LinearLayout 
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:orientation="vertical" 
+    android:background="@drawable/info_window_shape">
+ 
+        <TextView 
+        android:id="@+id/iw_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#222326"   
+            android:paddingLeft="10dp"
+            android:paddingRight="3dp"
+            android:textStyle="bold"
+        android:textSize="10sp" >
+        </TextView> 
+        <TextView 
+        android:id="@+id/iw_address"
+            android:textColor="#222326"
+            android:paddingLeft="10dp"
+            android:paddingRight="3dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="8sp" >
+        </TextView> 
+        <TextView 
+        android:id="@+id/iw_hours"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+            android:textColor="#222326"
+            android:paddingLeft="10dp"
+            android:paddingRight="3dp"
+        android:textSize="8sp" >
+        </TextView> 
+        <TextView 
+        android:id="@+id/iw_telephone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+            android:textColor="#222326"
+            android:paddingLeft="10dp"
+            android:paddingRight="3dp"
+        android:textSize="8sp" >
+        </TextView>        
+        <TextView 
+        android:id="@+id/iw_website"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+            android:textColor="#222326"
+            android:paddingLeft="10dp"
+            android:paddingRight="3dp"
+        android:textSize="8sp" >
+        </TextView>
+        
+   
+    
+    </LinearLayout>
+    
+<LinearLayout
+        android:layout_width="50dp"
+        android:layout_height="50dp" 
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/triangle_bottom"
+        android:rotation="180" >
+        </LinearLayout>
+
+</LinearLayout>
+ 
