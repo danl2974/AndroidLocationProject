@@ -522,6 +522,8 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	
 	public View getInfoWindow(Marker marker){
 		
+		marker.setRotation(180.0f);
+		
 		LinearLayout infoWindowImageView =  (LinearLayout) getLayoutInflater().inflate(R.layout.info_window_image, null);
 		//infoWindowView.setBackgroundResource(getResources().getIdentifier("info_window_bg", "drawable", this.getPackageName()););
 		//infoWindowView.setBackgroundResource(R.drawable.custom_info_bubble);
@@ -551,7 +553,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 			this.placesLocationDetailsData = dpc.getPlacesData().get(0);
 			Log.i("Places", "placesLocationDetailsData " + String.valueOf(this.placesLocationDetailsData));
 			
-			View infoWindowView = getLayoutInflater().inflate(R.layout.info_window, null);
+			View infoWindowView = getLayoutInflater().inflate(R.layout.info_window2, null);
 			TextView iw_name = (TextView) infoWindowView.findViewById(R.id.iw_name);
 			iw_name.setText((String) this.placesLocations.get(markerIndex).get("name"));
 			TextView iw_address = (TextView) infoWindowView.findViewById(R.id.iw_address);
