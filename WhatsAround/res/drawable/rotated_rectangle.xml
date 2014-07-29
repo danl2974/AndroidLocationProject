@@ -15,7 +15,7 @@
             android:fromDegrees="45"
             android:toDegrees="45"
             android:pivotX="-50%"
-            android:pivotY="-50%" >
+            android:pivotY="50%" >
             <shape
                 android:shape="rectangle" 
                 android:gravity="bottom|center_horizontal">
