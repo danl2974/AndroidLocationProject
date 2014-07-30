@@ -129,6 +129,7 @@ public class CategoryGridAdapter extends BaseAdapter {
         	layers[1] = r.getDrawable(categoryImages[position]);
         	LayerDrawable layerDrawable = new LayerDrawable(layers);
         	imageView.setImageDrawable(layerDrawable);
+        	//imageView.setBackgroundResource(categoryImages[position]);
             //textView.setBackgroundResource(categoryImages[position]);
             //textView.setBackgroundResource(R.drawable.grid_bg);
 
