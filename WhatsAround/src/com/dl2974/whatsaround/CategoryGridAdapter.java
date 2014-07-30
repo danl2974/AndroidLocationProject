@@ -105,9 +105,9 @@ public class CategoryGridAdapter extends BaseAdapter {
                 imageView = new ImageView(mContext);
                 GridView.LayoutParams layoutParams = new GridView.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
                 imageView.setLayoutParams(layoutParams);
-                
-                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                imageView.setPadding(2, 2, 2, 2);
+                //imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                imageView.setPadding(1, 1, 1, 1);
                 //textView.setAdjustViewBounds(true);
                 //imageView.setBackgroundResource(R.drawable.customborder);
                 //imageView.setBackgroundColor(0xFFF1F1F0);
@@ -125,7 +125,8 @@ public class CategoryGridAdapter extends BaseAdapter {
         else{	
         	Resources r = mContext.getResources();
         	Drawable[] layers = new Drawable[2];
-        	layers[0] = r.getDrawable(R.drawable.grid_bg);
+        	//layers[0] = r.getDrawable(R.drawable.grid_bg);
+        	layers[0] = r.getDrawable(R.drawable.bar_bg);
         	layers[1] = r.getDrawable(categoryImages[position]);
         	LayerDrawable layerDrawable = new LayerDrawable(layers);
         	imageView.setImageDrawable(layerDrawable);
@@ -163,7 +164,7 @@ public class CategoryGridAdapter extends BaseAdapter {
         textView.setTypeface(null, Typeface.BOLD);
         textView.setTextScaleX(1.5f);
         */
-        imageView.setMaxHeight(160);
+        //imageView.setMaxHeight(160);
         //imageView.setWidth(100);
     	
        return imageView;

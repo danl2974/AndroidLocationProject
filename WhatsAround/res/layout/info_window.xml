@@ -13,27 +13,18 @@
     android:padding="10dp"
     android:orientation="vertical" >
     
-    <TextView
+      <LinearLayout  
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:orientation="horizontal" >
+          
+         <ImageView
             android:id="@+id/go"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/info_window_action"
-            android:textSize="12sp"
-            android:textColor="#FF39ad80" />  
-       
-<!--  
-        <TextView
-            android:id="@+id/location_info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:paddingLeft="10dp"
-            android:paddingRight="3dp"
-            android:textStyle="bold"
-            android:textSize="10sp" />
-  -->       
+            android:src="@drawable/go_arrow_location"
+            android:contentDescription="@string/info_window_action" />   
+          
         <TextView 
         android:id="@+id/iw_name"
         android:layout_width="wrap_content"
@@ -42,8 +33,12 @@
             android:paddingLeft="10dp"
             android:paddingRight="3dp"
             android:textStyle="bold"
-        android:textSize="10sp" >
+        android:textSize="12sp"
+        android:gravity="center_vertical">
         </TextView> 
+                 
+        </LinearLayout>
+        
         <TextView 
         android:id="@+id/iw_address"
             android:textColor="#222326"
