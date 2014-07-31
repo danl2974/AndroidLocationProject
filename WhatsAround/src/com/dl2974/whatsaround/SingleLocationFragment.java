@@ -41,6 +41,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class SingleLocationFragment extends Fragment {
@@ -56,7 +57,10 @@ public class SingleLocationFragment extends Fragment {
     SingleLocationMapListener mMapListenerCallback;
 	private HashMap<String,Object> locationData;
 	private HashMap<String,Object> placeDetailsData;
+	private View singleView;
+	private TextView photoControl;
 	private LinearLayout dataContainer;
+	private RelativeLayout pagerContainer;
 	SingleLocationPagerAdapter slPagerAdapter;
 	ViewPager mViewPager;
 	private FragmentActivity mContext;
@@ -70,19 +74,51 @@ public class SingleLocationFragment extends Fragment {
         Bundle savedInstanceState) {
 
         //View singleView = inflater.inflate(R.layout.single_location_information2, container, false);
-        View singleView = inflater.inflate(R.layout.single_location_pager, container, false);
+        singleView = inflater.inflate(R.layout.single_location_pager, container, false);
         LinearLayout dataContainer = (LinearLayout) singleView.findViewById(R.id.location_information_overlay);
         
         ArrayList<HashMap<String, Object>> placePhotosList = (ArrayList<HashMap<String, Object>>) this.placeDetailsData.get("photos");
         if(placePhotosList != null){
+          pagerContainer = new RelativeLayout(this.mContext);
           SingleLocationPagerAdapter slPagerAdapter = new SingleLocationPagerAdapter(mContext.getSupportFragmentManager(), this.locationData, this.placeDetailsData);
-          mViewPager = (ViewPager) singleView.findViewById(R.id.pager);
+          //mViewPager = (ViewPager) singleView.findViewById(R.id.pager);
+          mViewPager = new ViewPager(mContext);
+          mViewPager.setId(R.id.location_view_pager);
           mViewPager.setAdapter(slPagerAdapter);
         }
         else{
-    	   ((LinearLayout) singleView).removeView(singleView.findViewById(R.id.pager_photo_container));
+    	   //((LinearLayout) singleView).removeView(singleView.findViewById(R.id.pager_photo_container));
     	}	
+        //RelativeLayout photoPagerContainer = (RelativeLayout) singleView.findViewById(R.id.pager_photo_container);
+        //photoPagerContainer.setVisibility(View.INVISIBLE);
+        LinearLayout controlsBar = (LinearLayout) singleView.findViewById(R.id.single_location_controls);
+        if(mViewPager != null && pagerContainer != null){
+        photoControl = (TextView) controlsBar.findViewById(R.id.single_location_photo_control);
+        photoControl.setText("Open Photos");
+        photoControl.setOnClickListener(new View.OnClickListener() { 	
+        	 @Override
+             public void onClick(View v) {
+        		 TextView cv = (TextView) v;
+        		 //RelativeLayout pagerContainer = (RelativeLayout) singleView.findViewById(R.id.pager_photo_container);
+        		 LinearLayout locationLayout = (LinearLayout) singleView.findViewById(R.id.location_layout);
+        		 
+        		 if(((String) cv.getText()).equals("Open Photos")){
+        			 
+        			 //pagerContainer.setVisibility(View.VISIBLE);
+        			 pagerContainer.addView(mViewPager);
+        			 LinearLayout.LayoutParams pLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
+        			 locationLayout.addView(pagerContainer, 2, pLayoutParams);
+        			 photoControl.setText("Close Photos");
+        		 }
+        		 else if(((String) cv.getText()).equals("Close Photos")){
+        			 pagerContainer.removeView(mViewPager);
+        			 locationLayout.removeView(pagerContainer);
+        			 photoControl.setText("Open Photos");
+        		 }
+        	 }
+        });
         
+        }
        
         TextView steetViewOverlay = (TextView) singleView.findViewById(R.id.street_view_request);
         String currentOverlayText = (String) steetViewOverlay.getText();

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+android:id="@+id/location_layout"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
 android:orientation="vertical" 
@@ -32,6 +33,29 @@ android:background="@color/whatsaroundcolor" >
                     
 </RelativeLayout>
 
+
+<LinearLayout 
+    android:id="@+id/single_location_controls"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+ 
+    <TextView
+     android:id="@+id/single_location_photo_control"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:textStyle="bold"
+     android:textSize="16sp"
+     android:textColor="#FFFFFF"
+     android:layout_gravity="center"
+     android:background="@drawable/location_view_control_button" />
+
+</LinearLayout>
+
+
+
+
+<!--
 <RelativeLayout 
     android:id="@+id/pager_photo_container"
     android:layout_width="match_parent"
@@ -42,9 +66,9 @@ android:background="@color/whatsaroundcolor" >
     android:id="@+id/pager"
     android:layout_width="match_parent"
     android:layout_height="match_parent" />
-                    
+                 
 </RelativeLayout>
-
+-->
 
 <LinearLayout 
     android:id="@+id/location_information_overlay"
