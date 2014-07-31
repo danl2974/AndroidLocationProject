@@ -94,7 +94,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	ArrayList<HashMap<String,String>> localLocations;
 	ArrayList<HashMap<String,Object>> yelpLocations;
 	GoogleMap map;
-	Marker activeMarker;
+	public Marker activeMarker;
 	GroundOverlay closeButton;
 	Projection projection;
 	int factualCategoryId;
@@ -474,11 +474,24 @@ GooglePlayServicesClient.OnConnectionFailedListener {
         	@Override
             public boolean onMarkerClick(Marker marker){
         		
-        		if(marker.equals(MainActivity.this.activeMarker)){
+        		if(marker.equals(MainActivity.this.activeMarker)){ // Close marker if active one is re-clicked
+        			Log.i("ActiveMarker onMarkerClick Re-click", MainActivity.this.activeMarker.getTitle());
         			resetMapMarker();
+        			return true;
         		}
         		else{
+        		  if (MainActivity.this.activeMarker != null){
+        			  Log.i("ActiveMarker onMarkerClick reset", MainActivity.this.activeMarker.getTitle());
+        			  resetMapMarker();
+        		  }	
+        		  MainActivity.this.setActiveMarker(marker);
         		  marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_active));
+        		  
+        		  //int mapDrawable = getResources().getIdentifier(resolveCategoryName(0), "drawable", MainActivity.this.getPackageName());
+        		  //MarkerOptions markerOptions = new MarkerOptions().position(marker.getPosition()).title(marker.getTitle()).icon(BitmapDescriptorFactory.fromResource(mapDrawable));
+        		  //marker.remove();
+        		  //map.addMarker(markerOptions);
+        		  
         		}
         		/*
         		double latOffset = marker.getPosition().latitude - 0.003;
@@ -498,7 +511,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
                   
             	if(MainActivity.this.activeMarker != null){
             		//Restore original marker
-            		resetMapMarker();            		
+            		resetMapMarker();           		
             		//MainActivity.this.activeMarker.setRotation(0.0f);
             		//int mapDrawable = getResources().getIdentifier(resolveCategoryName(0), "drawable", MainActivity.this.getPackageName());
             		//MainActivity.this.activeMarker.setIcon(BitmapDescriptorFactory.fromResource(mapDrawable)); 
@@ -575,10 +588,10 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	
 	public View getInfoWindow(Marker marker){
 		
-		if (this.activeMarker != null){
-			resetMapMarker();
-		}
-		this.activeMarker = marker;
+		//if (this.activeMarker != null){
+			//resetMapMarker();
+		//}
+		//this.activeMarker = marker;
 		//marker.setRotation(180.0f);
 		
 		LinearLayout infoWindowImageView =  (LinearLayout) getLayoutInflater().inflate(R.layout.info_window_image, null);
@@ -955,12 +968,21 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 
     private void resetMapMarker(){
     	
+    	
     	if (this.activeMarker != null){
     	  int mapDrawable = getResources().getIdentifier(resolveCategoryName(0), "drawable", MainActivity.this.getPackageName());
 		  this.activeMarker.setIcon(BitmapDescriptorFactory.fromResource(mapDrawable));
 		  this.activeMarker.hideInfoWindow();
+		  Log.i("ActiveMarker reset", this.activeMarker.getTitle());
     	}
+
     	
+    }
+    
+    public void setActiveMarker(Marker marker){
+    	
+    	this.activeMarker = marker;
+        
     }
     
     private double calculateLatOffset(double lat, int meters){

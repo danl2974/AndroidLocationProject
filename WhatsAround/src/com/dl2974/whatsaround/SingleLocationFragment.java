@@ -119,6 +119,9 @@ public class SingleLocationFragment extends Fragment {
         });
         
         }
+        else{
+        	controlsBar.removeView(controlsBar.findViewById(R.id.single_location_photo_control));
+        }
        
         TextView steetViewOverlay = (TextView) singleView.findViewById(R.id.street_view_request);
         String currentOverlayText = (String) steetViewOverlay.getText();
