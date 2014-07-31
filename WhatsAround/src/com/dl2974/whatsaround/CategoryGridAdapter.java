@@ -42,6 +42,40 @@ public class CategoryGridAdapter extends BaseAdapter {
     private HashMap<String,TextView> views;
     private int counter = 0;
     private int countercache = 0;
+	final static private Integer[] BG_IMG_IDS = {
+		R.drawable.bar_bg, R.drawable.cafe_bg, R.drawable.fitness_bg,
+		R.drawable.gas_bg, R.drawable.hair_bg, R.drawable.hotel_bg,
+		R.drawable.medical_bg, R.drawable.restaurants_bg, R.drawable.shopping_bg,
+		R.drawable.bar_bg, R.drawable.cafe_bg, R.drawable.fitness_bg,
+		R.drawable.gas_bg, R.drawable.hair_bg, R.drawable.hotel_bg,
+		R.drawable.medical_bg, R.drawable.restaurants_bg, R.drawable.shopping_bg,
+		R.drawable.bar_bg, R.drawable.cafe_bg, R.drawable.fitness_bg,
+		R.drawable.gas_bg, R.drawable.hair_bg, R.drawable.hotel_bg,
+		R.drawable.medical_bg, R.drawable.restaurants_bg, R.drawable.shopping_bg,
+		R.drawable.bar_bg, R.drawable.cafe_bg, R.drawable.fitness_bg,
+		R.drawable.gas_bg, R.drawable.hair_bg, R.drawable.hotel_bg,
+		R.drawable.medical_bg, R.drawable.restaurants_bg, R.drawable.shopping_bg,
+		R.drawable.bar_bg, R.drawable.cafe_bg, R.drawable.fitness_bg,
+		R.drawable.gas_bg, R.drawable.hair_bg, R.drawable.hotel_bg,
+		R.drawable.medical_bg, R.drawable.restaurants_bg, R.drawable.shopping_bg,
+		R.drawable.bar_bg, R.drawable.cafe_bg, R.drawable.fitness_bg,
+		R.drawable.gas_bg, R.drawable.hair_bg, R.drawable.hotel_bg,
+		R.drawable.medical_bg, R.drawable.restaurants_bg, R.drawable.shopping_bg,
+		R.drawable.bar_bg, R.drawable.cafe_bg, R.drawable.fitness_bg,
+		R.drawable.gas_bg, R.drawable.hair_bg, R.drawable.hotel_bg,
+		R.drawable.medical_bg, R.drawable.restaurants_bg, R.drawable.shopping_bg,
+		R.drawable.bar_bg, R.drawable.cafe_bg, R.drawable.fitness_bg,
+		R.drawable.gas_bg, R.drawable.hair_bg, R.drawable.hotel_bg,
+		R.drawable.medical_bg, R.drawable.restaurants_bg, R.drawable.shopping_bg,
+		R.drawable.bar_bg, R.drawable.cafe_bg, R.drawable.fitness_bg,
+		R.drawable.gas_bg, R.drawable.hair_bg, R.drawable.hotel_bg,
+		R.drawable.medical_bg, R.drawable.restaurants_bg, R.drawable.shopping_bg,
+		R.drawable.bar_bg, R.drawable.cafe_bg, R.drawable.fitness_bg,
+		R.drawable.gas_bg, R.drawable.hair_bg, R.drawable.hotel_bg,
+		R.drawable.medical_bg, R.drawable.restaurants_bg, R.drawable.shopping_bg,
+		R.drawable.gas_bg, R.drawable.hair_bg, R.drawable.hotel_bg,
+		R.drawable.medical_bg, R.drawable.restaurants_bg, R.drawable.shopping          
+    };
 
     public CategoryGridAdapter(Context c, String[] categories, Integer[] imgResourceIds, Location loc) {
         mContext = c;
@@ -126,7 +160,7 @@ public class CategoryGridAdapter extends BaseAdapter {
         	Resources r = mContext.getResources();
         	Drawable[] layers = new Drawable[2];
         	//layers[0] = r.getDrawable(R.drawable.grid_bg);
-        	layers[0] = r.getDrawable(R.drawable.bar_bg);
+        	layers[0] = r.getDrawable(BG_IMG_IDS[position]);
         	layers[1] = r.getDrawable(categoryImages[position]);
         	LayerDrawable layerDrawable = new LayerDrawable(layers);
         	imageView.setImageDrawable(layerDrawable);
