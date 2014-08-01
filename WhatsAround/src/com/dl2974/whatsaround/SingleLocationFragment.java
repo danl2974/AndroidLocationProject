@@ -26,6 +26,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
@@ -59,11 +60,16 @@ public class SingleLocationFragment extends Fragment {
 	private HashMap<String,Object> placeDetailsData;
 	private View singleView;
 	private TextView photoControl;
+	private TextView reviewControl;
 	private LinearLayout dataContainer;
 	private RelativeLayout pagerContainer;
 	SingleLocationPagerAdapter slPagerAdapter;
 	ViewPager mViewPager;
-	private FragmentActivity mContext;
+	View reviewView;
+	LinearLayout reviewsSection;
+	//private RelativeLayout reviewsPagerContainer;
+	//ViewPager reviewsViewPager;
+	public FragmentActivity mContext;
 	final static String SINGLE_MAP_FRAGMENT = "singlemapfragment";
 	final static String STREETVIEW_TEXT = "Street View";
 	final static String AERIALVIEW_TEXT = "Aerial View";
@@ -77,9 +83,12 @@ public class SingleLocationFragment extends Fragment {
         singleView = inflater.inflate(R.layout.single_location_pager, container, false);
         LinearLayout dataContainer = (LinearLayout) singleView.findViewById(R.id.location_information_overlay);
         
+        LinearLayout controlsBar = (LinearLayout) singleView.findViewById(R.id.single_location_controls);
+        pagerContainer = new RelativeLayout(this.mContext);
+        
         ArrayList<HashMap<String, Object>> placePhotosList = (ArrayList<HashMap<String, Object>>) this.placeDetailsData.get("photos");
         if(placePhotosList != null){
-          pagerContainer = new RelativeLayout(this.mContext);
+          //pagerContainer = new RelativeLayout(this.mContext);
           SingleLocationPagerAdapter slPagerAdapter = new SingleLocationPagerAdapter(mContext.getSupportFragmentManager(), this.locationData, this.placeDetailsData);
           //mViewPager = (ViewPager) singleView.findViewById(R.id.pager);
           mViewPager = new ViewPager(mContext);
@@ -91,7 +100,9 @@ public class SingleLocationFragment extends Fragment {
     	}	
         //RelativeLayout photoPagerContainer = (RelativeLayout) singleView.findViewById(R.id.pager_photo_container);
         //photoPagerContainer.setVisibility(View.INVISIBLE);
-        LinearLayout controlsBar = (LinearLayout) singleView.findViewById(R.id.single_location_controls);
+        
+        //LinearLayout controlsBar = (LinearLayout) singleView.findViewById(R.id.single_location_controls);
+        
         if(mViewPager != null && pagerContainer != null){
         photoControl = (TextView) controlsBar.findViewById(R.id.single_location_photo_control);
         photoControl.setText("Open Photos");
@@ -120,9 +131,108 @@ public class SingleLocationFragment extends Fragment {
         
         }
         else{
+        	Log.i("ReviewsFrag controlBar remove Photo", "call");
         	controlsBar.removeView(controlsBar.findViewById(R.id.single_location_photo_control));
         }
        
+        //REVIEWS
+        /*
+        ArrayList<HashMap<String, Object>> placeReviewsList = (ArrayList<HashMap<String, Object>>) this.placeDetailsData.get("reviews");
+        if(placeReviewsList != null){
+        	Log.i("ReviewsFrag", "not null" + String.valueOf(placeReviewsList.size()));
+        	if(placeReviewsList.size() > 0){
+              reviewsPagerContainer = new RelativeLayout(this.mContext);
+              SingleLocationReviewsAdapter rPagerAdapter = new SingleLocationReviewsAdapter(mContext.getSupportFragmentManager(), this.locationData, this.placeDetailsData);
+              reviewsViewPager = new ViewPager(mContext);
+              reviewsViewPager.setId(R.id.reviews_view_pager);
+              reviewsViewPager.setAdapter(rPagerAdapter);
+        	}
+          }
+        if(reviewsViewPager != null && reviewsPagerContainer != null){
+        	Log.i("ReviewsFrag", "pager and container not null");
+        	 reviewControl = (TextView) controlsBar.findViewById(R.id.single_location_review_control);
+        	 reviewControl.setText("See Reviews");
+        	 reviewControl.setOnClickListener(new View.OnClickListener() { 	
+             	 @Override
+                  public void onClick(View v) {
+             		 TextView cv = (TextView) v;
+             		 //RelativeLayout pagerContainer = (RelativeLayout) singleView.findViewById(R.id.pager_photo_container);
+             		 LinearLayout locationLayout = (LinearLayout) singleView.findViewById(R.id.location_layout);
+             		 
+             		 if(((String) cv.getText()).equals("See Reviews")){
+             			 
+             			 reviewsPagerContainer.addView(reviewsViewPager);
+             			 LinearLayout.LayoutParams rLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
+             			 locationLayout.addView(reviewsPagerContainer, 2, rLayoutParams);
+             			 reviewControl.setText("Close Reviews");
+             		 }
+             		 else if(((String) cv.getText()).equals("Close Reviews")){
+             			 reviewsPagerContainer.removeView(reviewsViewPager);
+             			 locationLayout.removeView(reviewsPagerContainer);
+             			 reviewControl.setText("See Reviews");
+             		 }
+             	 }
+             });
+        	
+        }
+        */
+        
+        //REVIEWS
+        ArrayList<HashMap<String, Object>> placeReviewsList = (ArrayList<HashMap<String, Object>>) this.placeDetailsData.get("reviews");
+        if(placeReviewsList != null){
+        	Log.i("ReviewsFrag", "not null " + String.valueOf(placeReviewsList.size()));
+        	if(placeReviewsList.size() > 0){
+
+        	  this.reviewView = inflater.inflate(R.layout.single_location_information_reviews, container, false);	
+              this.reviewsSection = (LinearLayout) reviewView.findViewById(R.id.single_review_container);
+      		
+      		  for (int i = 0; i < placeReviewsList.size(); i++){
+      			
+      			TextView tv =	new TextView(this.mContext);
+      			LinearLayout.LayoutParams lParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+      			tv.setText(String.format("%s -- from %s on %s\n\n", (String) placeReviewsList.get(i).get("text"),  (String) placeReviewsList.get(i).get("author_name"), (String) placeReviewsList.get(i).get("time") ));
+      			this.reviewsSection.addView(tv,lParams);
+      			
+      		   }  
+              
+         	 reviewControl = (TextView) controlsBar.findViewById(R.id.single_location_review_control);
+         	 reviewControl.setText("See Reviews");
+         	 reviewControl.setOnClickListener(new View.OnClickListener() { 	
+              	 @Override
+                   public void onClick(View v) {
+              		 TextView cv = (TextView) v;
+              		 //RelativeLayout pagerContainer = (RelativeLayout) singleView.findViewById(R.id.pager_photo_container);
+              		 LinearLayout locationLayout = (LinearLayout) singleView.findViewById(R.id.location_layout);
+              		 
+              		 if(((String) cv.getText()).equals("See Reviews")){
+              			 
+              			 pagerContainer.addView(reviewView);
+              			 LinearLayout.LayoutParams rLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
+              			 locationLayout.addView(pagerContainer, 2, rLayoutParams);
+              			 reviewControl.setText("Close Reviews");
+              		 }
+              		 else if(((String) cv.getText()).equals("Close Reviews")){
+              			 pagerContainer.removeView(reviewView);
+              			 locationLayout.removeView(pagerContainer);
+              			 reviewControl.setText("See Reviews");
+              		 }
+              	 }
+              });
+              
+                            
+        	}
+        	else{
+        		Log.i("ReviewsFrag controlBar remove Reviews", "call");
+        		controlsBar.removeView(controlsBar.findViewById(R.id.single_location_review_control));
+        	 }
+        	
+        }
+        
+        else{
+        	controlsBar.removeView(controlsBar.findViewById(R.id.single_location_review_control));
+        }
+        //END REVIEWS
+        
         TextView steetViewOverlay = (TextView) singleView.findViewById(R.id.street_view_request);
         String currentOverlayText = (String) steetViewOverlay.getText();
         
@@ -277,18 +387,7 @@ public class SingleLocationFragment extends Fragment {
         @Override
         public Fragment getItem(int i) {
             switch (i) {
-                /*
-                case 0:
-                	CustomMapFragment gmapFragment = CustomMapFragment.newInstance();
-            		gmapFragment.setSingleLocationData(this.singleLocationData);
-            		Log.i("SingleLocationPagerAdapter", String.valueOf(this.singleLocationData.size()) );
-            		Log.i("SingleLocationPagerAdapter Id", String.valueOf(gmapFragment.getId()) );
-            		Bundle gmargs = new Bundle();
-                    gmargs.putString("origin", SINGLE_MAP_FRAGMENT);
-                    gmapFragment.setArguments(gmargs);
-                    
-                    return gmapFragment;
-                */
+
                 default:
                 	Log.i("SingleLocationPagerAdapter", String.valueOf(i) );
                     Fragment fragment = new SingleLocationPhotoFragment();
@@ -317,6 +416,73 @@ public class SingleLocationFragment extends Fragment {
         }
     }    
     
+    
+  /*
+    private enum PagerType{
+    	photos,
+    	reviews
+    }
+    
+    public static class SingleLocationReviewsAdapter extends FragmentStatePagerAdapter {
+
+    	private HashMap<String,Object> singleLocationData;
+    	private HashMap<String,Object> detailsData;
+    	
+        public SingleLocationReviewsAdapter(FragmentManager fm, HashMap<String,Object> locationData, HashMap<String,Object> placeDetails) {
+            super(fm);
+            this.singleLocationData = locationData;
+            this.detailsData = placeDetails;
+            Log.i("ReviewsFrag constructor", String.valueOf(placeDetails.size()) + " " +  String.valueOf(this.detailsData.size())  );
+        }
+
+        @Override
+        public Fragment getItem(int i) {
+        	
+        	
+            switch(i) {
+            
+                    
+            default:
+            	    Log.i("ReviewsFrag","getItem switch called");
+                    Fragment rFragment = new SingleLocationReviewFragment();
+                    Bundle rArgs = new Bundle();
+                    rArgs.putSerializable("details", this.detailsData);
+                    rArgs.putInt("index", i);
+                    rFragment.setArguments(rArgs);
+                    return rFragment;
+
+            }
+            
+            
+            
+            
+        }
+
+        @Override
+        public int getCount() {
+
+        
+        	     if(detailsData.get("reviews") != null){
+        	    	
+       		      int cnt = ((ArrayList<HashMap<String, Object>>) this.detailsData.get("reviews")).size();
+       		      Log.i("ReviewsFrag","getCount switch called " + String.valueOf(cnt));
+       		      return cnt;
+       	         }
+       	         else
+       	         {
+       		        return 0;
+       	         }         		 
+        	
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return "Section " + (position + 1);
+        }
+    }
+    
+    
+    */
     
     
     
@@ -363,6 +529,49 @@ public class SingleLocationFragment extends Fragment {
         }
     }    
     
+    
+    
+    
+    /*
+    public static class SingleLocationReviewFragment extends Fragment {
+
+        public static final String ARG_SECTION_NUMBER = "section_number";
+        HashMap<String,Object> placeDetailsData;
+        Context cxt;
+        
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        	Log.i("ReviewsFrag","onCreateView called");
+            View reviewView = inflater.inflate(R.layout.single_location_information_reviews, container, false);
+            Bundle args = getArguments();
+            placeDetailsData = (HashMap<String, Object>) args.getSerializable("details");
+            //int reviewindex = args.getInt("index");
+            LinearLayout reviewsLayout = (LinearLayout) reviewView.findViewById(R.id.single_review_container);
+    		ArrayList<HashMap<String, Object>> placeReviews = (ArrayList<HashMap<String, Object>>) placeDetailsData.get("reviews");
+    		
+    		for (int i = 0; i < placeReviews.size(); i++){
+    			
+    			TextView tv =	new TextView(cxt);
+    			LinearLayout.LayoutParams lParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    			tv.setText(String.format("%s -- from %s on %s\n\n", (String) placeReviews.get(i).get("text"),  (String) placeReviews.get(i).get("author_name"), (String) placeReviews.get(i).get("time") ));
+    			reviewsLayout.addView(tv,lParams);
+    			
+    			Log.i("ReviewsFrag", String.format("%s -- from %s on %s\n\n", (String) placeReviews.get(i).get("text"),  (String) placeReviews.get(i).get("author_name"), (String) placeReviews.get(i).get("time") ));
+    		}
+            
+            return reviewView;
+        }
+        
+        
+        @Override
+        public void onAttach(Activity activity) {
+            super.onAttach(activity);
+            this.cxt = activity;
+        }
+        
+        
+    }     
+    */
     
 
 

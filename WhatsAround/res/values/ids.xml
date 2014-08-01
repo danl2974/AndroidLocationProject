@@ -2,5 +2,6 @@
 <resources>
 
     <item name="location_view_pager" type="id"/>
-
+    <item name="reviews_view_pager" type="id"/>
+    
 </resources>

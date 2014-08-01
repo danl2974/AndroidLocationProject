@@ -362,7 +362,8 @@ public class PlacesClient {
         }
         	        
         // onPostExecute displays the results of the AsyncTask.
-        @Override
+        @SuppressLint("NewApi")
+		@Override
         protected void onPostExecute(Bitmap result) {
         	if(result != null){
         	   this.imageView.setBackground(null);
@@ -593,23 +594,26 @@ public class PlacesClient {
     }
     
     private ArrayList<HashMap<String,Object>> formatDetailsReviews(JSONArray jsonArr){
-    	
+    	Log.i("Reviews", jsonArr.toJSONString());
     	ArrayList<HashMap<String,Object>> hmlist = new ArrayList<HashMap<String,Object>>();
     	try{
     	  Iterator iter = jsonArr.iterator();
     	  while(iter.hasNext()){
     		JSONObject reviews = (JSONObject) iter.next();
-    		if ( ((String) ((JSONObject) ((JSONArray) reviews.get("aspects")).get(0)).get("type")).equals("quality") ){
-    		   HashMap<String,Object> hm = new HashMap<String,Object>();
-    		   for(int i = 0; i < PlacesClient.reviewsDataFields.length; i++){
-    			   hm.put(PlacesClient.reviewsDataFields[i], (String) reviews.get(PlacesClient.reviewsDataFields[i]));
+    		//if ( ((String) ((JSONObject) ((JSONArray) reviews.get("aspects")).get(0)).get("type")).equals("quality") ){
+    			HashMap<String,Object> hm = new HashMap<String,Object>();
+    		    for(int i = 0; i < PlacesClient.reviewsDataFields.length; i++){
+    		     try{	 
+    			   hm.put(PlacesClient.reviewsDataFields[i], reviews.get(PlacesClient.reviewsDataFields[i]).toString() );
+    			   Log.i("Reviews", PlacesClient.reviewsDataFields[i] + "=" + (String) reviews.get(PlacesClient.reviewsDataFields[i]) );
+    		      }catch(Exception e){}
     		   }
     		   hmlist.add(hm);
-    		}
+    		//}
     	}
     	
     	}catch(Exception e){}
-    	
+    	Log.i("Reviews size", String.valueOf(hmlist.size()));
     	return hmlist;    	
     	
     }

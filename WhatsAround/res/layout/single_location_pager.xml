@@ -58,6 +58,15 @@ android:background="@color/whatsaroundcolor" >
      android:textSize="16sp"
      android:textColor="#FFFFFF" 
      android:background="@drawable/location_view_control_button" />
+  
+   <TextView
+     android:id="@+id/single_location_review_control"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:textStyle="bold"
+     android:textSize="16sp"
+     android:textColor="#FFFFFF" 
+     android:background="@drawable/location_view_control_button" />
 
 </LinearLayout>
 
