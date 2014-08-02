@@ -115,7 +115,10 @@ public class SingleLocationFragment extends Fragment {
         		 
         		 if(((String) cv.getText()).equals("Open Photos")){
         			 
-        			 //pagerContainer.setVisibility(View.VISIBLE);
+          			 if(pagerContainer.getChildCount() > 0 && locationLayout.getChildCount() > 3){
+            			   pagerContainer.removeAllViews();
+            			   locationLayout.removeViewAt(2);
+            		  }
         			 pagerContainer.addView(mViewPager);
         			 LinearLayout.LayoutParams pLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
         			 locationLayout.addView(pagerContainer, 2, pLayoutParams);
@@ -190,7 +193,9 @@ public class SingleLocationFragment extends Fragment {
       			
       			TextView tv =	new TextView(this.mContext);
       			LinearLayout.LayoutParams lParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+      			lParams.setMargins(0, 0, 0, 10);
       			tv.setText(String.format("%s -- from %s on %s\n\n", (String) placeReviewsList.get(i).get("text"),  (String) placeReviewsList.get(i).get("author_name"), (String) placeReviewsList.get(i).get("time") ));
+      			tv.setBackgroundResource(R.drawable.review_bg);
       			this.reviewsSection.addView(tv,lParams);
       			
       		   }  
@@ -206,6 +211,10 @@ public class SingleLocationFragment extends Fragment {
               		 
               		 if(((String) cv.getText()).equals("See Reviews")){
               			 
+              			 if(pagerContainer.getChildCount() > 0 && locationLayout.getChildCount() > 3){
+              				locationLayout.removeViewAt(2);
+              			    pagerContainer.removeAllViews();
+              		     }
               			 pagerContainer.addView(reviewView);
               			 LinearLayout.LayoutParams rLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
               			 locationLayout.addView(pagerContainer, 2, rLayoutParams);
