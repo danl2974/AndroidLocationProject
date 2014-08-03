@@ -7,11 +7,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.security.SecureRandom;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
 
 import org.json.simple.JSONArray;
@@ -604,11 +607,12 @@ public class PlacesClient {
     			HashMap<String,Object> hm = new HashMap<String,Object>();
     		    for(int i = 0; i < PlacesClient.reviewsDataFields.length; i++){
     		     try{	 
+    		    	 Log.i("Reviews", PlacesClient.reviewsDataFields[i] );
     			   hm.put(PlacesClient.reviewsDataFields[i], reviews.get(PlacesClient.reviewsDataFields[i]).toString() );
     			   Log.i("Reviews", PlacesClient.reviewsDataFields[i] + "=" + (String) reviews.get(PlacesClient.reviewsDataFields[i]) );
-    		      }catch(Exception e){}
+    		      }catch(Exception e){Log.i("Reviews excep", PlacesClient.reviewsDataFields[i] );}
     		   }
-    		   hmlist.add(hm);
+    		   hmlist.add(formatReviewsMap(hm));
     		//}
     	}
     	
@@ -617,6 +621,26 @@ public class PlacesClient {
     	return hmlist;    	
     	
     }
+    
+    private HashMap<String,Object> formatReviewsMap(HashMap<String,Object> hm){
+    	
+    	for(Map.Entry<String, Object> entry: hm.entrySet()){
+    		if(entry.getKey().equals("time")){
+    			entry.setValue(formatDate((String) entry.getValue()));
+    		}
+    	}
+    	return hm;
+    }
+    
+    
+    public String formatDate(String timestamp){
+
+    	Date date = new Date(Long.valueOf(timestamp)*1000L);
+    	SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy");
+    	sdf.setTimeZone(TimeZone.getTimeZone("EST"));
+    	return sdf.format(date);
+
+    	}
     
     /*
    private Bundle parseJsonSearchForPhotoRef(String jsonString){

@@ -13,7 +13,12 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
+import android.text.style.StyleSpan;
+import android.text.style.TypefaceSpan;
 
 import com.dl2974.whatsaround.LocationFragment.MapListener;
 import com.dl2974.whatsaround.PlacesClient.PlacesCallType;
@@ -30,6 +35,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -194,7 +200,17 @@ public class SingleLocationFragment extends Fragment {
       			TextView tv =	new TextView(this.mContext);
       			LinearLayout.LayoutParams lParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
       			lParams.setMargins(0, 0, 0, 10);
-      			tv.setText(String.format("%s -- from %s on %s\n\n", (String) placeReviewsList.get(i).get("text"),  (String) placeReviewsList.get(i).get("author_name"), (String) placeReviewsList.get(i).get("time") ));
+      			SpannableStringBuilder ssb = new SpannableStringBuilder();
+      			SpannableString text = new SpannableString((String) placeReviewsList.get(i).get("text"));
+      			SpannableString author = new SpannableString((String) placeReviewsList.get(i).get("author_name"));
+      			SpannableString time = new SpannableString((String) placeReviewsList.get(i).get("time"));
+      			text.setSpan(new TypefaceSpan("serif"), 0, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+      			author.setSpan(new StyleSpan(Typeface.ITALIC), 0, author.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+      			time.setSpan(new StyleSpan(Typeface.ITALIC), 0, time.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+      			ssb.append(text).append(" -- from ").append(author).append(" on ").append(time);
+      			
+      			//tv.setText(String.format("%s -- from %s on %s\n\n", (String) placeReviewsList.get(i).get("text"),  (String) placeReviewsList.get(i).get("author_name"), (String) placeReviewsList.get(i).get("time") ));
+      			tv.setText(ssb);
       			tv.setBackgroundResource(R.drawable.review_bg);
       			this.reviewsSection.addView(tv,lParams);
       			
