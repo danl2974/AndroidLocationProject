@@ -606,11 +606,17 @@ public class PlacesClient {
     		//if ( ((String) ((JSONObject) ((JSONArray) reviews.get("aspects")).get(0)).get("type")).equals("quality") ){
     			HashMap<String,Object> hm = new HashMap<String,Object>();
     		    for(int i = 0; i < PlacesClient.reviewsDataFields.length; i++){
-    		     try{	 
-    		    	 Log.i("Reviews", PlacesClient.reviewsDataFields[i] );
-    			   hm.put(PlacesClient.reviewsDataFields[i], reviews.get(PlacesClient.reviewsDataFields[i]).toString() );
-    			   Log.i("Reviews", PlacesClient.reviewsDataFields[i] + "=" + (String) reviews.get(PlacesClient.reviewsDataFields[i]) );
-    		      }catch(Exception e){Log.i("Reviews excep", PlacesClient.reviewsDataFields[i] );}
+    		     try{
+    		    	 Object value = reviews.get(PlacesClient.reviewsDataFields[i]);
+    		    	 if(value instanceof Integer){
+    		    		 hm.put(PlacesClient.reviewsDataFields[i], (Integer) reviews.get(PlacesClient.reviewsDataFields[i]) );
+    		    	 }
+    		    	 else{
+    		    		 hm.put(PlacesClient.reviewsDataFields[i], reviews.get(PlacesClient.reviewsDataFields[i]).toString() );
+    		    	 }
+    			   //hm.put(PlacesClient.reviewsDataFields[i], reviews.get(PlacesClient.reviewsDataFields[i]).toString() );
+    			   Log.i("Reviews", PlacesClient.reviewsDataFields[i] + "=" + String.valueOf(reviews.get(PlacesClient.reviewsDataFields[i])) );
+    		      }catch(Exception e){}
     		   }
     		   hmlist.add(formatReviewsMap(hm));
     		//}
