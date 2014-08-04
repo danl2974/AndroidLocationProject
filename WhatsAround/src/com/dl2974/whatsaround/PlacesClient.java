@@ -634,7 +634,9 @@ public class PlacesClient {
     			   Log.i("Reviews", PlacesClient.reviewsDataFields[i] + "=" + String.valueOf(reviews.get(PlacesClient.reviewsDataFields[i])) );
     		      }catch(Exception e){}
     		   }
-    		   hmlist.add(formatReviewsMap(hm));
+    		   if(((String) hm.get("text")).length() > 0){ // check for empty review text
+    		      hmlist.add(formatReviewsMap(hm));
+    		   }
     		//}
     	}
     	

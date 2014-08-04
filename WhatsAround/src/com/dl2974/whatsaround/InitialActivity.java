@@ -21,8 +21,10 @@ import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -45,6 +47,7 @@ PlacesClient.IPlacesClientTaskCompleted{
 	public final static String LOCATION_EXTRA = "Location";
 	public final static String PHOTO_TYPE_MAP_EXTRA = "GridPhotoTypeMap";
 	ProgressBar bar;
+	private Handler mHandler = new Handler();
 	
 	
     @SuppressLint("NewApi")
@@ -52,6 +55,9 @@ PlacesClient.IPlacesClientTaskCompleted{
     public void onCreate(Bundle savedInstanceState) {
     	
     	super.onCreate(savedInstanceState);
+    	getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
+        getActionBar().hide();
+        
     	setContentView(R.layout.initial_progress);
     	//bar = (ProgressBar) this.findViewById(R.id.progressBar);
     	//bar.setVisibility(View.VISIBLE);
@@ -63,8 +69,7 @@ PlacesClient.IPlacesClientTaskCompleted{
     	Animation animation = AnimationUtils.loadAnimation(this, R.anim.rotate_logo);
         imgview.startAnimation(animation);
         
-    	getActionBar().setDisplayHomeAsUpEnabled(true);
-    	
+    	//getActionBar().setDisplayHomeAsUpEnabled(true);
     	
     	 ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 	     NetworkInfo networkInfo = connMgr.getActiveNetworkInfo(); 
@@ -113,13 +118,18 @@ PlacesClient.IPlacesClientTaskCompleted{
 	@Override
 	public void onConnected(Bundle connectionHint) {
 		
-		googlePlayServicesConnected = true;
-		this.userLocation = mLocationClient.getLastLocation();
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra(LOCATION_EXTRA, this.userLocation);
-        //bar.setVisibility(View.GONE);
-        Log.i("InitialActivity", "start main");
-        startActivity(intent);
+		//googlePlayServicesConnected = true;
+		//this.userLocation = mLocationClient.getLastLocation();
+        //Intent intent = new Intent(this, MainActivity.class);
+        //intent.putExtra(LOCATION_EXTRA, this.userLocation);
+        //Log.i("InitialActivity", "start main");
+        //startActivity(intent);
+        mHandler.postDelayed(new Runnable() {
+            public void run() {
+            	startMain();
+            }
+           }, 3000);
+        
 		/*
         HashMap<String,Object> searchParams = new HashMap<String,Object>();
         searchParams.put("location", String.format("%s,%s", userLocation.getLatitude(), userLocation.getLongitude() ));
@@ -137,6 +147,16 @@ PlacesClient.IPlacesClientTaskCompleted{
         intent.putExtra(LOCATION_EXTRA, this.userLocation);
         startActivity(intent);
        
+	}
+	
+	public void startMain(){
+		
+		googlePlayServicesConnected = true;
+		this.userLocation = mLocationClient.getLastLocation();
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra(LOCATION_EXTRA, this.userLocation);
+        startActivity(intent);
+        
 	}
 	
 

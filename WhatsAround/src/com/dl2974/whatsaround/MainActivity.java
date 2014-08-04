@@ -64,6 +64,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -116,6 +117,13 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.container);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
+		
+		if (findViewById(R.id.fragment_container) != null) {
+			 if (savedInstanceState != null) {
+				    Log.i("Test savedInstanceState", String.valueOf(savedInstanceState.size()));
+	                return;
+	            }
+		}
 
 		Intent mIntent = this.getIntent();
 		if (mIntent.getExtras() != null){
@@ -127,17 +135,26 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 		int availableCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
 		if (availableCode == ConnectionResult.SUCCESS)
 		{
-	      this.mLocationRequest = LocationRequest.create();
-	      this.mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-	      this.mLocationClient = new LocationClient(this, this, this);
-	      this.mLocationClient.connect();
-	     
+	          if(this.mLocationRequest == null){		
+	             this.mLocationRequest = LocationRequest.create();
+	          }
+	          this.mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+	          
+	          if(this.mLocationClient == null){
+	             this.mLocationClient = new LocationClient(this, this, this); 
+	          }
+	          if(!this.mLocationClient.isConnected()){
+	            this.mLocationClient.connect();
+	          }
+	      
 		}
 		else{
-			Dialog dialog = GooglePlayServicesUtil.getErrorDialog(availableCode, this, 0);
+			Dialog gpErrorDialog = GooglePlayServicesUtil.getErrorDialog(availableCode, this, 0);
+			gpErrorDialog.show();
 			//do Toast here
 		}
 		
+		/*
 		if (findViewById(R.id.fragment_container) != null) {
 			 if (savedInstanceState != null) {
 	                return;
@@ -151,7 +168,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 			 //InitialFragment initFrag = new InitialFragment();
 			 //getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, initFrag).commit();
 			 
-			  		 
+		 		 
          ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 	     NetworkInfo networkInfo = connMgr.getActiveNetworkInfo(); 
 
@@ -165,7 +182,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	       	  AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity.this);
 	       	  alertBuilder
 	       	  .setTitle("Where Are You?")
-	       	  .setMessage("Your current location isn't available from your device. Are we allowed to find you?")
+	       	  .setMessage("Your current location isn't available currently from your device. Are we allowed to find you?")
 	             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 	           	  @Override
 	                 public void onClick(DialogInterface dialog, int id) {
@@ -189,8 +206,62 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 		     
 			 
 		}
+		*/
+		
 	}
 	
+	
+	
+    @Override
+    protected void onStart() {
+        super.onStart();
+        verifyConnectivity();
+    }
+	
+
+    
+    private void verifyConnectivity(){
+    	
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+  	    NetworkInfo networkInfo = connMgr.getActiveNetworkInfo(); 
+
+  	    if (networkInfo != null && networkInfo.isConnected()) {
+  	    	 
+  	 
+  	 	     return;
+  		 
+  	     }
+  	     else{
+  	       	  AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity.this);
+  	       	  alertBuilder
+  	       	  .setTitle("Where Are You?")
+  	       	  .setMessage("Your current location isn't available currently from your device. Are we allowed to find you?")
+  	             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+  	           	  @Override
+  	                 public void onClick(DialogInterface dialog, int id) {
+  	           		  dialog.cancel();
+  	           		  Toast.makeText(MainActivity.this, "Trying To Find Your Location", Toast.LENGTH_LONG).show(); 
+  	           		  MainActivity.this.connectionRetry = true;
+  	               	  MainActivity.this.mLocationClient.connect();
+  	                 }
+  	             })
+  	             .setNegativeButton("No", new DialogInterface.OnClickListener() {
+  	           	  @Override
+  	                 public void onClick(DialogInterface dialog, int id) {
+  	                      dialog.cancel();
+  	                 }
+  	             });
+  	       	  AlertDialog alertDialog = alertBuilder.create();
+  	       	  alertDialog.show();
+  	       	  
+  	         } //end ELSE
+    	
+    	
+    }
+	
+    
+    
+    
 	/*
 	@Override
 	protected void onStart (){
@@ -874,14 +945,16 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	public void onConnected(Bundle bundle) {
 	
 		googlePlayServicesConnected = true;
-		//this.userLocation = mLocationClient.getLastLocation();
+		this.userLocation = mLocationClient.getLastLocation();
 		mLocationClient.requestLocationUpdates(mLocationRequest, this);
-		
 		
 		if(this.connectionRetry){
 			//onUserCenteredLocationsView();
 			initGridHome();
 			this.connectionRetry = false;
+		}
+		else{
+			initGridHome();
 		}
 		
 	}

@@ -126,10 +126,17 @@ public class SingleLocationFragment extends Fragment {
             			   pagerContainer.removeAllViews();
             			   locationLayout.removeViewAt(2);
             		  }
+        			 if(reviewControl != null){ //Close Reviews If Open
+        				 if(reviewControl.getText().equals("Close Reviews")){
+        				    reviewControl.performClick();
+        				 }
+          			 }
+          			 
         			 pagerContainer.addView(mViewPager);
         			 LinearLayout.LayoutParams pLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
         			 locationLayout.addView(pagerContainer, 2, pLayoutParams);
         			 photoControl.setText("Close Photos");
+        			 
         		 }
         		 else if(((String) cv.getText()).equals("Close Photos")){
         			 pagerContainer.removeView(mViewPager);
@@ -240,10 +247,17 @@ public class SingleLocationFragment extends Fragment {
               				locationLayout.removeViewAt(2);
               			    pagerContainer.removeAllViews();
               		     }
+              			 if(photoControl != null){ // Close Photos If Open
+              				 if(photoControl.getText().equals("Close Photos")){
+              			        photoControl.performClick();
+              				 }
+              			 }
+              			 
               			 pagerContainer.addView(reviewView);
               			 LinearLayout.LayoutParams rLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
               			 locationLayout.addView(pagerContainer, 2, rLayoutParams);
               			 reviewControl.setText("Close Reviews");
+              			 
               		 }
               		 else if(((String) cv.getText()).equals("Close Reviews")){
               			 pagerContainer.removeView(reviewView);
