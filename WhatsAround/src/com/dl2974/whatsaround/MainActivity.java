@@ -644,12 +644,13 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 				  }
 				});
 			
-			
-			TextView iw_website = (TextView) infoWindowView.findViewById(R.id.iw_website);
-			iw_website.setClickable(true);
-			String websiteUrl = (String) this.placesLocationDetailsData.get("website");
-			String link = String.format("<a href='%s'>%s</a>", websiteUrl, websiteUrl );
-			iw_website.setText(Html.fromHtml(link));
+			if(this.placesLocationDetailsData.get("website") != null){
+			  TextView iw_website = (TextView) infoWindowView.findViewById(R.id.iw_website);
+			  iw_website.setClickable(true);
+			  String websiteUrl = (String) this.placesLocationDetailsData.get("website");
+			  String link = String.format("<a href='%s'>%s</a>", websiteUrl, websiteUrl );
+			  iw_website.setText(Html.fromHtml(link));
+			}
 			
 	    /*		
 		View infoWindowView = getLayoutInflater().inflate(R.layout.info_window, null);	

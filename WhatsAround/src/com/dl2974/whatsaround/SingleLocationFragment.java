@@ -209,7 +209,14 @@ public class SingleLocationFragment extends Fragment {
       			text.setSpan(new StyleSpan(Typeface.BOLD), 0, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
       			author.setSpan(new StyleSpan(Typeface.ITALIC), 0, author.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
       			time.setSpan(new StyleSpan(Typeface.ITALIC), 0, time.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-      			ssb.append(text).append(" -- from ").append(author).append(" on ").append(time).append(" Rating:").append(rating);
+      			ssb.append(text)
+      			    .append("\n -- from ")
+      			    .append(author)
+      			    .append(" on ")
+      			    .append(time)
+      			    .append("\nRating: ")
+      			    .append(rating)
+      			    .append("/5");
       			
       			//tv.setText(String.format("%s -- from %s on %s\n\n", (String) placeReviewsList.get(i).get("text"),  (String) placeReviewsList.get(i).get("author_name"), (String) placeReviewsList.get(i).get("time") ));
       			tv.setText(ssb);
@@ -328,7 +335,7 @@ public class SingleLocationFragment extends Fragment {
 		   TextView single_website = (TextView) textPortion.findViewById(R.id.single_website);
 		   single_website.setClickable(true);
 		   String websiteUrl = (String) placeDetailsData.get("website");
-		   String link = String.format("<a href='%s'>%s</a>", websiteUrl, websiteUrl );
+		   String link = String.format("<a href='%s'>Website</a>", websiteUrl);
 		   single_website.setText(Html.fromHtml(link));
 		   single_website.setMovementMethod(LinkMovementMethod.getInstance());
 		}

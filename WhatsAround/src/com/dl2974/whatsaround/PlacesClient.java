@@ -28,9 +28,17 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.ScaleXSpan;
+import android.text.style.StyleSpan;
+import android.text.style.TypefaceSpan;
 import android.util.Log;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
@@ -58,7 +66,7 @@ public class PlacesClient {
     public static String[] detailsDataFields = {"formatted_address","formatted_phone_number","icon","id","scope","url","user_ratings_total","utc_offset","vicinity","website","place_id","price_level","reference"};
     public static String[] reviewsDataFields = {"author_name","author_url","language","rating","text","time"};
     public static String[] photosDataFields = {};
-    public static String[] days = {"Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"};
+    public static String[] days = {"SUN","MON","TUE","WED","THU","FRI","SAT"};
     
 	public enum PlacesCallType {
 		search,
@@ -550,11 +558,12 @@ public class PlacesClient {
     
     private String formatDetailsHours(JSONObject jsonObj){
     	
-    	StringBuilder sb = new StringBuilder();
+    	SpannableStringBuilder ssb = new SpannableStringBuilder();
+    	//StringBuilder sb = new StringBuilder();
     	try{
     	Boolean opened = (Boolean) jsonObj.get("open_now");
     	String businessState = opened ? "Opened Now": "Closed Now";
-    	sb.append(businessState + "\n");
+    	ssb.append(businessState + "\n");
     	
     	JSONArray periods = (JSONArray) jsonObj.get("periods");
     	Iterator iter = periods.iterator();
@@ -567,13 +576,20 @@ public class PlacesClient {
     		String close = (String) ((JSONObject) dayOfWeek.get("close")).get("time");
     		String closeStr = Integer.valueOf(close.substring(0,2)) > 12 ? (String.valueOf(Integer.valueOf(close.substring(0,2)) - 12) + ":" + close.substring(2,4) + " p.m.") : (close.substring(0,2) + ":" + close.substring(2,4));
 
-    		sb.append(String.format("%s: %s - %s\n", PlacesClient.days[dayIndex.intValue()], openStr, closeStr));
+    		SpannableString dow = new SpannableString(PlacesClient.days[dayIndex.intValue()]);
+    		dow.setSpan(new TypefaceSpan("monospace"), 0, dow.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+    		ssb.append(dow).append(": ")
+                .append((openStr.startsWith("0") ? openStr.substring(1): openStr))
+                .append(" - ")
+                .append((closeStr.startsWith("0") ? closeStr.substring(1) : closeStr))
+                .append("\n");
+    		//sb.append(String.format("%s: %s - %s\n", PlacesClient.days[dayIndex.intValue()], (openStr.startsWith("0") ? openStr.substring(1): openStr), (closeStr.startsWith("0") ? closeStr.substring(1) : closeStr) ));
     		
     	}
     	 
     	 }catch(Exception e){}
     	
-    	 return sb.toString();
+    	 return ssb.toString();
 
     }
     
