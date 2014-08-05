@@ -146,7 +146,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	          if(!this.mLocationClient.isConnected()){
 	            this.mLocationClient.connect();
 	          }
-	      
+	          
 		}
 		else{
 			Dialog gpErrorDialog = GooglePlayServicesUtil.getErrorDialog(availableCode, this, 0);
@@ -546,15 +546,14 @@ GooglePlayServicesClient.OnConnectionFailedListener {
             public boolean onMarkerClick(Marker marker){
         		
         		if(marker.equals(MainActivity.this.activeMarker)){ // Close marker if active one is re-clicked
-        			Log.i("ActiveMarker onMarkerClick Re-click", MainActivity.this.activeMarker.getTitle());
         			resetMapMarker();
         			return true;
         		}
         		else{
         		  if (MainActivity.this.activeMarker != null){
-        			  Log.i("ActiveMarker onMarkerClick reset", MainActivity.this.activeMarker.getTitle());
         			  resetMapMarker();
         		  }	
+        		  
         		  MainActivity.this.setActiveMarker(marker);
         		  marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_active));
         		  
@@ -582,6 +581,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
                   
             	if(MainActivity.this.activeMarker != null){
             		//Restore original marker
+            		Log.i("Test MapClick", MainActivity.this.activeMarker.getTitle());
             		resetMapMarker();           		
             		//MainActivity.this.activeMarker.setRotation(0.0f);
             		//int mapDrawable = getResources().getIdentifier(resolveCategoryName(0), "drawable", MainActivity.this.getPackageName());
@@ -1047,7 +1047,6 @@ GooglePlayServicesClient.OnConnectionFailedListener {
     	  int mapDrawable = getResources().getIdentifier(resolveCategoryName(0), "drawable", MainActivity.this.getPackageName());
 		  this.activeMarker.setIcon(BitmapDescriptorFactory.fromResource(mapDrawable));
 		  this.activeMarker.hideInfoWindow();
-		  Log.i("ActiveMarker reset", this.activeMarker.getTitle());
     	}
 
     	

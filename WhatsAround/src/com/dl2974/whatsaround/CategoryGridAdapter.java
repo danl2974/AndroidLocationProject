@@ -47,8 +47,8 @@ public class CategoryGridAdapter extends BaseAdapter {
 		R.drawable.gas_bg, R.drawable.hair_bg, R.drawable.medical_bg,
 		R.drawable.bar_bg, R.drawable.cafe_bg, R.drawable.fitness_bg,
 		R.drawable.store_bg, R.drawable.entertainment_bg, R.drawable.financial_bg,
-		R.drawable.default_bg, R.drawable.default_bg, R.drawable.default_bg,
-		R.drawable.default_bg, R.drawable.default_bg, R.drawable.default_bg,
+		R.drawable.culture_bg, R.drawable.default_bg, R.drawable.default_bg,
+		R.drawable.default_bg, R.drawable.pharmacy_bg, R.drawable.transport_bg,
 		R.drawable.default_bg, R.drawable.default_bg, R.drawable.default_bg,
 		R.drawable.default_bg, R.drawable.default_bg, R.drawable.default_bg,
 		};
