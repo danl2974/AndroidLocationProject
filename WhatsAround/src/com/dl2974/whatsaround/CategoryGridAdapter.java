@@ -42,40 +42,17 @@ public class CategoryGridAdapter extends BaseAdapter {
     private HashMap<String,TextView> views;
     private int counter = 0;
     private int countercache = 0;
-	final static private Integer[] BG_IMG_IDS = {
+    final static private Integer[] BG_IMG_IDS = {
+    	R.drawable.restaurants_bg, R.drawable.shopping_bg, R.drawable.hotel_bg,
+		R.drawable.gas_bg, R.drawable.hair_bg, R.drawable.medical_bg,
 		R.drawable.bar_bg, R.drawable.cafe_bg, R.drawable.fitness_bg,
-		R.drawable.gas_bg, R.drawable.hair_bg, R.drawable.hotel_bg,
-		R.drawable.medical_bg, R.drawable.restaurants_bg, R.drawable.shopping_bg,
-		R.drawable.bar_bg, R.drawable.cafe_bg, R.drawable.fitness_bg,
-		R.drawable.gas_bg, R.drawable.hair_bg, R.drawable.hotel_bg,
-		R.drawable.medical_bg, R.drawable.restaurants_bg, R.drawable.shopping_bg,
-		R.drawable.bar_bg, R.drawable.cafe_bg, R.drawable.fitness_bg,
-		R.drawable.gas_bg, R.drawable.hair_bg, R.drawable.hotel_bg,
-		R.drawable.medical_bg, R.drawable.restaurants_bg, R.drawable.shopping_bg,
-		R.drawable.bar_bg, R.drawable.cafe_bg, R.drawable.fitness_bg,
-		R.drawable.gas_bg, R.drawable.hair_bg, R.drawable.hotel_bg,
-		R.drawable.medical_bg, R.drawable.restaurants_bg, R.drawable.shopping_bg,
-		R.drawable.bar_bg, R.drawable.cafe_bg, R.drawable.fitness_bg,
-		R.drawable.gas_bg, R.drawable.hair_bg, R.drawable.hotel_bg,
-		R.drawable.medical_bg, R.drawable.restaurants_bg, R.drawable.shopping_bg,
-		R.drawable.bar_bg, R.drawable.cafe_bg, R.drawable.fitness_bg,
-		R.drawable.gas_bg, R.drawable.hair_bg, R.drawable.hotel_bg,
-		R.drawable.medical_bg, R.drawable.restaurants_bg, R.drawable.shopping_bg,
-		R.drawable.bar_bg, R.drawable.cafe_bg, R.drawable.fitness_bg,
-		R.drawable.gas_bg, R.drawable.hair_bg, R.drawable.hotel_bg,
-		R.drawable.medical_bg, R.drawable.restaurants_bg, R.drawable.shopping_bg,
-		R.drawable.bar_bg, R.drawable.cafe_bg, R.drawable.fitness_bg,
-		R.drawable.gas_bg, R.drawable.hair_bg, R.drawable.hotel_bg,
-		R.drawable.medical_bg, R.drawable.restaurants_bg, R.drawable.shopping_bg,
-		R.drawable.bar_bg, R.drawable.cafe_bg, R.drawable.fitness_bg,
-		R.drawable.gas_bg, R.drawable.hair_bg, R.drawable.hotel_bg,
-		R.drawable.medical_bg, R.drawable.restaurants_bg, R.drawable.shopping_bg,
-		R.drawable.bar_bg, R.drawable.cafe_bg, R.drawable.fitness_bg,
-		R.drawable.gas_bg, R.drawable.hair_bg, R.drawable.hotel_bg,
-		R.drawable.medical_bg, R.drawable.restaurants_bg, R.drawable.shopping_bg,
-		R.drawable.gas_bg, R.drawable.hair_bg, R.drawable.hotel_bg,
-		R.drawable.medical_bg, R.drawable.restaurants_bg, R.drawable.shopping          
-    };
+		R.drawable.store_bg, R.drawable.entertainment_bg, R.drawable.financial_bg,
+		R.drawable.default_bg, R.drawable.default_bg, R.drawable.default_bg,
+		R.drawable.default_bg, R.drawable.default_bg, R.drawable.default_bg,
+		R.drawable.default_bg, R.drawable.default_bg, R.drawable.default_bg,
+		R.drawable.default_bg, R.drawable.default_bg, R.drawable.default_bg,
+		};
+
 
     public CategoryGridAdapter(Context c, String[] categories, Integer[] imgResourceIds, Location loc) {
         mContext = c;
