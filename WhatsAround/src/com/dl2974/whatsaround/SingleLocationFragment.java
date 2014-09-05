@@ -567,6 +567,7 @@ public class SingleLocationFragment extends Fragment {
     			   photoParams.put("maxwidth", 1600);
     			   PlacesClient ppc = new PlacesClient(getActivity(), photoParams, PlacesCallType.photos);
     			   imageView.setTag(placePhotos.get(photoindex).get("photo_reference"));
+    			   pCache.clearCache();
     			   ppc.getSingleLocationPhoto(imageView);
     			}
     			

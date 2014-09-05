@@ -35,5 +35,9 @@ public class SingleLocationPhotoCacheSingleton {
 		
 	}
 	
+	public void clearCache(){
+		 mMemoryCache.evictAll();
+	}
+	
 }
 
