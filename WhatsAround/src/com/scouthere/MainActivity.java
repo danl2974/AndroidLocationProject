@@ -79,6 +79,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	Projection projection;
 	int factualCategoryId;
 	boolean googlePlayServicesConnected;
+	private HomeGridFragment hgFragment;
 	final static String MAP_FRAGMENT = "mapfragment";
 	final static String SINGLE_MAP_FRAGMENT = "singlemapfragment";
 	final static String STREET_MAP_FRAGMENT = "streetmapfragment";
@@ -193,7 +194,10 @@ GooglePlayServicesClient.OnConnectionFailedListener {
     
 	private void initGridHome(){
 		
-	      HomeGridFragment hgFragment = new HomeGridFragment();
+	      //HomeGridFragment hgFragment = new HomeGridFragment();
+		  if(hgFragment == null){
+			  hgFragment = new HomeGridFragment();
+		  }
 		  hgFragment.setLocation(this.userLocation);
 		  FragmentTransaction mFragmentTransaction = getSupportFragmentManager().beginTransaction();
 		  mFragmentTransaction.add(R.id.fragment_container, hgFragment);
