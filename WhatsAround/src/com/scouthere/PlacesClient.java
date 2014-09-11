@@ -31,6 +31,7 @@ import android.text.SpannableStringBuilder;
 import android.text.style.TypefaceSpan;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
@@ -321,6 +322,8 @@ public class PlacesClient {
 		@Override
         protected void onPostExecute(Bitmap result) {
         	if(result != null){
+        	   LinearLayout photoLL = (LinearLayout) this.imageView.getParent();
+        	   photoLL.removeViewAt(1);
         	   this.imageView.setBackground(null);
                this.imageView.setImageDrawable(new BitmapDrawable(PlacesClient.this.mContext.getResources(), result ));
                SingleLocationPhotoCacheSingleton pCache = SingleLocationPhotoCacheSingleton.getInstance();

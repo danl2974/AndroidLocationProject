@@ -41,6 +41,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Html;
 import android.util.Log;
@@ -79,7 +80,10 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	Projection projection;
 	int factualCategoryId;
 	boolean googlePlayServicesConnected;
-	private HomeGridFragment hgFragment;
+	public static HomeGridFragment hgFragment = new HomeGridFragment();
+	CustomMapFragment placeTypeMapFragment;
+	SingleLocationFragment mSingleLocationFragment;
+	CustomMapFragment mSingleCustomMapFragment;
 	final static String MAP_FRAGMENT = "mapfragment";
 	final static String SINGLE_MAP_FRAGMENT = "singlemapfragment";
 	final static String STREET_MAP_FRAGMENT = "streetmapfragment";
@@ -195,9 +199,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	private void initGridHome(){
 		
 	      //HomeGridFragment hgFragment = new HomeGridFragment();
-		  if(hgFragment == null){
-			  hgFragment = new HomeGridFragment();
-		  }
+	      hgFragment = new HomeGridFragment();
 		  hgFragment.setLocation(this.userLocation);
 		  FragmentTransaction mFragmentTransaction = getSupportFragmentManager().beginTransaction();
 		  mFragmentTransaction.add(R.id.fragment_container, hgFragment);
@@ -209,10 +211,18 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	public void onPlaceTypeFilter(String filter){
 		
 		this.placesFilter = filter;
+		FragmentManager fragmentManager = getSupportFragmentManager();
+		
+		if (placeTypeMapFragment != null){
+			fragmentManager.popBackStack();
+			FragmentTransaction removetransaction = fragmentManager.beginTransaction();
+			removetransaction.remove(placeTypeMapFragment).commit();
+		}
 		
         CustomMapFragment mapFragment = CustomMapFragment.newInstance();
-		
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        placeTypeMapFragment = mapFragment;
+        //FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.fragment_container, mapFragment, MAP_FRAGMENT);
         transaction.addToBackStack(null);
 
@@ -426,15 +436,31 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 		int markerIndex = resolvePlacesIndex(marker.getTitle());
 		HashMap<String,Object> singleLocationData = this.placesLocations.get(markerIndex);
 		
+		FragmentManager fragmentManager = getSupportFragmentManager();
+		fragmentManager.popBackStack();
+		
+		if(mSingleLocationFragment != null){
+			FragmentTransaction rsingletransaction = fragmentManager.beginTransaction();
+			rsingletransaction.remove(mSingleLocationFragment).commit();
+		}
+		
 		SingleLocationFragment sFragment = new SingleLocationFragment();
+		mSingleLocationFragment = sFragment;
 		sFragment.setSingleLocationData(singleLocationData);
 		sFragment.setSingleLocationDetailsData(this.placesLocationDetailsData);
 		
+		if(mSingleCustomMapFragment != null){
+			FragmentTransaction rsinglemaptransaction = fragmentManager.beginTransaction();
+			rsinglemaptransaction.remove(mSingleCustomMapFragment).commit();			
+		}
+		
 		CustomMapFragment gmapFragment = CustomMapFragment.newInstance();
+		mSingleCustomMapFragment = gmapFragment;
 		gmapFragment.setSingleLocationData(singleLocationData);
 		
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
+        //FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+		FragmentTransaction transaction = fragmentManager.beginTransaction();
+		
         transaction.replace(R.id.fragment_container, sFragment);
         transaction.add(R.id.single_map, gmapFragment, SINGLE_MAP_FRAGMENT);
         transaction.addToBackStack(null);
@@ -569,6 +595,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 		    }
 			return true;
 		} else if (itemId == R.id.home_icon) {
+			finish();
 			startActivity(new Intent(this, MainActivity.class));
 			return true;
 		}

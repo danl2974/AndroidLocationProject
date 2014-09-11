@@ -2,6 +2,7 @@ package com.scouthere;
 
 import android.graphics.Bitmap;
 import android.support.v4.util.LruCache;
+import android.util.Log;
 
 public class SingleLocationPhotoCacheSingleton {
 	
@@ -31,12 +32,15 @@ public class SingleLocationPhotoCacheSingleton {
 	
 	public void put(String key, Bitmap bmp){
 		
+		Log.i("SingleLocationPhotoCacheSingleton", "size: " + String.valueOf(mMemoryCache.size()));
+		mMemoryCache.trimToSize(3);
 		mMemoryCache.put(key, bmp);
 		
 	}
 	
 	public void clearCache(){
 		 mMemoryCache.evictAll();
+		 Log.i("SingleLocationPhotoCacheSingleton", "mMemoryCache.evictAll() called");
 	}
 	
 }

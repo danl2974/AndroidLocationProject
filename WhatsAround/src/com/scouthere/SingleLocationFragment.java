@@ -329,11 +329,13 @@ public class SingleLocationFragment extends Fragment {
 
     	private HashMap<String,Object> singleLocationData;
     	private HashMap<String,Object> placeDetailsData;
+    	SingleLocationPhotoCacheSingleton pCache = SingleLocationPhotoCacheSingleton.getInstance();
     	
         public SingleLocationPagerAdapter(FragmentManager fm, HashMap<String,Object> locationData, HashMap<String,Object> placeDetails) {
             super(fm);
             this.singleLocationData = locationData;
             this.placeDetailsData = placeDetails;
+            pCache.clearCache();
         }
 
         @Override
@@ -393,13 +395,12 @@ public class SingleLocationFragment extends Fragment {
     			    imageView.setImageDrawable(new BitmapDrawable(getActivity().getResources(), bmp ));
     			}
     			else{
-    			   imageView.setBackgroundResource(R.drawable.empty_photo);
+    			   //imageView.setBackgroundResource(R.drawable.empty_photo);
     			   HashMap<String,Object> photoParams = new HashMap<String,Object>();
     			   photoParams.put("photoreference", placePhotos.get(photoindex).get("photo_reference"));
     			   photoParams.put("maxwidth", 1600);
     			   PlacesClient ppc = new PlacesClient(getActivity(), photoParams, PlacesCallType.photos);
     			   imageView.setTag(placePhotos.get(photoindex).get("photo_reference"));
-    			   pCache.clearCache();
     			   ppc.getSingleLocationPhoto(imageView);
     			}
     			
