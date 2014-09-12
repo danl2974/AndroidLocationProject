@@ -18,7 +18,7 @@ public class HomeGridFragment extends Fragment {
 	
     public interface OnPlaceTypeSelectedListener {
         
-        public void onPlaceTypeFilter(String filter);
+        public void onPlaceTypeFilter(String filter, String resourceName);
         
     }
     
@@ -52,7 +52,20 @@ public class HomeGridFragment extends Fragment {
     	"pet_store|veterinary_care", // Pets
     	"campground|rv_park", //Outdoors
     	};
-	
+    
+	final static private String[] INFOWINDOW_RESOURCE_NAMES = {
+
+		"restaurants_iw", "shopping_iw", "hotel_iw",
+		"gas_iw", "hair_iw", "medical_iw",
+		"bar_iw", "cafe_iw", "fitness_iw",
+		"store_iw", "entertainment_iw", "financial_iw",
+		"culture_iw", "establishment_iw", "professional_iw",
+		"publicgovt_iw", "pharmacy_iw", "transport_iw",
+		"specialty_iw", "education_iw", "automotive_iw",
+		"worship_iw", "pets_iw", "outdoors_iw"
+		
+    };
+    	
 	final static private Integer[] GRID_IMG_IDS = {
 		R.drawable.restaurants, R.drawable.shopping, R.drawable.hotel,
 		R.drawable.gas, R.drawable.hair, R.drawable.medical,
@@ -63,6 +76,7 @@ public class HomeGridFragment extends Fragment {
 		R.drawable.specialty, R.drawable.education, R.drawable.automotive,
 		R.drawable.worship, R.drawable.pets, R.drawable.outdoors,          
     };
+
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -77,7 +91,8 @@ public class HomeGridFragment extends Fragment {
 	        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 	            
 	        	String placesType = PLACES_TYPES[position];
-	        	selectionCallback.onPlaceTypeFilter(placesType);
+	        	String resourceName = INFOWINDOW_RESOURCE_NAMES[position];
+	        	selectionCallback.onPlaceTypeFilter(placesType, resourceName);
 	        	
 	        }
 	    });

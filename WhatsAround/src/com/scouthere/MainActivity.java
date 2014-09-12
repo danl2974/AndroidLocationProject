@@ -91,6 +91,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	ArrayList<String> yelpMarkers = new ArrayList<String>();
 	private String yelpFilter;
 	private String placesFilter;
+	private String infoWindowResourceName;
 	private String placesKey = null;
 	private boolean connectionRetry = false;
 	long mainTimestamp = 0;
@@ -162,7 +163,8 @@ GooglePlayServicesClient.OnConnectionFailedListener {
         	if ((startTime - mainTimestamp) >  60000){
         		 if(!this.mLocationClient.isConnected()){
         			Log.i("main onStart NOT connected", String.valueOf(mainTimestamp));
-     	            this.mLocationClient.connect();
+     	            //this.mLocationClient.connect();
+     	            startActivity(new Intent(this, InitialActivity.class));
      	          }
         		 else{
         			Log.i("main onStart connected", String.valueOf(mainTimestamp));
@@ -226,9 +228,10 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	 
 	}
 	
-	public void onPlaceTypeFilter(String filter){
+	public void onPlaceTypeFilter(String filter, String resourceName){
 		
 		this.placesFilter = filter;
+		this.infoWindowResourceName = resourceName;
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		
 		if (placeTypeMapFragment != null){
@@ -411,6 +414,8 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 			this.placesLocationDetailsData = dpc.getPlacesData().get(0);
 			
 			View infoWindowView = getLayoutInflater().inflate(R.layout.info_window, null);
+			ImageView iw_type_image = (ImageView) infoWindowView.findViewById(R.id.iw_type_image);
+			iw_type_image.setImageResource(getResources().getIdentifier(this.infoWindowResourceName, "drawable", this.getPackageName()));
 			TextView iw_name = (TextView) infoWindowView.findViewById(R.id.iw_name);
 			iw_name.setText((String) this.placesLocations.get(markerIndex).get("name"));
 			TextView iw_address = (TextView) infoWindowView.findViewById(R.id.iw_address);
