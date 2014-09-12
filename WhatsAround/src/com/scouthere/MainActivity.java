@@ -2,6 +2,7 @@ package com.scouthere;
 
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import com.scouthere.R;
@@ -92,6 +93,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	private String placesFilter;
 	private String placesKey = null;
 	private boolean connectionRetry = false;
+	long mainTimestamp = 0;
 
 
 	@SuppressLint("NewApi")
@@ -153,6 +155,22 @@ GooglePlayServicesClient.OnConnectionFailedListener {
     protected void onStart() {
         super.onStart();
         verifyConnectivity();
+        if(mainTimestamp != 0){
+        	Log.i("main onStart", String.valueOf(mainTimestamp));
+        	Date date = new Date();
+ 	        long startTime = date.getTime();
+        	if ((startTime - mainTimestamp) >  60000){
+        		 if(!this.mLocationClient.isConnected()){
+        			Log.i("main onStart NOT connected", String.valueOf(mainTimestamp));
+     	            this.mLocationClient.connect();
+     	          }
+        		 else{
+        			Log.i("main onStart connected", String.valueOf(mainTimestamp));
+        			this.userLocation = mLocationClient.getLastLocation();
+        			initGridHome();
+        		 }
+        	}
+        }
     }
 	
 
@@ -214,7 +232,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		
 		if (placeTypeMapFragment != null){
-			fragmentManager.popBackStack();
+			//fragmentManager.popBackStack();
 			FragmentTransaction removetransaction = fragmentManager.beginTransaction();
 			removetransaction.remove(placeTypeMapFragment).commit();
 		}
@@ -568,6 +586,9 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	        }
 	        mLocationClient.disconnect();
 	        super.onStop();
+	        Date date = new Date();
+	        mainTimestamp = date.getTime();
+	        Log.i("main onStop", "called");
 	    }
 	 
 	 
