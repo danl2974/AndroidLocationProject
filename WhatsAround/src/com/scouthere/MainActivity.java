@@ -164,6 +164,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
         		 if(!this.mLocationClient.isConnected()){
         			Log.i("main onStart NOT connected", String.valueOf(mainTimestamp));
      	            //this.mLocationClient.connect();
+        			finish();
      	            startActivity(new Intent(this, InitialActivity.class));
      	          }
         		 else{
@@ -460,7 +461,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 		HashMap<String,Object> singleLocationData = this.placesLocations.get(markerIndex);
 		
 		FragmentManager fragmentManager = getSupportFragmentManager();
-		fragmentManager.popBackStack();
+		//fragmentManager.popBackStack();
 		
 		if(mSingleLocationFragment != null){
 			FragmentTransaction rsingletransaction = fragmentManager.beginTransaction();
