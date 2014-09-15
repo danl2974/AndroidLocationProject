@@ -3,19 +3,28 @@ package com.scouthere;
 import com.scouthere.R;
 
 import android.annotation.SuppressLint;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.location.Location;
+import android.util.Log;
+import android.view.DragEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.DragShadowBuilder;
+import android.view.View.OnDragListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.BaseAdapter;
+import android.widget.GridLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 
 
+@SuppressLint("NewApi")
 public class CategoryGridAdapter extends BaseAdapter {
 	
     private Context mContext;
@@ -87,13 +96,74 @@ public class CategoryGridAdapter extends BaseAdapter {
         	imageView.setImageDrawable(layerDrawable);
 
         }
-
-    	
+       imageView.setOnTouchListener(new GridBlockTouchListener());
+       imageView.setOnDragListener(new GridBlockDragListener());
        return imageView;
 
     	
     }
 
 
+    
+    @SuppressLint("NewApi")
+	private final class GridBlockTouchListener implements OnTouchListener {
+    	  @SuppressLint("NewApi")
+		public boolean onTouch(View view, MotionEvent motionEvent) {
+    	    if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+    	      ClipData data = ClipData.newPlainText("", "");
+    	      DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+    	      view.startDrag(data, shadowBuilder, view, 0);
+    	      view.setVisibility(View.INVISIBLE);
+    	      return true;
+    	    } else {
+    	    return false;
+    	    }
+    	  }
+    	}
+    
+    
+    
+    
+    
+    class GridBlockDragListener implements OnDragListener {
+    	  //Drawable enterShape = getActivity().getResources().getDrawable(R.drawable.shape_droptarget);
+    	  //Drawable normalShape = getResources().getDrawable(R.drawable.shape);
+    	  
+    	  @Override
+    	  public boolean onDrag(View v, DragEvent event) {
+    	    int action = event.getAction();
+    	    switch (event.getAction()) {
+    	    case DragEvent.ACTION_DRAG_STARTED:
+    	    // do nothing
+    	      break;
+    	    case DragEvent.ACTION_DRAG_ENTERED:
+    	      //v.setBackgroundDrawable(enterShape);
+    	      break;
+    	    case DragEvent.ACTION_DRAG_EXITED:        
+    	      //v.setBackgroundDrawable(normalShape);
+    	      break;
+    	    case DragEvent.ACTION_DROP:
+    	      // Dropped, reassign View to ViewGroup
+    	      View view = (View) event.getLocalState();
+    	      ViewGroup owner = (ViewGroup) view.getParent();
+    	      Log.i("DragDrop", "view " + String.valueOf(view.getClass()));
+    	      Log.i("DragDrop", "owner " + String.valueOf(owner.getClass()));
+    	      Log.i("DragDrop", "v " + String.valueOf(v.getClass()));
+    	      //owner.removeView(view);
+    	      GridLayout container = (GridLayout) v;
+    	      //ImageView container = (ImageView) v;
+    	      container.addView(view);
+    	      //container.setImageDrawable(view.getBackground());
+    	      view.setVisibility(View.VISIBLE);
+    	      break;
+    	    case DragEvent.ACTION_DRAG_ENDED:
+    	      //v.setBackgroundDrawable(normalShape);
+    	      default:
+    	      break;
+    	    }
+    	    return true;
+    	  }
+    	} 
+    
 
 }
