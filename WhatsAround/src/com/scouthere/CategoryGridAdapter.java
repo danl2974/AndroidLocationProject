@@ -15,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.DragShadowBuilder;
 import android.view.View.OnDragListener;
+import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
@@ -22,6 +23,7 @@ import android.widget.BaseAdapter;
 import android.widget.GridLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 
 
 @SuppressLint("NewApi")
@@ -29,7 +31,7 @@ public class CategoryGridAdapter extends BaseAdapter {
 	
     private Context mContext;
     private Location location;
-    private String[] placeTypes;
+    public String[] placeTypes;
     private Integer[] categoryImages;
     GridViewCacheSingleton gridViewCache;
 
@@ -96,7 +98,9 @@ public class CategoryGridAdapter extends BaseAdapter {
         	imageView.setImageDrawable(layerDrawable);
 
         }
-       imageView.setOnTouchListener(new GridBlockTouchListener());
+       //imageView.setOnTouchListener(new GridBlockTouchListener());
+       //imageView.setOnLongClickListener(new GridBlockLongClickListener());
+       imageView.setTag(position);
        imageView.setOnDragListener(new GridBlockDragListener());
        return imageView;
 
@@ -104,7 +108,7 @@ public class CategoryGridAdapter extends BaseAdapter {
     }
 
 
-    
+    /*
     @SuppressLint("NewApi")
 	private final class GridBlockTouchListener implements OnTouchListener {
     	  @SuppressLint("NewApi")
@@ -123,7 +127,19 @@ public class CategoryGridAdapter extends BaseAdapter {
     
     
     
-    
+	private final class GridBlockLongClickListener implements OnLongClickListener {
+    	
+		public boolean onLongClick(View view) {
+    	   
+    	      ClipData data = ClipData.newPlainText("", "");
+    	      DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+    	      view.startDrag(data, shadowBuilder, view, 0);
+    	      view.setVisibility(View.INVISIBLE);
+    	      return true;
+    	    
+    	  }
+    	}
+    */
     
     class GridBlockDragListener implements OnDragListener {
     	  //Drawable enterShape = getActivity().getResources().getDrawable(R.drawable.shape_droptarget);
@@ -145,15 +161,29 @@ public class CategoryGridAdapter extends BaseAdapter {
     	    case DragEvent.ACTION_DROP:
     	      // Dropped, reassign View to ViewGroup
     	      View view = (View) event.getLocalState();
+    	      ((ImageView) v).setImageDrawable(((ImageView) view).getDrawable());
+    	      ((ImageView) view).setImageDrawable(((ImageView) v).getDrawable());
+    	      Integer draggedPosition = Integer.valueOf(event.getClipData().getItemAt(0).getText().toString());
+    	      Integer droppedPosition = (Integer) v.getTag();
+    	      String dragValue = placeTypes[draggedPosition];
+    	      String dropValue = placeTypes[droppedPosition];
+    	      placeTypes[draggedPosition] = dropValue;
+    	      placeTypes[droppedPosition] = dragValue;
+    	      
     	      ViewGroup owner = (ViewGroup) view.getParent();
+    	      ListAdapter lad = ((GridView) owner).getAdapter();
+    	      
     	      Log.i("DragDrop", "view " + String.valueOf(view.getClass()));
     	      Log.i("DragDrop", "owner " + String.valueOf(owner.getClass()));
     	      Log.i("DragDrop", "v " + String.valueOf(v.getClass()));
+    	      Log.i("DragDrop", "v tag " + String.valueOf(v.getTag()));
+    	      Log.i("DragDrop", "lad " + String.valueOf(lad.getClass()));
     	      //owner.removeView(view);
-    	      GridLayout container = (GridLayout) v;
+    	      //GridLayout container = (GridLayout) v;
     	      //ImageView container = (ImageView) v;
-    	      container.addView(view);
-    	      //container.setImageDrawable(view.getBackground());
+    	      //container.addView(view);
+    	      
+    	      
     	      view.setVisibility(View.VISIBLE);
     	      break;
     	    case DragEvent.ACTION_DRAG_ENDED:

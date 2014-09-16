@@ -1,19 +1,23 @@
 package com.scouthere;
 
 import java.util.HashMap;
-
 import com.scouthere.R;
-
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.ClipData;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.DragShadowBuilder;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+@SuppressLint("NewApi")
 public class HomeGridFragment extends Fragment {
 	
     public interface OnPlaceTypeSelectedListener {
@@ -96,6 +100,20 @@ public class HomeGridFragment extends Fragment {
 	        	
 	        }
 	    });
+	    gridview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
+	    	
+			@SuppressLint("NewApi")
+			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id){
+	    		  
+	    		  ClipData data = ClipData.newPlainText("position", String.valueOf(position));
+	    	      DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+	    	      view.startDrag(data, shadowBuilder, view, 0);
+	    	      view.setVisibility(View.INVISIBLE);
+	    	      return true;
+	    		  
+	    	  }
+	    });
+	    
 	    
 	    return gridLayout;
 	}
