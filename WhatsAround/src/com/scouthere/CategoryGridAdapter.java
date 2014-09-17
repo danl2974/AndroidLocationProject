@@ -1,10 +1,15 @@
 package com.scouthere;
 
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import com.scouthere.R;
 
 import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
@@ -33,6 +38,7 @@ public class CategoryGridAdapter extends BaseAdapter {
     private Location location;
     public String[] placeTypes;
     private Integer[] categoryImages;
+    SharedPreferences sharedPreferences;
     GridViewCacheSingleton gridViewCache;
 
     final static private Integer[] BG_IMG_IDS = {
@@ -54,6 +60,15 @@ public class CategoryGridAdapter extends BaseAdapter {
         location = new Location(loc);//New object for dissociating Grid from Main Activity 
         gridViewCache = GridViewCacheSingleton.getInstance();
     }
+    
+    public CategoryGridAdapter(Context c, String[] categories, Integer[] imgResourceIds, Location loc, SharedPreferences sharedPref) {
+        mContext = c;
+        placeTypes = categories;
+        categoryImages = imgResourceIds;
+        location = new Location(loc);//New object for dissociating Grid from Main Activity 
+        sharedPreferences = sharedPref;
+        gridViewCache = GridViewCacheSingleton.getInstance();
+    }    
 
     public int getCount() {
         return placeTypes.length;
@@ -98,97 +113,53 @@ public class CategoryGridAdapter extends BaseAdapter {
         	imageView.setImageDrawable(layerDrawable);
 
         }
-       //imageView.setOnTouchListener(new GridBlockTouchListener());
-       //imageView.setOnLongClickListener(new GridBlockLongClickListener());
+  
        imageView.setTag(position);
        imageView.setOnDragListener(new GridBlockDragListener());
+       
        return imageView;
 
-    	
     }
 
 
-    /*
-    @SuppressLint("NewApi")
-	private final class GridBlockTouchListener implements OnTouchListener {
-    	  @SuppressLint("NewApi")
-		public boolean onTouch(View view, MotionEvent motionEvent) {
-    	    if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-    	      ClipData data = ClipData.newPlainText("", "");
-    	      DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-    	      view.startDrag(data, shadowBuilder, view, 0);
-    	      view.setVisibility(View.INVISIBLE);
-    	      return true;
-    	    } else {
-    	    return false;
-    	    }
-    	  }
-    	}
-    
-    
-    
-	private final class GridBlockLongClickListener implements OnLongClickListener {
-    	
-		public boolean onLongClick(View view) {
-    	   
-    	      ClipData data = ClipData.newPlainText("", "");
-    	      DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-    	      view.startDrag(data, shadowBuilder, view, 0);
-    	      view.setVisibility(View.INVISIBLE);
-    	      return true;
-    	    
-    	  }
-    	}
-    */
     
     class GridBlockDragListener implements OnDragListener {
-    	  //Drawable enterShape = getActivity().getResources().getDrawable(R.drawable.shape_droptarget);
-    	  //Drawable normalShape = getResources().getDrawable(R.drawable.shape);
-    	  
+ 	  
     	  @Override
     	  public boolean onDrag(View v, DragEvent event) {
     	    int action = event.getAction();
     	    switch (event.getAction()) {
     	    case DragEvent.ACTION_DRAG_STARTED:
-    	    // do nothing
+    	    
     	      break;
     	    case DragEvent.ACTION_DRAG_ENTERED:
-    	      //v.setBackgroundDrawable(enterShape);
+    	     
     	      break;
     	    case DragEvent.ACTION_DRAG_EXITED:        
-    	      //v.setBackgroundDrawable(normalShape);
+    	      
     	      break;
     	    case DragEvent.ACTION_DROP:
-    	      // Dropped, reassign View to ViewGroup
     	      View view = (View) event.getLocalState();
-    	      ((ImageView) v).setImageDrawable(((ImageView) view).getDrawable());
-    	      ((ImageView) view).setImageDrawable(((ImageView) v).getDrawable());
+    	      Drawable draggedDrawable = ((ImageView) view).getDrawable();
+    	      Drawable droppedDrawable = ((ImageView) v).getDrawable();
+    	      ((ImageView) v).setImageDrawable(draggedDrawable);
+    	      ((ImageView) view).setImageDrawable(droppedDrawable);
     	      Integer draggedPosition = Integer.valueOf(event.getClipData().getItemAt(0).getText().toString());
     	      Integer droppedPosition = (Integer) v.getTag();
     	      String dragValue = placeTypes[draggedPosition];
     	      String dropValue = placeTypes[droppedPosition];
     	      placeTypes[draggedPosition] = dropValue;
     	      placeTypes[droppedPosition] = dragValue;
-    	      
-    	      ViewGroup owner = (ViewGroup) view.getParent();
-    	      ListAdapter lad = ((GridView) owner).getAdapter();
-    	      
-    	      Log.i("DragDrop", "view " + String.valueOf(view.getClass()));
-    	      Log.i("DragDrop", "owner " + String.valueOf(owner.getClass()));
-    	      Log.i("DragDrop", "v " + String.valueOf(v.getClass()));
-    	      Log.i("DragDrop", "v tag " + String.valueOf(v.getTag()));
-    	      Log.i("DragDrop", "lad " + String.valueOf(lad.getClass()));
-    	      //owner.removeView(view);
-    	      //GridLayout container = (GridLayout) v;
-    	      //ImageView container = (ImageView) v;
-    	      //container.addView(view);
-    	      
-    	      
     	      view.setVisibility(View.VISIBLE);
+    	      HashSet<String> draggedSet = (HashSet<String>) sharedPreferences.getStringSet(String.valueOf(draggedPosition), new HashSet<String>());
+    	      HashSet<String> droppedSet = (HashSet<String>) sharedPreferences.getStringSet(String.valueOf(droppedPosition), new HashSet<String>());
+    	      SharedPreferences.Editor sp = sharedPreferences.edit();
+    	      sp.putStringSet(String.valueOf(droppedPosition), draggedSet);
+    	      sp.putStringSet(String.valueOf(draggedPosition), droppedSet);
     	      break;
     	    case DragEvent.ACTION_DRAG_ENDED:
-    	      //v.setBackgroundDrawable(normalShape);
-    	      default:
+    	      
+    	    default:
     	      break;
     	    }
     	    return true;

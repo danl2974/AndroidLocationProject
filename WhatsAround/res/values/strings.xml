@@ -7,6 +7,7 @@
     <string name="not_connected">Your device is not connected to the internet</string>
     <string name="button_connect_retry">Retry Start</string>
     <string name="hoursunavailable">Hours Unavailable</string>
+    <string name="loaded">loaded</string>
     <string name="info_window_action">Go To Location</string>
     <string name="button_single_location">Go To Location</string>
     <string name="action_settings">Settings</string>

@@ -1,11 +1,20 @@
 package com.scouthere;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import com.scouthere.R;
+
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ClipData;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,6 +38,9 @@ public class HomeGridFragment extends Fragment {
     OnPlaceTypeSelectedListener selectionCallback;
     private HashMap<String,Object> typephotoMap;
     private Location location;
+    static public String[] mPlaceTypes;
+    static public String[] mPlaceNames;
+    static public Integer[] mTypeGridImages;
 	
     final static public String[] PLACES_TYPES = {
     	"bakery|food|restaurant|meal_delivery|meal_takeaway", //Restaurants
@@ -70,7 +82,7 @@ public class HomeGridFragment extends Fragment {
 		
     };
     	
-	final static private Integer[] GRID_IMG_IDS = {
+	final static public Integer[] GRID_IMG_IDS = {
 		R.drawable.restaurants, R.drawable.shopping, R.drawable.hotel,
 		R.drawable.gas, R.drawable.hair, R.drawable.medical,
 		R.drawable.bar, R.drawable.cafe, R.drawable.fitness,
@@ -85,17 +97,53 @@ public class HomeGridFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 	    
-
+		SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+		if(sharedPref.contains(getResources().getString(R.string.loaded))){
+			
+			for (Entry<String, ?> pref : sharedPref.getAll().entrySet()){
+				HashSet<String> sset = (HashSet<String>) pref.getValue();
+				Iterator<String> si = sset.iterator();
+				int counter = 0;
+				while(si.hasNext()){
+				   if (counter == 0){
+				   mPlaceTypes[Integer.valueOf(pref.getKey())] = (String) si.next();
+				   }
+				   if (counter == 1){
+				   mTypeGridImages[Integer.valueOf(pref.getKey())] = Integer.valueOf(si.next());
+				   }
+				   if (counter == 2){
+				   mPlaceNames[Integer.valueOf(pref.getKey())] = (String) si.next();
+				   }
+				   counter ++;
+				}
+			}
+		}
+		else{
+			mPlaceTypes = PLACES_TYPES;
+			mTypeGridImages = GRID_IMG_IDS;
+			mPlaceNames = INFOWINDOW_RESOURCE_NAMES;
+			SharedPreferences.Editor editor = sharedPref.edit();
+			editor.putBoolean(getResources().getString(R.string.loaded), true);
+			for(int i = 0; i < GRID_IMG_IDS.length; i++){
+				LinkedHashSet<String> vset = new LinkedHashSet<String>();
+				vset.add(PLACES_TYPES[i]);
+				vset.add(String.valueOf(GRID_IMG_IDS[i]));
+				vset.add(INFOWINDOW_RESOURCE_NAMES[i]);
+				editor.putStringSet(String.valueOf(i), vset);
+			}
+			editor.commit();
+		}
+		
 	    View gridLayout = getActivity().getLayoutInflater().inflate(R.layout.home_grid, container, false);
 	    gridLayout.setBackgroundColor(0xFFFFFFFF);
 	    GridView gridview = (GridView) gridLayout.findViewById(R.id.gridview);
-	    gridview.setAdapter(new CategoryGridAdapter(getActivity(), PLACES_TYPES, GRID_IMG_IDS, this.location));
+	    gridview.setAdapter(new CategoryGridAdapter(getActivity(), mPlaceTypes, mTypeGridImages, this.location, sharedPref));
 
 	    gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 	        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 	            
-	        	String placesType = PLACES_TYPES[position];
-	        	String resourceName = INFOWINDOW_RESOURCE_NAMES[position];
+	        	String placesType = mPlaceTypes[position];
+	        	String resourceName = mPlaceNames[position];
 	        	selectionCallback.onPlaceTypeFilter(placesType, resourceName);
 	        	
 	        }
