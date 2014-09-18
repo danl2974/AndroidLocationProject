@@ -38,7 +38,6 @@ public class CategoryGridAdapter extends BaseAdapter {
     private Location location;
     public String[] placeTypes;
     private Integer[] categoryImages;
-    SharedPreferences sharedPreferences;
     GridViewCacheSingleton gridViewCache;
 
     final static private Integer[] BG_IMG_IDS = {
@@ -60,7 +59,7 @@ public class CategoryGridAdapter extends BaseAdapter {
         location = new Location(loc);//New object for dissociating Grid from Main Activity 
         gridViewCache = GridViewCacheSingleton.getInstance();
     }
-    
+    /*
     public CategoryGridAdapter(Context c, String[] categories, Integer[] imgResourceIds, Location loc, SharedPreferences sharedPref) {
         mContext = c;
         placeTypes = categories;
@@ -69,7 +68,7 @@ public class CategoryGridAdapter extends BaseAdapter {
         sharedPreferences = sharedPref;
         gridViewCache = GridViewCacheSingleton.getInstance();
     }    
-
+    */
     public int getCount() {
         return placeTypes.length;
     }
@@ -151,11 +150,12 @@ public class CategoryGridAdapter extends BaseAdapter {
     	      placeTypes[draggedPosition] = dropValue;
     	      placeTypes[droppedPosition] = dragValue;
     	      view.setVisibility(View.VISIBLE);
-    	      HashSet<String> draggedSet = (HashSet<String>) sharedPreferences.getStringSet(String.valueOf(draggedPosition), new HashSet<String>());
-    	      HashSet<String> droppedSet = (HashSet<String>) sharedPreferences.getStringSet(String.valueOf(droppedPosition), new HashSet<String>());
-    	      SharedPreferences.Editor sp = sharedPreferences.edit();
-    	      sp.putStringSet(String.valueOf(droppedPosition), draggedSet);
-    	      sp.putStringSet(String.valueOf(draggedPosition), droppedSet);
+    	      String draggedStr = HomeGridFragment.sharedPref.getString(String.valueOf(draggedPosition), "");
+    	      String droppedStr = HomeGridFragment.sharedPref.getString(String.valueOf(droppedPosition), "");
+    	      SharedPreferences.Editor sp = HomeGridFragment.sharedPref.edit();
+    	      sp.putString(String.valueOf(droppedPosition), draggedStr);
+    	      sp.putString(String.valueOf(draggedPosition), droppedStr);
+    	      sp.commit();
     	      break;
     	    case DragEvent.ACTION_DRAG_ENDED:
     	      

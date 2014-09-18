@@ -19,6 +19,7 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,9 +39,10 @@ public class HomeGridFragment extends Fragment {
     OnPlaceTypeSelectedListener selectionCallback;
     private HashMap<String,Object> typephotoMap;
     private Location location;
-    static public String[] mPlaceTypes;
-    static public String[] mPlaceNames;
-    static public Integer[] mTypeGridImages;
+    static public SharedPreferences sharedPref;
+    static public String[] mPlaceTypes = new String[25];
+    static public String[] mPlaceNames = new String[25];
+    static public Integer[] mTypeGridImages = new Integer[25];
 	
     final static public String[] PLACES_TYPES = {
     	"bakery|food|restaurant|meal_delivery|meal_takeaway", //Restaurants
@@ -97,39 +99,42 @@ public class HomeGridFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 	    
-		SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+		sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+		//sharedPref.edit().clear().commit();
+		
 		if(sharedPref.contains(getResources().getString(R.string.loaded))){
-			
+			Log.i("HomeGridPrefStatus", "Prefs loaded " + String.valueOf(sharedPref.getAll().size()));
 			for (Entry<String, ?> pref : sharedPref.getAll().entrySet()){
-				HashSet<String> sset = (HashSet<String>) pref.getValue();
-				Iterator<String> si = sset.iterator();
-				int counter = 0;
-				while(si.hasNext()){
-				   if (counter == 0){
-				   mPlaceTypes[Integer.valueOf(pref.getKey())] = (String) si.next();
-				   }
-				   if (counter == 1){
-				   mTypeGridImages[Integer.valueOf(pref.getKey())] = Integer.valueOf(si.next());
-				   }
-				   if (counter == 2){
-				   mPlaceNames[Integer.valueOf(pref.getKey())] = (String) si.next();
-				   }
-				   counter ++;
-				}
+				
+			  if(!pref.getKey().equals(getResources().getString(R.string.loaded))){	
+				String[] vals = ((String) pref.getValue()).split("::");
+				String key = pref.getKey();
+				 Log.i("HomeGridPref"+key, String.valueOf(vals[0]));
+				 mPlaceTypes[Integer.valueOf(key)] = vals[0];
+
+				 Log.i("HomeGridPref"+key, String.valueOf(vals[1]));
+				 mTypeGridImages[Integer.valueOf(key)] = Integer.valueOf(vals[1]);
+
+				 Log.i("HomeGridPref"+key, String.valueOf(vals[2]));
+				 mPlaceNames[Integer.valueOf(key)] = vals[2];
+			    }
 			}
 		}
 		else{
+			Log.i("HomeGridPrefStatus", "No Prefs loaded");
 			mPlaceTypes = PLACES_TYPES;
 			mTypeGridImages = GRID_IMG_IDS;
 			mPlaceNames = INFOWINDOW_RESOURCE_NAMES;
 			SharedPreferences.Editor editor = sharedPref.edit();
 			editor.putBoolean(getResources().getString(R.string.loaded), true);
 			for(int i = 0; i < GRID_IMG_IDS.length; i++){
-				LinkedHashSet<String> vset = new LinkedHashSet<String>();
-				vset.add(PLACES_TYPES[i]);
-				vset.add(String.valueOf(GRID_IMG_IDS[i]));
-				vset.add(INFOWINDOW_RESOURCE_NAMES[i]);
-				editor.putStringSet(String.valueOf(i), vset);
+				StringBuilder sb = new StringBuilder();
+				sb.append(PLACES_TYPES[i]);
+				sb.append("::");
+				sb.append(String.valueOf(GRID_IMG_IDS[i]));
+				sb.append("::");
+				sb.append(INFOWINDOW_RESOURCE_NAMES[i]);
+				editor.putString(String.valueOf(i), sb.toString());
 			}
 			editor.commit();
 		}
@@ -137,7 +142,7 @@ public class HomeGridFragment extends Fragment {
 	    View gridLayout = getActivity().getLayoutInflater().inflate(R.layout.home_grid, container, false);
 	    gridLayout.setBackgroundColor(0xFFFFFFFF);
 	    GridView gridview = (GridView) gridLayout.findViewById(R.id.gridview);
-	    gridview.setAdapter(new CategoryGridAdapter(getActivity(), mPlaceTypes, mTypeGridImages, this.location, sharedPref));
+	    gridview.setAdapter(new CategoryGridAdapter(getActivity(), mPlaceTypes, mTypeGridImages, this.location));
 
 	    gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 	        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
