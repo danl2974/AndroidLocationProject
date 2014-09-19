@@ -38,8 +38,9 @@ public class CategoryGridAdapter extends BaseAdapter {
     private Location location;
     public String[] placeTypes;
     private Integer[] categoryImages;
+    private Integer[] backgroundImages;
     GridViewCacheSingleton gridViewCache;
-
+    /*
     final static private Integer[] BG_IMG_IDS = {
     	R.drawable.restaurants_bg, R.drawable.shopping_bg, R.drawable.hotel_bg,
 		R.drawable.gas_bg, R.drawable.hair_bg, R.drawable.medical_bg,
@@ -50,7 +51,7 @@ public class CategoryGridAdapter extends BaseAdapter {
 		R.drawable.default_bg, R.drawable.education_bg, R.drawable.automotive_bg,
 		R.drawable.worship_bg, R.drawable.pets_bg, R.drawable.default_bg,
 		};
-
+     */
 
     public CategoryGridAdapter(Context c, String[] categories, Integer[] imgResourceIds, Location loc) {
         mContext = c;
@@ -59,16 +60,16 @@ public class CategoryGridAdapter extends BaseAdapter {
         location = new Location(loc);//New object for dissociating Grid from Main Activity 
         gridViewCache = GridViewCacheSingleton.getInstance();
     }
-    /*
-    public CategoryGridAdapter(Context c, String[] categories, Integer[] imgResourceIds, Location loc, SharedPreferences sharedPref) {
+    
+    public CategoryGridAdapter(Context c, String[] categories, Integer[] imgResourceIds, Integer[] imgBgIds, Location loc) {
         mContext = c;
         placeTypes = categories;
         categoryImages = imgResourceIds;
-        location = new Location(loc);//New object for dissociating Grid from Main Activity 
-        sharedPreferences = sharedPref;
+        backgroundImages = imgBgIds;
+        location = new Location(loc);//New object for dissociating Grid from Main Activity
         gridViewCache = GridViewCacheSingleton.getInstance();
     }    
-    */
+    
     public int getCount() {
         return placeTypes.length;
     }
@@ -106,7 +107,7 @@ public class CategoryGridAdapter extends BaseAdapter {
         else{	
         	Resources r = mContext.getResources();
         	Drawable[] layers = new Drawable[2];
-        	layers[0] = r.getDrawable(BG_IMG_IDS[position]);
+        	layers[0] = r.getDrawable(backgroundImages[position]);
         	layers[1] = r.getDrawable(categoryImages[position]);
         	LayerDrawable layerDrawable = new LayerDrawable(layers);
         	imageView.setImageDrawable(layerDrawable);
@@ -120,7 +121,7 @@ public class CategoryGridAdapter extends BaseAdapter {
 
     }
 
-
+    
     
     class GridBlockDragListener implements OnDragListener {
  	  
@@ -129,6 +130,7 @@ public class CategoryGridAdapter extends BaseAdapter {
     	    int action = event.getAction();
     	    switch (event.getAction()) {
     	    case DragEvent.ACTION_DRAG_STARTED:
+    	      View dragview = (View) event.getLocalState();
     	    
     	      break;
     	    case DragEvent.ACTION_DRAG_ENTERED:

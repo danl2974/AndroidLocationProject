@@ -40,9 +40,10 @@ public class HomeGridFragment extends Fragment {
     private HashMap<String,Object> typephotoMap;
     private Location location;
     static public SharedPreferences sharedPref;
-    static public String[] mPlaceTypes = new String[25];
-    static public String[] mPlaceNames = new String[25];
-    static public Integer[] mTypeGridImages = new Integer[25];
+    static private String[] mPlaceTypes = new String[25];
+    static private String[] mPlaceNames = new String[25];
+    static private Integer[] mTypeGridImages = new Integer[25];
+    static private Integer[] mTypeGridBgImages = new Integer[25];
 	
     final static public String[] PLACES_TYPES = {
     	"bakery|food|restaurant|meal_delivery|meal_takeaway", //Restaurants
@@ -84,7 +85,7 @@ public class HomeGridFragment extends Fragment {
 		
     };
     	
-	final static public Integer[] GRID_IMG_IDS = {
+	final static private Integer[] GRID_IMG_IDS = {
 		R.drawable.restaurants, R.drawable.shopping, R.drawable.hotel,
 		R.drawable.gas, R.drawable.hair, R.drawable.medical,
 		R.drawable.bar, R.drawable.cafe, R.drawable.fitness,
@@ -95,6 +96,16 @@ public class HomeGridFragment extends Fragment {
 		R.drawable.worship, R.drawable.pets, R.drawable.outdoors,          
     };
 
+    final static private Integer[] BG_IMG_IDS = {
+    	R.drawable.restaurants_bg, R.drawable.shopping_bg, R.drawable.hotel_bg,
+		R.drawable.gas_bg, R.drawable.hair_bg, R.drawable.medical_bg,
+		R.drawable.bar_bg, R.drawable.cafe_bg, R.drawable.fitness_bg,
+		R.drawable.store_bg, R.drawable.entertainment_bg, R.drawable.financial_bg,
+		R.drawable.culture_bg, R.drawable.default_bg, R.drawable.default_bg,
+		R.drawable.publicgovt_bg, R.drawable.pharmacy_bg, R.drawable.transport_bg,
+		R.drawable.default_bg, R.drawable.education_bg, R.drawable.automotive_bg,
+		R.drawable.worship_bg, R.drawable.pets_bg, R.drawable.default_bg,
+		};
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -109,14 +120,10 @@ public class HomeGridFragment extends Fragment {
 			  if(!pref.getKey().equals(getResources().getString(R.string.loaded))){	
 				String[] vals = ((String) pref.getValue()).split("::");
 				String key = pref.getKey();
-				 Log.i("HomeGridPref"+key, String.valueOf(vals[0]));
 				 mPlaceTypes[Integer.valueOf(key)] = vals[0];
-
-				 Log.i("HomeGridPref"+key, String.valueOf(vals[1]));
 				 mTypeGridImages[Integer.valueOf(key)] = Integer.valueOf(vals[1]);
-
-				 Log.i("HomeGridPref"+key, String.valueOf(vals[2]));
-				 mPlaceNames[Integer.valueOf(key)] = vals[2];
+				 mTypeGridBgImages[Integer.valueOf(key)] = Integer.valueOf(vals[2]);
+				 mPlaceNames[Integer.valueOf(key)] = vals[3];
 			    }
 			}
 		}
@@ -124,6 +131,7 @@ public class HomeGridFragment extends Fragment {
 			Log.i("HomeGridPrefStatus", "No Prefs loaded");
 			mPlaceTypes = PLACES_TYPES;
 			mTypeGridImages = GRID_IMG_IDS;
+			mTypeGridBgImages = BG_IMG_IDS;
 			mPlaceNames = INFOWINDOW_RESOURCE_NAMES;
 			SharedPreferences.Editor editor = sharedPref.edit();
 			editor.putBoolean(getResources().getString(R.string.loaded), true);
@@ -133,6 +141,8 @@ public class HomeGridFragment extends Fragment {
 				sb.append("::");
 				sb.append(String.valueOf(GRID_IMG_IDS[i]));
 				sb.append("::");
+				sb.append(String.valueOf(BG_IMG_IDS[i]));
+				sb.append("::");				
 				sb.append(INFOWINDOW_RESOURCE_NAMES[i]);
 				editor.putString(String.valueOf(i), sb.toString());
 			}
@@ -142,7 +152,7 @@ public class HomeGridFragment extends Fragment {
 	    View gridLayout = getActivity().getLayoutInflater().inflate(R.layout.home_grid, container, false);
 	    gridLayout.setBackgroundColor(0xFFFFFFFF);
 	    GridView gridview = (GridView) gridLayout.findViewById(R.id.gridview);
-	    gridview.setAdapter(new CategoryGridAdapter(getActivity(), mPlaceTypes, mTypeGridImages, this.location));
+	    gridview.setAdapter(new CategoryGridAdapter(getActivity(), mPlaceTypes, mTypeGridImages, mTypeGridBgImages, this.location));
 
 	    gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 	        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
