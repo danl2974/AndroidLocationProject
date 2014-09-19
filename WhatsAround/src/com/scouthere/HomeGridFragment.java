@@ -25,7 +25,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.DragShadowBuilder;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.GridView;
+import android.widget.TextView;
 
 @SuppressLint("NewApi")
 public class HomeGridFragment extends Fragment {
@@ -172,6 +174,18 @@ public class HomeGridFragment extends Fragment {
 	    	      DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
 	    	      view.startDrag(data, shadowBuilder, view, 0);
 	    	      view.setVisibility(View.INVISIBLE);
+	    	      
+	    	      ViewGroup gridParent = (ViewGroup) view.getParent();
+	    	      //Animation dragAnimation = AnimationUtils.loadAnimation(this, R.anim.hyperspace_jump);
+	    	      //dragview.setAnimation(dragAnimation);
+	    	      TextView tv = new TextView(getActivity());
+	    	      tv.setText("Drag to where you want this");
+	    	      tv.setTextColor(0xff39ad80);
+	    	      tv.setVisibility(View.VISIBLE);
+	    	      ((FrameLayout) getView()).addView(tv, 0);
+	    	      //gridParent.addView(tv, 0);
+	    	      
+	    	      
 	    	      return true;
 	    		  
 	    	  }

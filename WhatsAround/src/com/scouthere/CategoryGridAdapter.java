@@ -24,11 +24,13 @@ import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.ViewParent;
 import android.widget.BaseAdapter;
 import android.widget.GridLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
+import android.widget.TextView;
 
 
 @SuppressLint("NewApi")
@@ -130,17 +132,17 @@ public class CategoryGridAdapter extends BaseAdapter {
     	    int action = event.getAction();
     	    switch (event.getAction()) {
     	    case DragEvent.ACTION_DRAG_STARTED:
-    	      View dragview = (View) event.getLocalState();
-    	    
+
     	      break;
     	    case DragEvent.ACTION_DRAG_ENTERED:
     	     
     	      break;
-    	    case DragEvent.ACTION_DRAG_EXITED:        
+    	    case DragEvent.ACTION_DRAG_EXITED:       
     	      
     	      break;
     	    case DragEvent.ACTION_DROP:
     	      View view = (View) event.getLocalState();
+    	      ((ViewGroup) view.getParent().getParent()).removeViewAt(0);
     	      Drawable draggedDrawable = ((ImageView) view).getDrawable();
     	      Drawable droppedDrawable = ((ImageView) v).getDrawable();
     	      ((ImageView) v).setImageDrawable(draggedDrawable);
