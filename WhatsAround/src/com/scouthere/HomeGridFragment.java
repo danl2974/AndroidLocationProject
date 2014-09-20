@@ -15,6 +15,12 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.Paint;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,10 +30,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.DragShadowBuilder;
+import android.view.ViewOverlay;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 @SuppressLint("NewApi")
 public class HomeGridFragment extends Fragment {
@@ -169,20 +177,23 @@ public class HomeGridFragment extends Fragment {
 	    	
 			@SuppressLint("NewApi")
 			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id){
+				
+	    	      Toast toast = Toast.makeText(getActivity(), "Drag to where you want this", Toast.LENGTH_LONG);
+	    	      toast.show();
 	    		  
 	    		  ClipData data = ClipData.newPlainText("position", String.valueOf(position));
 	    	      DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
 	    	      view.startDrag(data, shadowBuilder, view, 0);
-	    	      view.setVisibility(View.INVISIBLE);
+	    	      view.setVisibility(View.VISIBLE);
 	    	      
-	    	      ViewGroup gridParent = (ViewGroup) view.getParent();
+
 	    	      //Animation dragAnimation = AnimationUtils.loadAnimation(this, R.anim.hyperspace_jump);
 	    	      //dragview.setAnimation(dragAnimation);
-	    	      TextView tv = new TextView(getActivity());
-	    	      tv.setText("Drag to where you want this");
-	    	      tv.setTextColor(0xff39ad80);
-	    	      tv.setVisibility(View.VISIBLE);
-	    	      ((FrameLayout) getView()).addView(tv, 0);
+	    	      //TextView tv = new TextView(getActivity());
+	    	      //tv.setText("Drag to where you want this");
+	    	      //tv.setTextColor(0xff39ad80);
+	    	      //tv.setVisibility(View.VISIBLE);
+	    	      //((GridView) getActivity().findViewById(R.id.gridview)).addView(tv, 0);
 	    	      //gridParent.addView(tv, 0);
 	    	      
 	    	      
@@ -220,5 +231,6 @@ public class HomeGridFragment extends Fragment {
         }
     }
 	
+     
 
 }

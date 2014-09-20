@@ -7,6 +7,7 @@ import java.util.Set;
 import com.scouthere.R;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -26,6 +27,7 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewParent;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -36,7 +38,7 @@ import android.widget.TextView;
 @SuppressLint("NewApi")
 public class CategoryGridAdapter extends BaseAdapter {
 	
-    private Context mContext;
+    public Context mContext;
     private Location location;
     public String[] placeTypes;
     private Integer[] categoryImages;
@@ -103,21 +105,23 @@ public class CategoryGridAdapter extends BaseAdapter {
         }
         
         
-        if(gridViewCache.get(placeTypes[position]) != null){ 
+        //if(gridViewCache.get(placeTypes[position]) != null){ 
         	  
-        }
-        else{	
+        //}
+        //else{	
+          Log.i("TestScroll", String.valueOf(backgroundImages.length) + " " + String.valueOf(categoryImages.length));
         	Resources r = mContext.getResources();
         	Drawable[] layers = new Drawable[2];
         	layers[0] = r.getDrawable(backgroundImages[position]);
         	layers[1] = r.getDrawable(categoryImages[position]);
         	LayerDrawable layerDrawable = new LayerDrawable(layers);
         	imageView.setImageDrawable(layerDrawable);
-
-        }
+        	
+            
+        //}
   
        imageView.setTag(position);
-       imageView.setOnDragListener(new GridBlockDragListener());
+       imageView.setOnDragListener(new GridBlockDragListener(mContext));
        
        return imageView;
 
@@ -126,6 +130,12 @@ public class CategoryGridAdapter extends BaseAdapter {
     
     
     class GridBlockDragListener implements OnDragListener {
+    	
+    	  Activity activity;
+    	  
+    	  GridBlockDragListener(Context c){
+    		  activity = (Activity) c;
+    	  }
  	  
     	  @Override
     	  public boolean onDrag(View v, DragEvent event) {
@@ -142,7 +152,7 @@ public class CategoryGridAdapter extends BaseAdapter {
     	      break;
     	    case DragEvent.ACTION_DROP:
     	      View view = (View) event.getLocalState();
-    	      ((ViewGroup) view.getParent().getParent()).removeViewAt(0);
+    	      // ((GridView) activity.findViewById(R.id.gridview)).removeViewAt(0);
     	      Drawable draggedDrawable = ((ImageView) view).getDrawable();
     	      Drawable droppedDrawable = ((ImageView) v).getDrawable();
     	      ((ImageView) v).setImageDrawable(draggedDrawable);
