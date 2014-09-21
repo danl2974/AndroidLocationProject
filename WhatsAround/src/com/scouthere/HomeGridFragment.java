@@ -119,9 +119,13 @@ public class HomeGridFragment extends Fragment {
 		R.drawable.worship_bg, R.drawable.pets_bg, R.drawable.default_bg,
 		};
 
+
+ 
+    
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 	    
+		
 		sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 		//sharedPref.edit().clear().commit();
 		
@@ -160,6 +164,7 @@ public class HomeGridFragment extends Fragment {
 			}
 			editor.commit();
 		}
+		
 		
 	    View gridLayout = getActivity().getLayoutInflater().inflate(R.layout.home_grid, container, false);
 	    gridLayout.setBackgroundColor(0xFFFFFFFF);

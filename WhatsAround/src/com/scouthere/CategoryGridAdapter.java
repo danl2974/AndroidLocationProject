@@ -129,6 +129,24 @@ public class CategoryGridAdapter extends BaseAdapter {
     }
 
     
+    private void updateGridState(Integer dragged, Integer dropped){
+    	
+    	  String dragValue = placeTypes[dragged];
+	      String dropValue = placeTypes[dropped];
+	      Integer dragImg = categoryImages[dragged];
+	      Integer dropImg = categoryImages[dropped];
+	      Integer dragBg = backgroundImages[dragged];
+	      Integer dropBg = backgroundImages[dropped];
+	      
+	      placeTypes[dragged] = dropValue;
+	      placeTypes[dropped] = dragValue;
+	      categoryImages[dragged] = dropImg;
+	      categoryImages[dropped] = dragImg;
+	      backgroundImages[dragged] = dropBg;
+	      backgroundImages[dropped] = dragBg;
+	      
+    	
+    }
     
     class GridBlockDragListener implements OnDragListener {
     	
@@ -169,10 +187,11 @@ public class CategoryGridAdapter extends BaseAdapter {
     	      ((ImageView) view).setImageDrawable(droppedDrawable);
     	      Integer draggedPosition = Integer.valueOf(event.getClipData().getItemAt(0).getText().toString());
     	      Integer droppedPosition = (Integer) v.getTag();
-    	      String dragValue = placeTypes[draggedPosition];
-    	      String dropValue = placeTypes[droppedPosition];
-    	      placeTypes[draggedPosition] = dropValue;
-    	      placeTypes[droppedPosition] = dragValue;
+    	      updateGridState(draggedPosition, droppedPosition);
+    	      //String dragValue = placeTypes[draggedPosition];
+    	      //String dropValue = placeTypes[droppedPosition];
+    	      //placeTypes[draggedPosition] = dropValue;
+    	      //placeTypes[droppedPosition] = dragValue;
     	      view.setVisibility(View.VISIBLE);
     	      String draggedStr = HomeGridFragment.sharedPref.getString(String.valueOf(draggedPosition), "");
     	      String droppedStr = HomeGridFragment.sharedPref.getString(String.valueOf(droppedPosition), "");
