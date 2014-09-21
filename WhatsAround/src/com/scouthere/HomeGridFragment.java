@@ -26,6 +26,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,7 @@ import android.view.ViewOverlay;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,10 +52,10 @@ public class HomeGridFragment extends Fragment {
     private HashMap<String,Object> typephotoMap;
     private Location location;
     static public SharedPreferences sharedPref;
-    static private String[] mPlaceTypes = new String[25];
-    static private String[] mPlaceNames = new String[25];
-    static private Integer[] mTypeGridImages = new Integer[25];
-    static private Integer[] mTypeGridBgImages = new Integer[25];
+    static private String[] mPlaceTypes = new String[24];
+    static private String[] mPlaceNames = new String[24];
+    static private Integer[] mTypeGridImages = new Integer[24];
+    static private Integer[] mTypeGridBgImages = new Integer[24];
 	
     final static public String[] PLACES_TYPES = {
     	"bakery|food|restaurant|meal_delivery|meal_takeaway", //Restaurants
@@ -178,23 +180,25 @@ public class HomeGridFragment extends Fragment {
 			@SuppressLint("NewApi")
 			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id){
 				
-	    	      Toast toast = Toast.makeText(getActivity(), "Drag to where you want this", Toast.LENGTH_LONG);
-	    	      toast.show();
+	    	      //Toast toast = Toast.makeText(getActivity(), "Drag to spot where you want this", Toast.LENGTH_LONG);
+	    	      //toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 70);
+	    	      //toast.show();
 	    		  
 	    		  ClipData data = ClipData.newPlainText("position", String.valueOf(position));
 	    	      DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
 	    	      view.startDrag(data, shadowBuilder, view, 0);
 	    	      view.setVisibility(View.VISIBLE);
 	    	      
-
+	    	      LinearLayout gridParent = (LinearLayout) parent.getParent();
 	    	      //Animation dragAnimation = AnimationUtils.loadAnimation(this, R.anim.hyperspace_jump);
 	    	      //dragview.setAnimation(dragAnimation);
-	    	      //TextView tv = new TextView(getActivity());
-	    	      //tv.setText("Drag to where you want this");
-	    	      //tv.setTextColor(0xff39ad80);
-	    	      //tv.setVisibility(View.VISIBLE);
+	    	      TextView tv = new TextView(getActivity());
+	    	      tv.setText("Drag to where you want this");
+	    	      tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+	    	      tv.setTextColor(0xff39ad80);
+	    	      tv.setVisibility(View.VISIBLE);
 	    	      //((GridView) getActivity().findViewById(R.id.gridview)).addView(tv, 0);
-	    	      //gridParent.addView(tv, 0);
+	    	      gridParent.addView(tv, 0);
 	    	      
 	    	      
 	    	      return true;

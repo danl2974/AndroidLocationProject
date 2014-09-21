@@ -15,6 +15,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.location.Location;
+import android.os.Handler;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.MotionEvent;
@@ -31,6 +32,7 @@ import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
@@ -109,7 +111,7 @@ public class CategoryGridAdapter extends BaseAdapter {
         	  
         //}
         //else{	
-          Log.i("TestScroll", String.valueOf(backgroundImages.length) + " " + String.valueOf(categoryImages.length));
+         
         	Resources r = mContext.getResources();
         	Drawable[] layers = new Drawable[2];
         	layers[0] = r.getDrawable(backgroundImages[position]);
@@ -117,7 +119,6 @@ public class CategoryGridAdapter extends BaseAdapter {
         	LayerDrawable layerDrawable = new LayerDrawable(layers);
         	imageView.setImageDrawable(layerDrawable);
         	
-            
         //}
   
        imageView.setTag(position);
@@ -152,7 +153,16 @@ public class CategoryGridAdapter extends BaseAdapter {
     	      break;
     	    case DragEvent.ACTION_DROP:
     	      View view = (View) event.getLocalState();
-    	      // ((GridView) activity.findViewById(R.id.gridview)).removeViewAt(0);
+    	      LinearLayout gridContainer = (LinearLayout) activity.findViewById(R.id.homegrid_container);
+    	      ((TextView) gridContainer.getChildAt(0)).setText("Done! New Position Set");
+    	      
+    	      new Handler().postDelayed(new Runnable() {
+    	            public void run() {
+    	                ((LinearLayout) activity.findViewById(R.id.homegrid_container)).removeViewAt(0);
+    	            }
+    	           }, 3000);
+    	      
+    	     
     	      Drawable draggedDrawable = ((ImageView) view).getDrawable();
     	      Drawable droppedDrawable = ((ImageView) v).getDrawable();
     	      ((ImageView) v).setImageDrawable(draggedDrawable);
