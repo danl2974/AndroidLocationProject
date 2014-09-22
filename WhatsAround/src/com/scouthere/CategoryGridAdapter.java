@@ -137,9 +137,13 @@ public class CategoryGridAdapter extends BaseAdapter {
 	      Integer dropImg = categoryImages[dropped];
 	      Integer dragBg = backgroundImages[dragged];
 	      Integer dropBg = backgroundImages[dropped];
+	      String draggedPlaceName = HomeGridFragment.mPlaceNames[dragged];
+	      String droppedPlaceName = HomeGridFragment.mPlaceNames[dropped];
 	      
-	      placeTypes[dragged] = dropValue;
-	      placeTypes[dropped] = dragValue;
+	      HomeGridFragment.mPlaceTypes[dragged] = dropValue;
+	      HomeGridFragment.mPlaceTypes[dropped] = dragValue;
+	      HomeGridFragment.mPlaceNames[dragged] = droppedPlaceName;
+	      HomeGridFragment.mPlaceNames[dropped] = draggedPlaceName;
 	      categoryImages[dragged] = dropImg;
 	      categoryImages[dropped] = dragImg;
 	      backgroundImages[dragged] = dropBg;

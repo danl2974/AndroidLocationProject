@@ -52,10 +52,10 @@ public class HomeGridFragment extends Fragment {
     private HashMap<String,Object> typephotoMap;
     private Location location;
     static public SharedPreferences sharedPref;
-    static private String[] mPlaceTypes = new String[24];
-    static private String[] mPlaceNames = new String[24];
-    static private Integer[] mTypeGridImages = new Integer[24];
-    static private Integer[] mTypeGridBgImages = new Integer[24];
+    static public String[] mPlaceTypes = new String[24];
+    static public String[] mPlaceNames = new String[24];
+    static public Integer[] mTypeGridImages = new Integer[24];
+    static public Integer[] mTypeGridBgImages = new Integer[24];
 	
     final static public String[] PLACES_TYPES = {
     	"bakery|food|restaurant|meal_delivery|meal_takeaway", //Restaurants
