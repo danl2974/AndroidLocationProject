@@ -95,6 +95,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	private String placesKey = null;
 	private boolean connectionRetry = false;
 	long mainTimestamp = 0;
+	public static boolean homeFlag;
 
 
 	@SuppressLint("NewApi")
@@ -103,7 +104,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.container);
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		//getActionBar().setDisplayHomeAsUpEnabled(true);
 		
 		//if (findViewById(R.id.fragment_container) != null) {
 	    if (savedInstanceState != null) {
@@ -217,6 +218,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
     }
 	
     
+	@SuppressLint("NewApi")
 	private void initGridHome(){
 		
 	      //HomeGridFragment hgFragment = new HomeGridFragment();
@@ -229,7 +231,11 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	 
 	}
 	
+	@SuppressLint("NewApi")
 	public void onPlaceTypeFilter(String filter, String resourceName){
+		
+		this.homeFlag = false;
+		invalidateOptionsMenu();
 		
 		this.placesFilter = filter;
 		this.infoWindowResourceName = resourceName;
@@ -252,8 +258,10 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	}
     
 	
+	@SuppressLint("NewApi")
 	public void onUserCenteredLocationsView(){
 		
+		getActionBar().setDisplayHomeAsUpEnabled(true);
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         
@@ -267,6 +275,10 @@ GooglePlayServicesClient.OnConnectionFailedListener {
         	PlacesClient pc = new PlacesClient(searchParams, PlacesCallType.search);
         	this.placesLocations = pc.getPlacesData();
 		
+        
+        String abTitle = this.infoWindowResourceName.split("_")[0];
+        getActionBar().setTitle(abTitle.substring(0, 1).toUpperCase() + abTitle.substring(1, abTitle.length()) );
+        
 		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentByTag(MAP_FRAGMENT);
 		map = mapFragment.getMap();
@@ -607,6 +619,19 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	     return super.onCreateOptionsMenu(menu);
 	 }
 	 
+	  @SuppressLint("NewApi")
+	  @Override
+	  public boolean onPrepareOptionsMenu (Menu menu){
+	    	
+	    	Log.i("onPrepareOptionsMenu", "called");
+	    	if(homeFlag){
+	    	  getActionBar().setDisplayHomeAsUpEnabled(false);
+	    	  MenuItem menuItem = menu.findItem(R.id.home_icon);
+			  menuItem.setVisible(false);
+	    	}
+			return true;
+			
+	   }
 	 
 	 @SuppressLint("NewApi")
 	 @Override

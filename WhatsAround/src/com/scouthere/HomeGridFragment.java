@@ -28,6 +28,9 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.DragShadowBuilder;
@@ -125,6 +128,9 @@ public class HomeGridFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 	    
+		getActivity().getActionBar().setTitle(R.string.app_name);
+	    MainActivity.homeFlag = true;
+		setHasOptionsMenu(true);
 		
 		sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 		//sharedPref.edit().clear().commit();
@@ -240,6 +246,7 @@ public class HomeGridFragment extends Fragment {
         }
     }
 	
+    
      
 
 }
