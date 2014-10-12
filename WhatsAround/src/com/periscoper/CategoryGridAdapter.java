@@ -1,10 +1,10 @@
-package com.scouthere;
+package com.periscoper;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.scouthere.R;
+import com.periscoper.R;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;

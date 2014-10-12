@@ -1,6 +1,6 @@
-package com.scouthere;
+package com.periscoper;
 
-import com.scouthere.R;
+import com.periscoper.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;

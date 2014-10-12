@@ -1,4 +1,4 @@
-package com.scouthere;
+package com.periscoper;
 
 import java.util.HashMap;
 

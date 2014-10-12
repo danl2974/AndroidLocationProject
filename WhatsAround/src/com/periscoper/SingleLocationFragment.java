@@ -1,4 +1,4 @@
-package com.scouthere;
+package com.periscoper;
 
 
 import java.util.ArrayList;
@@ -16,8 +16,8 @@ import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.text.style.StyleSpan;
 
-import com.scouthere.R;
-import com.scouthere.PlacesClient.PlacesCallType;
+import com.periscoper.PlacesClient.PlacesCallType;
+import com.periscoper.R;
 
 import android.app.Activity;
 import android.content.Intent;

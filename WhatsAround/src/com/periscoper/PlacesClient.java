@@ -1,4 +1,4 @@
-package com.scouthere;
+package com.periscoper;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

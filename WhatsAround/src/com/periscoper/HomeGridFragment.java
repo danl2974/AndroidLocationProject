@@ -1,4 +1,4 @@
-package com.scouthere;
+package com.periscoper;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,7 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.scouthere.R;
+import com.periscoper.R;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;

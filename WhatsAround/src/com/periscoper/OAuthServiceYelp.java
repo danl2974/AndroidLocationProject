@@ -1,4 +1,4 @@
-package com.scouthere;
+package com.periscoper;
 
 import org.scribe.builder.api.DefaultApi10a;
 import org.scribe.model.Token;

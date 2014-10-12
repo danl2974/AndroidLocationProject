@@ -1,6 +1,6 @@
-package com.scouthere;
+package com.periscoper;
 
-import com.scouthere.R;
+import com.periscoper.R;
 
 import android.app.Activity;
 import android.content.Intent;

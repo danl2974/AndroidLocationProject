@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Scout Here</string>
+    <string name="app_name">Periscoper</string>
     <string name="home_icon">Home</string>
     <string name="streetviewovermap">Street View</string>
     <string name="not_connected">Your device is not connected to the internet</string>

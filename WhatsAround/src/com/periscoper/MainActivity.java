@@ -1,11 +1,12 @@
-package com.scouthere;
+package com.periscoper;
 
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-import com.scouthere.R;
+import com.periscoper.PlacesClient.PlacesCallType;
+import com.periscoper.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -25,7 +26,6 @@ import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.scouthere.PlacesClient.PlacesCallType;
 
 import android.location.Location;
 import android.net.ConnectivityManager;

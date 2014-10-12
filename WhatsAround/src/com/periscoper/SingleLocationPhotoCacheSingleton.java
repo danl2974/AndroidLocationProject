@@ -1,4 +1,4 @@
-package com.scouthere;
+package com.periscoper;
 
 import android.graphics.Bitmap;
 import android.support.v4.util.LruCache;
