@@ -116,9 +116,9 @@ public class HomeGridFragment extends Fragment {
 		R.drawable.gas_bg, R.drawable.hair_bg, R.drawable.medical_bg,
 		R.drawable.bar_bg, R.drawable.cafe_bg, R.drawable.fitness_bg,
 		R.drawable.store_bg, R.drawable.entertainment_bg, R.drawable.financial_bg,
-		R.drawable.culture_bg, R.drawable.default_bg, R.drawable.professional_bg,
+		R.drawable.culture_bg, R.drawable.establishment_bg, R.drawable.professional_bg,
 		R.drawable.publicgovt_bg, R.drawable.pharmacy_bg, R.drawable.transport_bg,
-		R.drawable.default_bg, R.drawable.education_bg, R.drawable.automotive_bg,
+		R.drawable.specialty_bg, R.drawable.education_bg, R.drawable.automotive_bg,
 		R.drawable.worship_bg, R.drawable.pets_bg, R.drawable.outdoors_bg,
 		};
 
