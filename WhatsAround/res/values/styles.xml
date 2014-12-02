@@ -23,11 +23,11 @@
         <!-- the theme applied to the application or activity -->
     <style name="CustomActionBarTheme"
            parent="@android:style/Theme.Holo.Light.DarkActionBar">
-        <item name="android:actionBarStyle">@style/WhatsAroundActionBar</item>
+        <item name="android:actionBarStyle">@style/PeriscoperActionBar</item>
     </style>
 
     <!-- ActionBar styles -->
-    <style name="WhatsAroundActionBar"
+    <style name="PeriscoperActionBar"
            parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
         <item name="android:background">@drawable/actionbar_background</item>
     </style>
