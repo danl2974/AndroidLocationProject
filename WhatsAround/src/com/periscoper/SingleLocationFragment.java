@@ -10,10 +10,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.Html;
+import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
+import android.text.style.AlignmentSpan;
 import android.text.style.StyleSpan;
 
 import com.periscoper.PlacesClient.PlacesCallType;
@@ -131,6 +133,15 @@ public class SingleLocationFragment extends Fragment {
 
         	  this.reviewView = inflater.inflate(R.layout.single_location_information_reviews, container, false);	
               this.reviewsSection = (LinearLayout) reviewView.findViewById(R.id.single_review_container);
+              
+              //Caption
+              TextView caption = new TextView(this.mContext);
+              LinearLayout.LayoutParams captionParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+              captionParams.gravity = 0x01;
+              SpannableString captionss = new SpannableString("Reviews from Google");
+              captionss.setSpan(new StyleSpan(Typeface.ITALIC), 0, captionss.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+              caption.setText(captionss);
+              this.reviewsSection.addView(caption, captionParams);
       		
       		  for (int i = 0; i < placeReviewsList.size(); i++){
       			
