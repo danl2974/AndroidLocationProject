@@ -136,7 +136,7 @@ public class HomeGridFragment extends Fragment {
 		//sharedPref.edit().clear().commit();
 		
 		if(sharedPref.contains(getResources().getString(R.string.loaded))){
-			Log.i("HomeGridPrefStatus", "Prefs loaded " + String.valueOf(sharedPref.getAll().size()));
+			
 			for (Entry<String, ?> pref : sharedPref.getAll().entrySet()){
 				
 			  if(!pref.getKey().equals(getResources().getString(R.string.loaded))){	
@@ -150,7 +150,6 @@ public class HomeGridFragment extends Fragment {
 			}
 		}
 		else{
-			Log.i("HomeGridPrefStatus", "No Prefs loaded");
 			mPlaceTypes = PLACES_TYPES;
 			mTypeGridImages = GRID_IMG_IDS;
 			mTypeGridBgImages = BG_IMG_IDS;

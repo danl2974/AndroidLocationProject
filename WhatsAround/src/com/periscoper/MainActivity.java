@@ -108,7 +108,6 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 		
 		//if (findViewById(R.id.fragment_container) != null) {
 	    if (savedInstanceState != null) {
-				    Log.i("Main savedInstanceState", String.valueOf(savedInstanceState.size()));
 	                return;
 	           }
 		//}
@@ -117,7 +116,9 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 		if (mIntent.getExtras() != null){
 		    this.userLocation = mIntent.getParcelableExtra(InitialActivity.LOCATION_EXTRA);
 	    }
-		else{Log.i("startmain","no location in intent");}
+		else{
+			
+		}
 		
 		
 		int availableCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
@@ -149,7 +150,6 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	@Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Log.i("Main onSaveInstanceState called", "bundle size: " + String.valueOf(outState.size()));
     }	
 	
 	
@@ -158,18 +158,15 @@ GooglePlayServicesClient.OnConnectionFailedListener {
         super.onStart();
         verifyConnectivity();
         if(mainTimestamp != 0){
-        	Log.i("main onStart", String.valueOf(mainTimestamp));
         	Date date = new Date();
  	        long startTime = date.getTime();
         	if ((startTime - mainTimestamp) >  60000){
         		 if(!this.mLocationClient.isConnected()){
-        			Log.i("main onStart NOT connected", String.valueOf(mainTimestamp));
      	            //this.mLocationClient.connect();
         			finish();
      	            startActivity(new Intent(this, InitialActivity.class));
      	          }
         		 else{
-        			Log.i("main onStart connected", String.valueOf(mainTimestamp));
         			this.userLocation = mLocationClient.getLastLocation();
         			initGridHome();
         		 }
@@ -331,7 +328,6 @@ GooglePlayServicesClient.OnConnectionFailedListener {
                   
             	if(MainActivity.this.activeMarker != null){
             		//Restore original marker
-            		Log.i("Test MapClick", MainActivity.this.activeMarker.getTitle());
             		resetMapMarker();
 	
             	}
@@ -519,7 +515,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
           gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationLongLat, 17));
           gmap.animateCamera(CameraUpdateFactory.zoomTo(17), 2000, null);
 		 }
-		 catch(Exception e){Log.i("SingleLocationCustomMap Main", e.getMessage() );}
+		 catch(Exception e){}
 	    
 	}
 	
@@ -561,7 +557,6 @@ GooglePlayServicesClient.OnConnectionFailedListener {
     public void onLocationChanged(Location location) {
     	
     	this.userLocation = location;
-    	Log.i("MainActivityOnLocationChanged", String.format("location changed: lat %f long %f", location.getLatitude(), location.getLongitude()) );
     	
     }
 	
@@ -606,7 +601,6 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	        super.onStop();
 	        Date date = new Date();
 	        mainTimestamp = date.getTime();
-	        Log.i("main onStop", "called");
 	    }
 	 
 	 
@@ -623,7 +617,6 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	  @Override
 	  public boolean onPrepareOptionsMenu (Menu menu){
 	    	
-	    	Log.i("onPrepareOptionsMenu", "called");
 	    	if(homeFlag){
 	    	  getActionBar().setDisplayHomeAsUpEnabled(false);
 	    	  MenuItem menuItem = menu.findItem(R.id.home_icon);

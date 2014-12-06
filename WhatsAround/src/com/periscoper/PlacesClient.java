@@ -122,9 +122,9 @@ public class PlacesClient {
 		try {
 			 result = task.get();
 		} catch (InterruptedException e) {
-			Log.e(this.getClass().getName(), e.getMessage());
+			
 		} catch (ExecutionException e) {
-			Log.e(this.getClass().getName(), e.getMessage());
+			
 		}
 		  
 		  return result;
@@ -154,9 +154,9 @@ public class PlacesClient {
 		try {
 			 photo = task.get();
 		} catch (InterruptedException e) {
-			Log.e(this.getClass().getName(), e.getMessage());
+			
 		} catch (ExecutionException e) {
-			Log.e(this.getClass().getName(), e.getMessage());
+		
 		}
 		  
 		  return photo;
@@ -186,7 +186,7 @@ public class PlacesClient {
 	        	 is = conn.getErrorStream();
 	        	 /*
 	              for (Map.Entry<String,List<String>> hf : conn.getHeaderFields().entrySet()){
-	            	  Log.i("PlacesClientResponseHeader", String.format("%s %s", hf.getKey(), hf.getValue().get(0) ) );
+	            	  
 	              }
 	              */	        	 
 	             }
@@ -199,10 +199,10 @@ public class PlacesClient {
 	     	     }
 	     	     
 	     	     callResponse = sb.toString();
-	     	     Log.i("PlacesClient callResponse", callResponse);
+	     	     
 			}
 			catch(Exception e){
-				Log.e("PlacesClientException", "Exception call " + e.getMessage());
+				
 			}
 			finally {
 			    conn.disconnect();
@@ -386,7 +386,7 @@ public class PlacesClient {
 		  try {
 			obj = (JSONObject) parser.parse(jsonString);
 		  } catch (ParseException e) {
-			Log.e("parseJsonSearchResponse", e.getMessage());
+			
 		  }
         
 		  if (obj.get("status").equals("OK")){
@@ -431,7 +431,7 @@ public class PlacesClient {
 		  try {
 			obj = (JSONObject) parser.parse(jsonString);
 		  } catch (ParseException e) {
-			Log.e("parseJsonDetailsResponse", e.getMessage());
+			
 		  }
 		  
 		  if (obj != null){
@@ -443,7 +443,7 @@ public class PlacesClient {
 				  String field = PlacesClient.detailsDataFields[f];
 				  try{
 				  hm.put(field, (String) resultObj.get(field));
-				  }catch(Exception e){ Log.i("PlacesClient", "Detail Exception: " + field); }
+				  }catch(Exception e){  }
 			  }
 			  
 			  if(resultObj.get("opening_hours") != null){
@@ -486,13 +486,12 @@ public class PlacesClient {
 	            }
 	            else{
 	        	  is = conn.getErrorStream();
-	        	  Log.i("PlacesClient callPhoto", String.valueOf(response));
 	            }
 	           
 	           
 	        }
 	        catch (Exception e) {
-	           Log.e(getClass().getName(), e.getMessage());
+	           
 	          }
 	        
 	        
@@ -622,7 +621,7 @@ public class PlacesClient {
 		  try {
 			obj = (JSONObject) parser.parse(jsonString);
 		  } catch (ParseException e) {
-			Log.e("parseJsonSearchResponse", e.getMessage());
+			
 		  }
         
 		  if (obj.get("status").equals("OK")){
@@ -654,7 +653,7 @@ public class PlacesClient {
 					    }
 
 				  }
-				 }catch(Exception e){Log.i(getClass().getName(), "Exception in parseJsonSearchForBitmap" );}
+				 }catch(Exception e){}
 				  
 				 
 			  }

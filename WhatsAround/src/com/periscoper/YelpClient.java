@@ -99,7 +99,7 @@ public class YelpClient {
 		    Iterator i = businesses.iterator();
 		    while (i.hasNext()) {
 		    	JSONObject bObj = (JSONObject) i.next();
-		    	Log.i("YELP", "matchLocation " + bObj.get("name").toString() );
+		    	
 		    	if (bObj.get("name").equals(locationName)){
 		    		businessId = bObj.get("id").toString();
 		    		return businessId;
@@ -145,7 +145,7 @@ public class YelpClient {
 			try {
 				obj = (JSONObject) parser.parse(jsonStr);
 			} catch (ParseException e) {
-				Log.e(getClass().getName(), e.getMessage());
+				
 			}
 		    JSONArray businesses = (JSONArray) obj.get("businesses");
 		    Iterator i = businesses.iterator();
@@ -184,7 +184,7 @@ public class YelpClient {
             bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
          }
          catch (Exception e) {
-            Log.e(getClass().getName(), e.getMessage());
+            
            }
          
          
@@ -202,9 +202,9 @@ public class YelpClient {
 		  try {
 			 result = task.get();
 		} catch (InterruptedException e) {
-			Log.e(this.getClass().getName(), e.getMessage());
+			
 		} catch (ExecutionException e) {
-			Log.e(this.getClass().getName(), e.getMessage());
+			
 		}
 		  
 		  return result;
@@ -220,7 +220,6 @@ public class YelpClient {
 	              
 	            try {
 	      		    String searchResults = search();
-	      		    Log.i("YELP search results", searchResults);
 	                return  parseLocations(searchResults);
 	                
 	                

@@ -32,7 +32,6 @@ public class SingleLocationPhotoCacheSingleton {
 	
 	public void put(String key, Bitmap bmp){
 		
-		Log.i("SingleLocationPhotoCacheSingleton", "size: " + String.valueOf(mMemoryCache.size()));
 		mMemoryCache.trimToSize(3);
 		mMemoryCache.put(key, bmp);
 		
@@ -40,7 +39,6 @@ public class SingleLocationPhotoCacheSingleton {
 	
 	public void clearCache(){
 		 mMemoryCache.evictAll();
-		 Log.i("SingleLocationPhotoCacheSingleton", "mMemoryCache.evictAll() called");
 	}
 	
 }
