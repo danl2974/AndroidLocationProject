@@ -43,7 +43,7 @@
             android:configChanges="keyboardHidden|orientation" >
                  <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.dl2974.andapp.InitialActivity" />
+                android:value="com.periscoper.InitialActivity" />
         </activity>  
         <activity
             android:name="com.periscoper.NotConnectedActivity"
@@ -52,7 +52,7 @@
             android:configChanges="keyboardHidden|orientation" >
                  <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.dl2974.andapp.InitialActivity" />
+                android:value="com.periscoper.InitialActivity" />
         </activity>                
 
         <meta-data 
